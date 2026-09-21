@@ -13,7 +13,7 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased bg-white dark:bg-gray-900 dark:text-gray-100">
+    <body class="font-sans text-gray-900 antialiased bg-white dark:bg-gray-900 dark:text-gray-100 pb-16 md:pb-0">
         <x-site-header />
 
         @if (session('status'))

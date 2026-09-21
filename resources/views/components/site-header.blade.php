@@ -50,19 +50,20 @@
             @endauth
         </div>
     </nav>
-
-    <div class="flex items-center justify-around border-t border-gray-200 py-2 md:hidden dark:border-gray-800">
-        <a href="{{ route('home') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('home') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
-            <x-icons.home class="h-4 w-4" />
-            Home
-        </a>
-        <a href="{{ route('courses.index') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('courses.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
-            <x-icons.book-open class="h-4 w-4" />
-            Courses
-        </a>
-        <a href="{{ route('contact') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('contact') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
-            <x-icons.desk-phone class="h-4 w-4" />
-            Contact
-        </a>
-    </div>
 </header>
+
+{{-- Mobile bottom navigation --}}
+<nav class="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-gray-200 bg-white/95 py-2 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 md:hidden" aria-label="Mobile navigation">
+    <a href="{{ route('home') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('home') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
+        <x-icons.home class="h-4 w-4" />
+        Home
+    </a>
+    <a href="{{ route('courses.index') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('courses.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
+        <x-icons.book-open class="h-4 w-4" />
+        Courses
+    </a>
+    <a href="{{ route('contact') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('contact') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
+        <x-icons.desk-phone class="h-4 w-4" />
+        Contact
+    </a>
+</nav>
