@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,5 +29,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->isProduction()) {
             URL::forceScheme('https');
         }
+
+        Event::listen(Registered::class, SendEmailVerificationNotification::class);
     }
 }

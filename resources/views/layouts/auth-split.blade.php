@@ -24,7 +24,7 @@
                 <div class="relative hidden items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700 p-10 md:flex">
                     <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 20%, white 0, transparent 40%), radial-gradient(circle at 80% 80%, white 0, transparent 40%);"></div>
                     <div class="relative flex w-full max-w-xs items-center justify-center rounded-3xl bg-white p-6 shadow-lg">
-                        <img src="{{ asset('images/logo.jpg') }}" alt="EnglishBaro" class="w-full max-w-[220px]">
+                        <img src="{{ asset('images/logo.png') }}" alt="EnglishBaro" class="w-full max-w-[220px]">
                     </div>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\HomeController;
@@ -20,5 +21,9 @@ Route::view('dashboard', 'dashboard')
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
+
+Route::post('logout', LogoutController::class)
+    ->middleware(['auth'])
+    ->name('logout');
 
 require __DIR__.'/auth.php';

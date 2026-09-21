@@ -52,13 +52,15 @@ new #[Layout('layouts.auth-split')] class extends Component
 
         Auth::login($user);
 
+        session()->flash('status', 'Successfully created account! Please check your email for a verification link.');
+
         if ($this->redirect) {
             $this->redirect(SafeRedirect::resolve($this->redirect, route('dashboard', absolute: false)));
 
             return;
         }
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        $this->redirect(route('verification.notice', absolute: false));
     }
 
     #[Computed]
