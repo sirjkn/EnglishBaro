@@ -12,20 +12,19 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="flex min-h-screen items-center justify-center bg-indigo-50 dark:bg-gray-900 px-4 py-10">
+    <body class="font-sans text-gray-900 antialiased bg-white dark:bg-gray-900">
+        <x-site-header />
+
+        <div class="flex items-center justify-center bg-indigo-50 dark:bg-gray-900 px-4 py-10">
             <div class="grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl md:grid-cols-2">
                 <div class="p-8 sm:p-12">
                     {{ $slot }}
                 </div>
 
-                <div class="relative hidden flex-col items-center justify-center gap-4 bg-gradient-to-br from-indigo-500 to-indigo-700 p-10 md:flex">
+                <div class="relative hidden items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700 p-10 md:flex">
                     <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 20%, white 0, transparent 40%), radial-gradient(circle at 80% 80%, white 0, transparent 40%);"></div>
-                    <div class="relative flex aspect-square w-full max-w-xs items-center justify-center rounded-3xl bg-white/10 backdrop-blur">
-                        <x-icons.logo-mark class="h-28 w-28" />
-                    </div>
-                    <div class="relative text-2xl font-bold tracking-tight text-white">
-                        english<span class="text-indigo-200">baro</span>
+                    <div class="relative flex w-full max-w-xs items-center justify-center rounded-3xl bg-white p-6 shadow-lg">
+                        <img src="{{ asset('images/logo.jpg') }}" alt="EnglishBaro" class="w-full max-w-[220px]">
                     </div>
                 </div>
             </div>
