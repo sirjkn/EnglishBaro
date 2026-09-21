@@ -2,8 +2,10 @@
 
 use App\Actions\Auth\RegisterUserAction;
 use App\Models\User;
+use App\Support\Countries;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
@@ -44,75 +46,88 @@ new #[Layout('layouts.auth-split')] class extends Component
 
         $this->redirect(route('dashboard', absolute: false), navigate: true);
     }
+
+    #[Computed]
+    public function countries(): array
+    {
+        return Countries::all();
+    }
 }; ?>
 
 <div>
     <h1 class="text-2xl font-bold tracking-wide text-gray-900 dark:text-white">JOIN ENGLISHBARO</h1>
     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Create your account to start learning.</p>
 
-    <form wire:submit="register" class="mt-6 space-y-4">
+    <form wire:submit="register" class="mt-5 space-y-3">
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Full Names')" class="sr-only" />
-            <x-text-input wire:model="name" id="name" class="block w-full" type="text" name="name" placeholder="Full Names" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <x-text-input wire:model="name" id="name" class="block w-full text-sm py-1.5 px-2.5" type="text" name="name" placeholder="Full Names" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('name')" class="mt-1" />
         </div>
 
         <!-- Phone -->
         <div>
             <x-input-label for="phone" :value="__('Phone')" class="sr-only" />
-            <x-text-input wire:model="phone" id="phone" class="block w-full" type="text" name="phone" placeholder="Phone" required autocomplete="tel" />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+            <x-text-input wire:model="phone" id="phone" class="block w-full text-sm py-1.5 px-2.5" type="text" name="phone" placeholder="Phone" required autocomplete="tel" />
+            <x-input-error :messages="$errors->get('phone')" class="mt-1" />
         </div>
 
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" class="sr-only" />
-            <x-text-input wire:model="email" id="email" class="block w-full" type="email" name="email" placeholder="Email" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-text-input wire:model="email" id="email" class="block w-full text-sm py-1.5 px-2.5" type="email" name="email" placeholder="Email" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
 
         <!-- Country -->
         <div>
             <x-input-label for="country" :value="__('Country')" class="sr-only" />
-            <x-text-input wire:model="country" id="country" class="block w-full" type="text" name="country" placeholder="Country" required autocomplete="country-name" />
-            <x-input-error :messages="$errors->get('country')" class="mt-2" />
+            <select wire:model="country" id="country" name="country" required autocomplete="country-name"
+                    class="block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-sm py-1.5 px-2.5 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                <option value="">Select Country</option>
+                @foreach ($this->countries as $countryOption)
+                    <option value="{{ $countryOption }}">{{ $countryOption }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('country')" class="mt-1" />
         </div>
 
         <!-- Referral Email -->
         <div>
             <x-input-label for="referral_email" :value="__('Referral Email (optional)')" class="sr-only" />
-            <x-text-input wire:model="referral_email" id="referral_email" class="block w-full" type="email" name="referral_email" placeholder="Referral Email (optional)" autocomplete="off" />
-            <x-input-error :messages="$errors->get('referral_email')" class="mt-2" />
+            <x-text-input wire:model="referral_email" id="referral_email" class="block w-full text-sm py-1.5 px-2.5" type="email" name="referral_email" placeholder="Referral Email (optional)" autocomplete="off" />
+            <x-input-error :messages="$errors->get('referral_email')" class="mt-1" />
         </div>
 
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" class="sr-only" />
+        <!-- Password / Confirm Password -->
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <x-input-label for="password" :value="__('Password')" class="sr-only" />
 
-            <x-text-input wire:model="password" id="password" class="block w-full"
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            required autocomplete="new-password" />
+                <x-text-input wire:model="password" id="password" class="block w-full text-sm py-1.5 px-2.5"
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                required autocomplete="new-password" />
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <x-input-error :messages="$errors->get('password')" class="mt-1" />
+            </div>
+
+            <div>
+                <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="sr-only" />
+
+                <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block w-full text-sm py-1.5 px-2.5"
+                                type="password"
+                                name="password_confirmation"
+                                placeholder="Confirm Password"
+                                required autocomplete="new-password" />
+
+                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
+            </div>
         </div>
 
-        <!-- Confirm Password -->
-        <div>
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="sr-only" />
-
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block w-full"
-                            type="password"
-                            name="password_confirmation"
-                            placeholder="Confirm Password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <button type="submit" class="w-full rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
+        <button type="submit" class="w-full rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
             {{ __('Register Now') }}
         </button>
     </form>
