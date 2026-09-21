@@ -13,7 +13,7 @@ class HomeController extends Controller
         $featuredCourses = Course::query()
             ->where('status', 'published')
             ->where('is_featured', true)
-            ->with('level')
+            ->with(['level', 'thumbnail'])
             ->latest()
             ->take(6)
             ->get();

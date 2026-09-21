@@ -13,7 +13,7 @@ class CourseController extends Controller
     {
         $query = Course::query()
             ->where('status', 'published')
-            ->with('level');
+            ->with(['level', 'thumbnail']);
 
         if ($search = $request->string('search')->trim()->value()) {
             $query->where('title', 'like', "%{$search}%");
@@ -55,7 +55,7 @@ class CourseController extends Controller
     {
         abort_unless($course->status === 'published', 404);
 
-        $course->load(['level', 'sections.lessons', 'assessments', 'ebooks']);
+        $course->load(['level', 'thumbnail', 'sections.lessons', 'assessments', 'ebooks']);
 
         $isEnrolled = auth()->check()
             && $course->enrollments()->where('user_id', auth()->id())->where('status', 'active')->exists();
