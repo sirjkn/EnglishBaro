@@ -20,7 +20,7 @@
                 Courses
             </a>
             <a href="{{ route('contact') }}" class="{{ $navLinkClasses(request()->routeIs('contact')) }}">
-                <x-icons.desk-phone class="h-4 w-4" />
+                <x-icons.envelope class="h-4 w-4" />
                 Contact
             </a>
         </div>
@@ -63,7 +63,7 @@
         Courses
     </a>
     <a href="{{ route('contact') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('contact') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
-        <x-icons.desk-phone class="h-4 w-4" />
+        <x-icons.envelope class="h-4 w-4" />
         Contact
     </a>
 </nav>
