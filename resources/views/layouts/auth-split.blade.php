@@ -19,10 +19,13 @@
                     {{ $slot }}
                 </div>
 
-                <div class="relative hidden items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700 p-10 md:flex">
+                <div class="relative hidden flex-col items-center justify-center gap-4 bg-gradient-to-br from-indigo-500 to-indigo-700 p-10 md:flex">
                     <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 20%, white 0, transparent 40%), radial-gradient(circle at 80% 80%, white 0, transparent 40%);"></div>
                     <div class="relative flex aspect-square w-full max-w-xs items-center justify-center rounded-3xl bg-white/10 backdrop-blur">
-                        <span class="text-7xl">🎓</span>
+                        <x-icons.logo-mark class="h-28 w-28" />
+                    </div>
+                    <div class="relative text-2xl font-bold tracking-tight text-white">
+                        english<span class="text-indigo-200">baro</span>
                     </div>
                 </div>
             </div>
