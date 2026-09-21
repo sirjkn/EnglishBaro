@@ -141,10 +141,12 @@ new #[Layout('layouts.auth-split')] class extends Component
     <div class="grid grid-cols-2 gap-3">
         <a href="{{ route('auth.social.redirect', 'google') }}"
            class="flex items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+            <x-icons.google />
             Google
         </a>
         <a href="{{ route('auth.social.redirect', 'facebook') }}"
            class="flex items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+            <x-icons.facebook />
             Facebook
         </a>
     </div>
