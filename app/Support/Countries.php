@@ -5,9 +5,26 @@ namespace App\Support;
 class Countries
 {
     /**
+     * Countries prioritised at the top of the list, in order.
+     *
+     * @var array<int, string>
+     */
+    private const PRIORITY = ['Kenya', 'Somalia'];
+
+    /**
      * @return array<int, string>
      */
     public static function all(): array
+    {
+        $rest = array_values(array_diff(self::alphabetical(), self::PRIORITY));
+
+        return array_merge(self::PRIORITY, $rest);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function alphabetical(): array
     {
         return [
             'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia',

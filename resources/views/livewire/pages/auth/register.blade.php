@@ -2,6 +2,7 @@
 
 use App\Actions\Auth\RegisterUserAction;
 use App\Models\User;
+use App\Support\CountryCodes;
 use App\Support\Countries;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
@@ -12,6 +13,7 @@ use Livewire\Volt\Component;
 new #[Layout('layouts.auth-split')] class extends Component
 {
     public string $name = '';
+    public string $phone_country_code = '+254';
     public string $phone = '';
     public string $email = '';
     public string $country = '';
@@ -26,7 +28,8 @@ new #[Layout('layouts.auth-split')] class extends Component
     {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:30'],
+            'phone_country_code' => ['required', 'string', 'max:5'],
+            'phone' => ['required', 'string', 'max:20'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'country' => ['required', 'string', 'max:100'],
             'referral_email' => ['nullable', 'string', 'email', 'max:255'],
@@ -36,7 +39,7 @@ new #[Layout('layouts.auth-split')] class extends Component
         $user = $registerUserAction->execute([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'phone' => $validated['phone'],
+            'phone' => $validated['phone_country_code'].' '.$validated['phone'],
             'country' => $validated['country'],
             'referral_email' => $validated['referral_email'] ?: null,
             'password' => $validated['password'],
@@ -51,6 +54,12 @@ new #[Layout('layouts.auth-split')] class extends Component
     public function countries(): array
     {
         return Countries::all();
+    }
+
+    #[Computed]
+    public function countryCodes(): array
+    {
+        return CountryCodes::all();
     }
 }; ?>
 
@@ -69,7 +78,16 @@ new #[Layout('layouts.auth-split')] class extends Component
         <!-- Phone -->
         <div>
             <x-input-label for="phone" :value="__('Phone')" class="sr-only" />
-            <x-text-input wire:model="phone" id="phone" class="block w-full text-sm py-1.5 px-2.5" type="text" name="phone" placeholder="Phone" required autocomplete="tel" />
+            <div class="flex gap-2">
+                <select wire:model="phone_country_code" id="phone_country_code" name="phone_country_code" required
+                        class="w-28 shrink-0 rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-sm py-1.5 px-2 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                    @foreach ($this->countryCodes as $code)
+                        <option value="{{ $code['dial_code'] }}">{{ $code['dial_code'] }} {{ $code['name'] }}</option>
+                    @endforeach
+                </select>
+                <x-text-input wire:model="phone" id="phone" class="block w-full text-sm py-1.5 px-2.5" type="text" name="phone" placeholder="Phone number" required autocomplete="tel" />
+            </div>
+            <x-input-error :messages="$errors->get('phone_country_code')" class="mt-1" />
             <x-input-error :messages="$errors->get('phone')" class="mt-1" />
         </div>
 
@@ -101,7 +119,7 @@ new #[Layout('layouts.auth-split')] class extends Component
         </div>
 
         <!-- Password / Confirm Password -->
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
                 <x-input-label for="password" :value="__('Password')" class="sr-only" />
 

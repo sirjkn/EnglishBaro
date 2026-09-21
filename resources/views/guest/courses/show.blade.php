@@ -66,7 +66,7 @@
             </div>
 
             <div>
-                <div class="sticky top-8 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-6 lg:sticky lg:top-8">
                     <p class="text-3xl font-bold text-gray-900 dark:text-white">
                         {{ $course->currency }} {{ number_format((float) $course->price, 2) }}
                     </p>

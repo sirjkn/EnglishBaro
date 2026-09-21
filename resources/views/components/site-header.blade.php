@@ -1,6 +1,6 @@
 <header class="border-b border-gray-200 dark:border-gray-800">
-    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Main navigation">
-        <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-bold text-indigo-600 dark:text-indigo-400">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-0 sm:px-6 sm:py-4 lg:px-8" aria-label="Main navigation">
+        <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2 text-lg font-bold text-indigo-600 sm:text-xl dark:text-indigo-400">
             EnglishBaro
         </a>
 
@@ -10,12 +10,12 @@
             <a href="{{ route('contact') }}" class="text-sm font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">Contact</a>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex shrink-0 items-center gap-2 sm:gap-3">
             @auth
-                <a href="{{ route('dashboard') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-500 sm:px-4 sm:py-2 sm:text-sm">Dashboard</a>
             @else
-                <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">Login</a>
-                <a href="{{ route('register.create') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">Join</a>
+                <a href="{{ route('login') }}" class="text-xs font-medium text-gray-700 hover:text-indigo-600 sm:text-sm dark:text-gray-300 dark:hover:text-indigo-400">Login</a>
+                <a href="{{ route('register.create') }}" class="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-500 sm:px-4 sm:py-2 sm:text-sm">Join</a>
             @endauth
         </div>
     </nav>
