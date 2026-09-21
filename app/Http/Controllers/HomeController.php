@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Lesson;
 use App\Models\Testimonial;
 use Illuminate\View\View;
 
@@ -20,13 +21,20 @@ class HomeController extends Controller
 
         $testimonials = Testimonial::query()
             ->where('is_published', true)
+            ->with('avatar')
             ->orderBy('order')
             ->take(6)
             ->get();
 
+        $stats = [
+            'courses' => Course::query()->where('status', 'published')->count(),
+            'lessons' => Lesson::query()->count(),
+        ];
+
         return view('guest.home', [
             'featuredCourses' => $featuredCourses,
             'testimonials' => $testimonials,
+            'stats' => $stats,
         ]);
     }
 }

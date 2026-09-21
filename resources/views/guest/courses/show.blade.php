@@ -88,7 +88,7 @@
                                 </a>
                             @endif
                         @else
-                            <a href="{{ route('register.create') }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
+                            <a href="{{ route('register.create', ['redirect' => route('courses.show', $course, absolute: false)]) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
                                 Join to Enroll
                             </a>
                         @endauth

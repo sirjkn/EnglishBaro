@@ -1,13 +1,18 @@
 <?php
 
 use App\Livewire\Forms\LoginForm;
+use App\Support\SafeRedirect;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
 
 new #[Layout('layouts.auth-split')] class extends Component
 {
     public LoginForm $form;
+
+    #[Url(except: '')]
+    public string $redirect = '';
 
     /**
      * Handle an incoming authentication request.
@@ -19,6 +24,12 @@ new #[Layout('layouts.auth-split')] class extends Component
         $this->form->authenticate();
 
         Session::regenerate();
+
+        if ($this->redirect) {
+            $this->redirect(SafeRedirect::resolve($this->redirect, route('dashboard', absolute: false)));
+
+            return;
+        }
 
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
@@ -78,12 +89,12 @@ new #[Layout('layouts.auth-split')] class extends Component
     </div>
 
     <div class="grid grid-cols-2 gap-3">
-        <a href="{{ route('auth.social.redirect', 'google') }}"
+        <a href="{{ route('auth.social.redirect', ['provider' => 'google', 'redirect' => $redirect ?: null]) }}"
            class="flex items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
             <x-icons.google />
             Google
         </a>
-        <a href="{{ route('auth.social.redirect', 'facebook') }}"
+        <a href="{{ route('auth.social.redirect', ['provider' => 'facebook', 'redirect' => $redirect ?: null]) }}"
            class="flex items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
             <x-icons.facebook />
             Facebook
@@ -93,7 +104,7 @@ new #[Layout('layouts.auth-split')] class extends Component
     <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
         {{ __("Don't have an account?") }}
     </p>
-    <a href="{{ route('register.create') }}" wire:navigate
+    <a href="{{ route('register.create', ['redirect' => $redirect ?: null]) }}" wire:navigate
        class="mt-2 block w-full rounded-md border border-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">
         {{ __('Create an account here') }}
     </a>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\RegisterOauthUserAction;
 use App\Http\Controllers\Controller;
+use App\Support\SafeRedirect;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,9 +16,17 @@ class SocialAuthController extends Controller
 {
     private const SUPPORTED_PROVIDERS = ['google', 'facebook'];
 
-    public function redirect(string $provider): RedirectResponse
+    private const SESSION_KEY = 'oauth_redirect';
+
+    public function redirect(string $provider, Request $request): RedirectResponse
     {
         $this->ensureProviderIsSupported($provider);
+
+        if ($redirect = $request->string('redirect')->toString()) {
+            session()->put(self::SESSION_KEY, SafeRedirect::resolve($redirect, route('dashboard', absolute: false)));
+        } else {
+            session()->forget(self::SESSION_KEY);
+        }
 
         return Socialite::driver($provider)->redirect();
     }
@@ -24,6 +34,8 @@ class SocialAuthController extends Controller
     public function callback(string $provider, RegisterOauthUserAction $registerOauthUserAction): RedirectResponse
     {
         $this->ensureProviderIsSupported($provider);
+
+        $intended = session()->pull(self::SESSION_KEY, route('dashboard', absolute: false));
 
         try {
             $socialiteUser = Socialite::driver($provider)->user();
@@ -41,7 +53,7 @@ class SocialAuthController extends Controller
 
         Auth::login($user, remember: true);
 
-        return redirect()->route('dashboard');
+        return redirect()->to($intended);
     }
 
     private function ensureProviderIsSupported(string $provider): void
