@@ -7,7 +7,7 @@ use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
+new #[Layout('layouts.auth-split')] class extends Component
 {
     public string $name = '';
     public string $phone = '';
@@ -47,84 +47,98 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <form wire:submit="register">
+    <h1 class="text-2xl font-bold tracking-wide text-gray-900 dark:text-white">JOIN ENGLISHBARO</h1>
+    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Create your account to start learning.</p>
+
+    <form wire:submit="register" class="mt-6 space-y-4">
         <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Full Names')" />
-            <x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text" name="name" required autofocus autocomplete="name" />
+            <x-input-label for="name" :value="__('Full Names')" class="sr-only" />
+            <x-text-input wire:model="name" id="name" class="block w-full" type="text" name="name" placeholder="Full Names" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <!-- Phone -->
-        <div class="mt-4">
-            <x-input-label for="phone" :value="__('Phone')" />
-            <x-text-input wire:model="phone" id="phone" class="block mt-1 w-full" type="text" name="phone" required autocomplete="tel" />
+        <div>
+            <x-input-label for="phone" :value="__('Phone')" class="sr-only" />
+            <x-text-input wire:model="phone" id="phone" class="block w-full" type="text" name="phone" placeholder="Phone" required autocomplete="tel" />
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
+        <div>
+            <x-input-label for="email" :value="__('Email')" class="sr-only" />
+            <x-text-input wire:model="email" id="email" class="block w-full" type="email" name="email" placeholder="Email" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Country -->
-        <div class="mt-4">
-            <x-input-label for="country" :value="__('Country')" />
-            <x-text-input wire:model="country" id="country" class="block mt-1 w-full" type="text" name="country" required autocomplete="country-name" />
+        <div>
+            <x-input-label for="country" :value="__('Country')" class="sr-only" />
+            <x-text-input wire:model="country" id="country" class="block w-full" type="text" name="country" placeholder="Country" required autocomplete="country-name" />
             <x-input-error :messages="$errors->get('country')" class="mt-2" />
         </div>
 
         <!-- Referral Email -->
-        <div class="mt-4">
-            <x-input-label for="referral_email" :value="__('Referral Email (optional)')" />
-            <x-text-input wire:model="referral_email" id="referral_email" class="block mt-1 w-full" type="email" name="referral_email" autocomplete="off" />
+        <div>
+            <x-input-label for="referral_email" :value="__('Referral Email (optional)')" class="sr-only" />
+            <x-text-input wire:model="referral_email" id="referral_email" class="block w-full" type="email" name="referral_email" placeholder="Referral Email (optional)" autocomplete="off" />
             <x-input-error :messages="$errors->get('referral_email')" class="mt-2" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <div>
+            <x-input-label for="password" :value="__('Password')" class="sr-only" />
 
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full"
+            <x-text-input wire:model="password" id="password" class="block w-full"
                             type="password"
                             name="password"
+                            placeholder="Password"
                             required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <div>
+            <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="sr-only" />
 
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
+            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block w-full"
                             type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+                            name="password_confirmation"
+                            placeholder="Confirm Password"
+                            required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="mt-4 space-y-3">
-            <a href="{{ route('auth.social.redirect', 'google') }}"
-               class="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
-                {{ __('Continue with Google') }}
-            </a>
-            <a href="{{ route('auth.social.redirect', 'facebook') }}"
-               class="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
-                {{ __('Continue with Facebook') }}
-            </a>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}" wire:navigate>
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" class="w-full rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
+            {{ __('Register Now') }}
+        </button>
     </form>
+
+    <div class="my-6 flex items-center gap-3">
+        <div class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+        <span class="text-xs font-medium text-gray-400">Register with Others</span>
+        <div class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <a href="{{ route('auth.social.redirect', 'google') }}"
+           class="flex items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+            Google
+        </a>
+        <a href="{{ route('auth.social.redirect', 'facebook') }}"
+           class="flex items-center justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+            Facebook
+        </a>
+    </div>
+
+    <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        {{ __('Already registered?') }}
+    </p>
+    <a href="{{ route('login') }}" wire:navigate
+       class="mt-2 block w-full rounded-md border border-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">
+        {{ __('Login here') }}
+    </a>
 </div>
