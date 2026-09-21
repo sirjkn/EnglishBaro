@@ -1,12 +1,23 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::middleware('guest')->group(function () {
+    Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])
+        ->name('auth.social.redirect');
+
+    Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback'])
+        ->name('auth.social.callback');
+
+
     Volt::route('register', 'pages.auth.register')
         ->name('register');
+
+    Volt::route('create', 'pages.auth.register')
+        ->name('register.create');
 
     Volt::route('login', 'pages.auth.login')
         ->name('login');
