@@ -105,4 +105,9 @@ class Course extends Model
     {
         return $this->status === 'published';
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }
