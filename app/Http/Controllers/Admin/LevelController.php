@@ -4,91 +4,102 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Level;
+use App\Models\Track;
 use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LevelController extends Controller
 {
-    public function index(): View
+    public function all(Request $request): View
     {
-        $levels = Level::query()->withCount('courses')->orderBy('order')->get();
+        $this->authorize('viewAny', Track::class);
 
-        return view('admin.levels.index', ['levels' => $levels]);
+        $tracks = Track::query()->orderBy('order')->get();
+
+        $selectedTrack = $tracks->firstWhere('track_code', $request->query('track'))
+            ?? $tracks->first();
+
+        $levels = $selectedTrack
+            ? $selectedTrack->levels()->withCount('sections')->paginate(25)
+            : null;
+
+        return view('admin.levels.all', [
+            'tracks' => $tracks,
+            'selectedTrack' => $selectedTrack,
+            'levels' => $levels,
+        ]);
     }
 
-    public function create(): View
+    public function index(Track $track): View
     {
-        return view('admin.levels.create');
+        $this->authorize('update', $track);
+
+        $levels = $track->levels()
+            ->withCount('sections')
+            ->paginate(25);
+
+        return view('admin.levels.index', [
+            'track' => $track,
+            'levels' => $levels,
+        ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, Track $track): RedirectResponse
     {
-        $validated = $this->validated($request);
+        $this->authorize('update', $track);
 
-        $level = Level::create($validated);
+        $validated = $request->validate([
+            'number' => ['required', 'integer', 'min:1', 'unique:levels,number,NULL,id,track_id,'.$track->id],
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+
+        $level = $track->levels()->create($validated);
+        $level->ensureSections();
 
         AuditLogger::log('admin.level.created', $level, [], $validated);
 
-        return redirect()->route('admin.levels.index')->with('status', 'Level created.');
+        return back()->with('status', "Level {$level->number} added with its four sections.");
     }
 
-    public function edit(Level $level): View
+    public function edit(Track $track, Level $level): View
     {
-        return view('admin.levels.edit', ['level' => $level]);
+        $this->authorize('update', $track);
+
+        $level->load(['sections.lessons.video']);
+
+        return view('admin.levels.edit', [
+            'track' => $track,
+            'level' => $level,
+        ]);
     }
 
-    public function update(Request $request, Level $level): RedirectResponse
+    public function update(Request $request, Track $track, Level $level): RedirectResponse
     {
-        $validated = $this->validated($request, $level);
+        $this->authorize('update', $track);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+
         $previous = $level->only(array_keys($validated));
 
         $level->update($validated);
 
         AuditLogger::log('admin.level.updated', $level, $previous, $validated);
 
-        return redirect()->route('admin.levels.index')->with('status', 'Level updated.');
+        return back()->with('status', 'Level updated.');
     }
 
-    public function destroy(Level $level): RedirectResponse
+    public function destroy(Track $track, Level $level): RedirectResponse
     {
-        if ($level->courses()->exists()) {
-            return back()->with('status', 'Cannot delete a level that has courses assigned.');
-        }
+        $this->authorize('update', $track);
 
         AuditLogger::log('admin.level.deleted', $level, $level->toArray());
 
         $level->delete();
 
-        return redirect()->route('admin.levels.index')->with('status', 'Level deleted.');
-    }
-
-    private function validated(Request $request, ?Level $level = null): array
-    {
-        $name = $request->input('name');
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'description' => ['nullable', 'string'],
-            'order' => ['required', 'integer', 'min:0'],
-            'is_default' => ['boolean'],
-            'is_active' => ['boolean'],
-        ]);
-
-        $data['slug'] = Str::slug($name).'-'.Str::random(4);
-        $data['is_default'] = $request->boolean('is_default');
-        $data['is_active'] = $request->boolean('is_active', true);
-
-        if ($level) {
-            $data['slug'] = $level->slug;
-        }
-
-        if ($data['is_default']) {
-            Level::query()->where('id', '!=', $level?->id)->update(['is_default' => false]);
-        }
-
-        return $data;
+        return redirect()->route('admin.tracks.levels.index', $track)->with('status', 'Level deleted.');
     }
 }

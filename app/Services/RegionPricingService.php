@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Course;
+use App\Models\Track;
 use Illuminate\Http\Request;
 
 class RegionPricingService
@@ -16,8 +16,8 @@ class RegionPricingService
         return $this->geoLocationService->regionForIp($request->ip());
     }
 
-    public function priceFor(Course $course, ?string $region): float
+    public function priceFor(Track $track, ?string $region): float
     {
-        return $course->priceForRegion($region);
+        return $track->priceForRegion($region);
     }
 }

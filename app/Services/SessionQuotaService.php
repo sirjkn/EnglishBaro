@@ -72,13 +72,16 @@ class SessionQuotaService
 
     /**
      * Admin action: clear this month's session count so the student can log in again.
+     *
+     * This also clears sessions still marked "active" — a student who switches
+     * devices without explicitly logging out leaves their old session active
+     * forever, so an admin reset must be able to force those closed too.
      */
     public function resetForCurrentMonth(User $user): int
     {
         $sessions = UserSession::query()
             ->where('user_id', $user->id)
             ->whereBetween('login_at', [now()->startOfMonth(), now()->endOfMonth()])
-            ->where('status', '!=', 'active')
             ->get();
 
         DB::table('sessions')->whereIn('id', $sessions->pluck('session_id'))->delete();

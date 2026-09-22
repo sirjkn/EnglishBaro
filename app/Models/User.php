@@ -91,9 +91,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Enrollment::class);
     }
 
-    public function courses(): BelongsToMany
+    public function tracks(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class, 'enrollments')->withPivot('status', 'enrolled_at')->withTimestamps();
+        return $this->belongsToMany(Track::class, 'enrollments')->withPivot('status', 'enrolled_at')->withTimestamps();
     }
 
     public function subscriptions(): HasMany
@@ -121,9 +121,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(AppNotification::class);
     }
 
-    public function courseProgress(): HasMany
+    public function trackProgress(): HasMany
     {
-        return $this->hasMany(CourseProgress::class);
+        return $this->hasMany(TrackProgress::class);
     }
 
     public function lessonProgress(): HasMany

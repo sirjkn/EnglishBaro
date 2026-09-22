@@ -1,9 +1,33 @@
 <x-layouts.admin :title="'Settings'">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
 
-    <div class="mt-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    @php
+        $activeTab = old('_tab', request()->query('tab', 'company'));
+    @endphp
+
+    <div x-data="{ tab: '{{ $activeTab }}' }" class="mt-6">
+        <div class="flex flex-wrap gap-1 border-b border-gray-200 dark:border-gray-700">
+            <button type="button" @click="tab = 'company'"
+                    :class="tab === 'company' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'"
+                    class="border-b-2 px-4 py-2.5 text-sm font-medium">
+                Company Settings
+            </button>
+            <button type="button" @click="tab = 'payment'"
+                    :class="tab === 'payment' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'"
+                    class="border-b-2 px-4 py-2.5 text-sm font-medium">
+                Payment Gateways
+            </button>
+            <button type="button" @click="tab = 'system'"
+                    :class="tab === 'system' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'"
+                    class="border-b-2 px-4 py-2.5 text-sm font-medium">
+                System Settings
+            </button>
+        </div>
+
+    <div x-show="tab === 'company'" x-cloak class="mt-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
         <h2 class="font-semibold text-gray-900 dark:text-white">Company Settings</h2>
         <form method="POST" action="{{ route('admin.settings.company') }}" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <input type="hidden" name="_tab" value="company">
             @csrf
             @method('PUT')
 
@@ -29,7 +53,7 @@
         </form>
     </div>
 
-    <div class="mt-8 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    <div x-show="tab === 'payment'" x-cloak class="mt-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
         <h2 class="font-semibold text-gray-900 dark:text-white">Payment Gateways</h2>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Credentials are encrypted at rest and never exposed to the frontend.</p>
 
@@ -39,6 +63,7 @@
                 <form method="POST" action="{{ route('admin.settings.payment') }}" class="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="_tab" value="payment">
                     <input type="hidden" name="gateway" value="{{ $gateway }}">
 
                     <div class="flex items-center justify-between">
@@ -67,11 +92,12 @@
         </div>
     </div>
 
-    <div class="mt-8 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    <div x-show="tab === 'system'" x-cloak class="mt-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
         <h2 class="font-semibold text-gray-900 dark:text-white">System Settings</h2>
         <form method="POST" action="{{ route('admin.settings.system') }}" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             @csrf
             @method('PUT')
+            <input type="hidden" name="_tab" value="system">
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Subscription Days</label>
@@ -82,5 +108,6 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save System Settings</button>
             </div>
         </form>
+    </div>
     </div>
 </x-layouts.admin>

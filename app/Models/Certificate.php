@@ -10,7 +10,7 @@ class Certificate extends Model
     protected $fillable = [
         'certificate_number',
         'user_id',
-        'course_id',
+        'track_id',
         'file_media_id',
         'issued_at',
     ];
@@ -27,9 +27,9 @@ class Certificate extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function course(): BelongsTo
+    public function track(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Track::class);
     }
 
     public function file(): BelongsTo

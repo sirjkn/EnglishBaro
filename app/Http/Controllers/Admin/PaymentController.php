@@ -13,14 +13,14 @@ class PaymentController extends Controller
     {
         $this->authorize('viewAny', Payment::class);
 
-        $query = Payment::query()->with(['user', 'course']);
+        $query = Payment::query()->with(['user', 'track']);
 
         if ($studentId = $request->integer('student')) {
             $query->where('user_id', $studentId);
         }
 
-        if ($courseId = $request->integer('course')) {
-            $query->where('course_id', $courseId);
+        if ($trackId = $request->integer('track')) {
+            $query->where('track_id', $trackId);
         }
 
         if ($method = $request->string('method')->value()) {
@@ -44,7 +44,7 @@ class PaymentController extends Controller
                 'successful' => Payment::query()->where('status', 'successful')->count(),
                 'pending' => Payment::query()->whereIn('status', ['pending', 'processing'])->count(),
             ],
-            'filters' => $request->only(['student', 'course', 'method', 'status', 'transaction_id']),
+            'filters' => $request->only(['student', 'track', 'method', 'status', 'transaction_id']),
         ]);
     }
 
@@ -52,7 +52,7 @@ class PaymentController extends Controller
     {
         $this->authorize('view', $payment);
 
-        $payment->load(['user', 'course', 'transactions']);
+        $payment->load(['user', 'track', 'transactions']);
 
         return view('admin.payments.show', ['payment' => $payment]);
     }

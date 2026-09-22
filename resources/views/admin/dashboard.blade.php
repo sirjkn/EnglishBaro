@@ -4,7 +4,7 @@
     <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <x-stat-card label="Total Students" :value="$stats['total_students']" />
         <x-stat-card label="Active Students" :value="$stats['active_students']" />
-        <x-stat-card label="Total Courses" :value="$stats['total_courses']" />
+        <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" />
         <x-stat-card label="Active Enrollments" :value="$stats['active_enrollments']" />
         <x-stat-card label="Revenue" :value="'$'.number_format($stats['revenue'], 2)" />
         <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" />
@@ -21,8 +21,8 @@
             <canvas id="studentsChart" height="180"></canvas>
         </div>
         <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-            <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Course Popularity</h2>
-            <canvas id="courseChart" height="180"></canvas>
+            <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Track Popularity</h2>
+            <canvas id="trackChart" height="180"></canvas>
         </div>
         <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Payment Status</h2>
@@ -35,8 +35,8 @@
     <script>
         const revenueData = @json($revenueByDay);
         const studentsData = @json($studentsByDay);
-        const courseLabels = @json($coursePopularity->pluck('title'));
-        const courseValues = @json($coursePopularity->pluck('enrollments_count'));
+        const trackLabels = @json($trackPopularity->pluck('name'));
+        const trackValues = @json($trackPopularity->pluck('enrollments_count'));
         const paymentLabels = @json($paymentStatusBreakdown->keys());
         const paymentValues = @json($paymentStatusBreakdown->values());
 
@@ -52,9 +52,9 @@
             options: { plugins: { legend: { display: false } } }
         });
 
-        new Chart(document.getElementById('courseChart'), {
+        new Chart(document.getElementById('trackChart'), {
             type: 'bar',
-            data: { labels: courseLabels, datasets: [{ label: 'Active Enrollments', data: courseValues, backgroundColor: '#f59e0b' }] },
+            data: { labels: trackLabels, datasets: [{ label: 'Active Enrollments', data: trackValues, backgroundColor: '#f59e0b' }] },
             options: { indexAxis: 'y', plugins: { legend: { display: false } } }
         });
 

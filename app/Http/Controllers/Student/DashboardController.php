@@ -15,7 +15,7 @@ class DashboardController extends Controller
 
         $enrollments = $user->enrollments()
             ->where('status', 'active')
-            ->with(['course.level', 'progress', 'subscription'])
+            ->with(['track', 'progress', 'subscription'])
             ->latest('enrolled_at')
             ->get();
 

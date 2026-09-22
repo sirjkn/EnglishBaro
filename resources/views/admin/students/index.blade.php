@@ -2,7 +2,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
         <div class="flex gap-2">
-            <a href="{{ route('admin.courses.index') }}" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">Courses</a>
+            <a href="{{ route('admin.tracks.index') }}" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">Tracks</a>
             <a href="{{ route('admin.students.create') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Add Student</a>
         </div>
     </div>
@@ -15,10 +15,10 @@
 
     <form method="GET" class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-4">
         <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-        <select name="level" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            <option value="">All Levels</option>
-            @foreach ($levels as $level)
-                <option value="{{ $level->id }}" @selected(($filters['level'] ?? null) == $level->id)>{{ $level->name }}</option>
+        <select name="track" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+            <option value="">All Tracks</option>
+            @foreach ($tracks as $track)
+                <option value="{{ $track->id }}" @selected(($filters['track'] ?? null) == $track->id)>{{ $track->track_code }} — {{ $track->name }}</option>
             @endforeach
         </select>
         <select name="status" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
@@ -36,8 +36,8 @@
                     <th class="px-4 py-2">Student</th>
                     <th class="px-4 py-2">Student ID</th>
                     <th class="px-4 py-2">Email</th>
-                    <th class="px-4 py-2">Level</th>
-                    <th class="px-4 py-2">Courses</th>
+                    <th class="px-4 py-2">Track</th>
+                    <th class="px-4 py-2">Enrollments</th>
                     <th class="px-4 py-2">Status</th>
                     <th class="px-4 py-2"></th>
                 </tr>
@@ -48,7 +48,7 @@
                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $student->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->studentProfile?->student_id }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->email }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->studentProfile?->level?->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->studentProfile?->track?->track_code ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->enrollments_count }}</td>
                         <td class="px-4 py-3">
                             <x-badge :color="$student->is_active ? 'green' : 'gray'">{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge>

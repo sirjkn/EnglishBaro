@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Track;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<\App\Models\Level>
@@ -12,17 +12,12 @@ class LevelFactory extends Factory
 {
     public function definition(): array
     {
-        $name = fake()->unique()->randomElement([
-            'Beginner', 'Elementary', 'Pre-Intermediate', 'Intermediate', 'Upper-Intermediate', 'Advanced',
-        ]);
+        $number = fake()->unique()->numberBetween(1, 100);
 
         return [
-            'name' => $name,
-            'slug' => Str::slug($name),
-            'description' => fake()->sentence(),
-            'order' => fake()->unique()->numberBetween(1, 6),
-            'is_default' => false,
-            'is_active' => true,
+            'track_id' => Track::factory(),
+            'number' => $number,
+            'title' => "Level {$number}",
         ];
     }
 }

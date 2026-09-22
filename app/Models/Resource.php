@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Resource extends Model
 {
-    protected $fillable = ['course_id', 'lesson_id', 'title', 'description', 'media_id', 'order'];
+    protected $fillable = ['track_id', 'lesson_id', 'title', 'description', 'media_id', 'order'];
 
-    public function course(): BelongsTo
+    public function track(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Track::class);
     }
 
     public function lesson(): BelongsTo

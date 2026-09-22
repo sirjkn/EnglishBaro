@@ -13,7 +13,7 @@ class Enrollment extends Model
 
     protected $fillable = [
         'user_id',
-        'course_id',
+        'track_id',
         'status',
         'enrolled_at',
         'last_viewed_lesson_id',
@@ -33,9 +33,9 @@ class Enrollment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function course(): BelongsTo
+    public function track(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Track::class);
     }
 
     public function lastViewedLesson(): BelongsTo
@@ -45,7 +45,7 @@ class Enrollment extends Model
 
     public function progress(): HasOne
     {
-        return $this->hasOne(CourseProgress::class);
+        return $this->hasOne(TrackProgress::class);
     }
 
     public function subscription(): HasOne

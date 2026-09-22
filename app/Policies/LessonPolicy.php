@@ -17,7 +17,7 @@ class LessonPolicy
             return true;
         }
 
-        return app(CoursePolicy::class)->learn($user, $lesson->course);
+        return app(TrackPolicy::class)->learn($user, $lesson->section->level->track);
     }
 
     public function create(User $user): bool

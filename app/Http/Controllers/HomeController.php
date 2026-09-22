@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Level;
 use App\Models\Testimonial;
+use App\Models\Track;
 use App\Services\RegionPricingService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,12 +14,12 @@ class HomeController extends Controller
 {
     public function __invoke(Request $request, RegionPricingService $regionPricingService): View
     {
-        $featuredCourses = Course::query()
+        $featuredTracks = Track::query()
             ->where('status', 'published')
             ->where('is_featured', true)
-            ->with(['level', 'thumbnail'])
-            ->latest()
-            ->take(6)
+            ->with('thumbnail')
+            ->withCount('levels')
+            ->orderBy('order')
             ->get();
 
         $testimonials = Testimonial::query()
@@ -29,13 +30,14 @@ class HomeController extends Controller
             ->get();
 
         $stats = [
-            'courses' => Course::query()->where('status', 'published')->count(),
+            'tracks' => Track::query()->where('status', 'published')->count(),
+            'levels' => Level::query()->count(),
             'lessons' => Lesson::query()->count(),
-            'access_days' => Course::query()->where('status', 'published')->min('subscription_days') ?? 0,
+            'access_days' => Track::query()->where('status', 'published')->min('subscription_days') ?? 0,
         ];
 
         return view('guest.home', [
-            'featuredCourses' => $featuredCourses,
+            'featuredTracks' => $featuredTracks,
             'testimonials' => $testimonials,
             'stats' => $stats,
             'pricingRegion' => $regionPricingService->resolveRegion($request),

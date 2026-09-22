@@ -2,7 +2,7 @@
 
 namespace App\Actions\Auth;
 
-use App\Models\Level;
+use App\Models\Track;
 use App\Models\OauthAccount;
 use App\Models\Role;
 use App\Models\StudentProfile;
@@ -44,13 +44,13 @@ class RegisterOauthUserAction
                     'email_verified_at' => now(),
                 ]);
 
-                $defaultLevel = Level::query()->where('is_default', true)->first()
-                    ?? Level::query()->orderBy('order')->first();
+                $defaultTrack = Track::query()->where('is_default', true)->first()
+                    ?? Track::query()->orderBy('order')->first();
 
                 StudentProfile::create([
                     'user_id' => $user->id,
                     'student_id' => $this->generateUniqueStudentId(),
-                    'level_id' => $defaultLevel?->id,
+                    'track_id' => $defaultTrack?->id,
                 ]);
 
                 $studentRole = Role::query()->where('slug', 'student')->first();

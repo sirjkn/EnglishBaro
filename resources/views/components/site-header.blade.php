@@ -15,9 +15,9 @@
                 <x-icons.home class="h-4 w-4" />
                 Home
             </a>
-            <a href="{{ route('courses.index') }}" class="{{ $navLinkClasses(request()->routeIs('courses.*')) }}">
+            <a href="{{ route('tracks.index') }}" class="{{ $navLinkClasses(request()->routeIs('tracks.*')) }}">
                 <x-icons.book-open class="h-4 w-4" />
-                Courses
+                Course Tracks
             </a>
             <a href="{{ route('contact') }}" class="{{ $navLinkClasses(request()->routeIs('contact')) }}">
                 <x-icons.envelope class="h-4 w-4" />
@@ -58,9 +58,9 @@
         <x-icons.home class="h-4 w-4" />
         Home
     </a>
-    <a href="{{ route('courses.index') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('courses.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
+    <a href="{{ route('tracks.index') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('tracks.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
         <x-icons.book-open class="h-4 w-4" />
-        Courses
+        Course Tracks
     </a>
     <a href="{{ route('contact') }}" class="flex flex-col items-center gap-0.5 rounded-lg px-3 py-1 text-xs font-medium {{ request()->routeIs('contact') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300' }}">
         <x-icons.envelope class="h-4 w-4" />

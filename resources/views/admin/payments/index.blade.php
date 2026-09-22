@@ -31,7 +31,7 @@
                 <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
                     <th class="px-4 py-2">Transaction ID</th>
                     <th class="px-4 py-2">Student</th>
-                    <th class="px-4 py-2">Course</th>
+                    <th class="px-4 py-2">Track</th>
                     <th class="px-4 py-2">Amount</th>
                     <th class="px-4 py-2">Method</th>
                     <th class="px-4 py-2">Status</th>
@@ -44,7 +44,7 @@
                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900">
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->transaction_id }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->user->name }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->course->title }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->track->track_code }} — {{ $payment->track->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ ucfirst($payment->payment_method) }}</td>
                         <td class="px-4 py-3"><x-payment-status :status="$payment->status" /></td>

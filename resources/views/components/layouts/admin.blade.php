@@ -7,6 +7,11 @@
 
         <title>{{ isset($title) ? $title.' - Admin - '.config('app.name') : 'Admin - '.config('app.name') }}</title>
 
+        <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg+xml">
+        <link rel="icon" href="{{ asset('images/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+        <link rel="icon" href="{{ asset('images/favicon-16x16.png') }}" sizes="16x16" type="image/png">
+        <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
@@ -20,42 +25,79 @@
                         <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-9 w-auto">
                     </a>
                 </div>
-                <nav class="space-y-1 overflow-y-auto p-4" style="max-height: calc(100vh - 4rem)">
+                <nav class="space-y-4 overflow-y-auto p-4" style="max-height: calc(100vh - 4rem)">
                     @php
-                        $adminNav = [
-                            ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
-                            ['route' => 'admin.students.index', 'label' => 'Students', 'icon' => 'user-circle'],
-                            ['route' => 'admin.courses.index', 'label' => 'Courses', 'icon' => 'book-open'],
-                            ['route' => 'admin.levels.index', 'label' => 'Levels', 'icon' => 'medal'],
-                            ['route' => 'admin.payments.index', 'label' => 'Payments', 'icon' => 'credit-card'],
-                            ['route' => 'admin.sessions.index', 'label' => 'Sessions', 'icon' => 'login'],
-                            ['route' => 'admin.testimonials.index', 'label' => 'Testimonials', 'icon' => 'medal'],
-                            ['route' => 'admin.contact-messages.index', 'label' => 'Contact Messages', 'icon' => 'desk-phone'],
-                            ['route' => 'admin.audit-logs.index', 'label' => 'Audit Logs', 'icon' => 'map'],
-                            ['route' => 'admin.settings.edit', 'label' => 'Settings', 'icon' => 'user-plus'],
+                        $adminNavGroups = [
+                            [
+                                'label' => null,
+                                'items' => [
+                                    ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
+                                ],
+                            ],
+                            [
+                                'label' => 'Student Management',
+                                'items' => [
+                                    ['route' => 'admin.students.index', 'label' => 'Students', 'icon' => 'user-circle'],
+                                    ['route' => 'admin.sessions.index', 'label' => 'Sessions', 'icon' => 'login'],
+                                    ['route' => 'admin.testimonials.index', 'label' => 'Testimonials', 'icon' => 'medal'],
+                                ],
+                            ],
+                            [
+                                'label' => 'Course Management',
+                                'items' => [
+                                    ['route' => 'admin.tracks.index', 'label' => 'Course Tracks', 'icon' => 'book-open'],
+                                    ['route' => 'admin.levels.index', 'label' => 'Levels', 'icon' => 'book-open'],
+                                    ['route' => 'admin.enrollments.index', 'label' => 'Enrollments', 'icon' => 'user-plus'],
+                                ],
+                            ],
+                            [
+                                'label' => 'Financial',
+                                'items' => [
+                                    ['route' => 'admin.payments.index', 'label' => 'Payments', 'icon' => 'credit-card'],
+                                ],
+                            ],
+                            [
+                                'label' => 'System',
+                                'items' => [
+                                    ['route' => 'admin.settings.edit', 'label' => 'Settings', 'icon' => 'user-plus'],
+                                    ['route' => 'admin.audit-logs.index', 'label' => 'Audit Logs', 'icon' => 'map'],
+                                    ['route' => 'admin.contact-messages.index', 'label' => 'Contact Messages', 'icon' => 'desk-phone'],
+                                ],
+                            ],
                         ];
                     @endphp
 
-                    @foreach ($adminNav as $item)
-                        <a href="{{ route($item['route']) }}"
-                           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700' }}">
-                            <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
-                            {{ $item['label'] }}
-                        </a>
+                    @foreach ($adminNavGroups as $group)
+                        <div>
+                            @if ($group['label'])
+                                <p class="px-3 pb-1 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ $group['label'] }}</p>
+                            @endif
+                            <div class="space-y-1">
+                                @foreach ($group['items'] as $item)
+                                    <a href="{{ route($item['route']) }}"
+                                       class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                                        <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
+                                        {{ $item['label'] }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     @endforeach
 
-                    <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
-                        <x-icons.home class="h-4 w-4" />
-                        Back to Site
-                    </a>
+                    <div class="border-t border-gray-200 pt-3 dark:border-gray-700">
+                        <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                            <x-icons.home class="h-4 w-4" />
+                            Back to Site
+                        </a>
 
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
-                            <x-icons.logout class="h-4 w-4" />
-                            Logout
-                        </button>
-                    </form>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                                <x-icons.logout class="h-4 w-4" />
+                                Log Out
+                            </button>
+                        </form>
+                    </div>
                 </nav>
             </aside>
 

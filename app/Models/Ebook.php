@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Ebook extends Model
 {
-    protected $fillable = ['course_id', 'title', 'description', 'file_media_id', 'cover_media_id'];
+    protected $fillable = ['track_id', 'title', 'description', 'file_media_id', 'cover_media_id'];
 
-    public function course(): BelongsTo
+    public function track(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Track::class);
     }
 
     public function file(): BelongsTo

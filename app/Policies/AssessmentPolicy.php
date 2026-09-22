@@ -9,12 +9,12 @@ class AssessmentPolicy
 {
     public function view(User $user, Assessment $assessment): bool
     {
-        return app(CoursePolicy::class)->learn($user, $assessment->course);
+        return app(TrackPolicy::class)->learn($user, $assessment->level->track);
     }
 
     public function attempt(User $user, Assessment $assessment): bool
     {
-        return app(CoursePolicy::class)->learn($user, $assessment->course);
+        return app(TrackPolicy::class)->learn($user, $assessment->level->track);
     }
 
     public function create(User $user): bool

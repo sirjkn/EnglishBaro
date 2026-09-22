@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Level;
+use App\Models\Track;
 use App\Models\Role;
 use App\Models\StudentProfile;
 use App\Models\User;
@@ -12,7 +12,7 @@ class DemoStudentSeeder extends Seeder
 {
     public function run(): void
     {
-        $defaultLevel = Level::query()->where('is_default', true)->first() ?? Level::query()->first();
+        $defaultTrack = Track::query()->where('is_default', true)->first() ?? Track::query()->first();
         $studentRole = Role::query()->where('slug', 'student')->first();
 
         $student = User::query()->updateOrCreate(
@@ -36,7 +36,7 @@ class DemoStudentSeeder extends Seeder
                 'student_id' => 'EB-00001',
                 'phone' => '+254700000000',
                 'country' => 'Kenya',
-                'level_id' => $defaultLevel?->id,
+                'track_id' => $defaultTrack?->id,
             ]
         );
     }

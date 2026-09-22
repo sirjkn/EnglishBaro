@@ -4,7 +4,7 @@
     <div class="mt-6 rounded-xl border border-dashed border-gray-300 p-16 text-center dark:border-gray-700">
         <p class="text-lg font-semibold text-gray-900 dark:text-white">Coming Soon</p>
         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Detailed progress analytics are being built. In the meantime, check course progress from My Courses.
+            Detailed progress analytics are being built. In the meantime, check track progress from My Tracks.
         </p>
     </div>
 </x-layouts.student>

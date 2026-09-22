@@ -7,6 +7,11 @@
 
         <title>{{ isset($title) ? $title.' - '.config('app.name') : config('app.name') }}</title>
 
+        <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg+xml">
+        <link rel="icon" href="{{ asset('images/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+        <link rel="icon" href="{{ asset('images/favicon-16x16.png') }}" sizes="16x16" type="image/png">
+        <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
@@ -25,8 +30,8 @@
                     @php
                         $studentNav = [
                             ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
-                            ['route' => 'student.courses.index', 'label' => 'My Courses', 'icon' => 'book-open'],
-                            ['route' => 'courses.index', 'label' => 'All Courses', 'icon' => 'map'],
+                            ['route' => 'student.tracks.index', 'label' => 'My Course Tracks', 'icon' => 'book-open'],
+                            ['route' => 'tracks.index', 'label' => 'All Course Tracks', 'icon' => 'map'],
                             ['route' => 'student.progress', 'label' => 'My Progress', 'icon' => 'medal'],
                             ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                             ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card'],
@@ -72,7 +77,7 @@
 
                 <div class="flex items-center justify-around border-b border-gray-200 bg-white py-2 dark:border-gray-800 dark:bg-gray-800 md:hidden">
                     <a href="{{ route('student.dashboard') }}" class="text-xs font-medium {{ request()->routeIs('student.dashboard') ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-300' }}">Dashboard</a>
-                    <a href="{{ route('student.courses.index') }}" class="text-xs font-medium {{ request()->routeIs('student.courses.*') ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-300' }}">My Courses</a>
+                    <a href="{{ route('student.tracks.index') }}" class="text-xs font-medium {{ request()->routeIs('student.tracks.*') ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-300' }}">My Course Tracks</a>
                     <a href="{{ route('student.progress') }}" class="text-xs font-medium {{ request()->routeIs('student.progress') ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-300' }}">Progress</a>
                     <a href="{{ route('student.payments') }}" class="text-xs font-medium {{ request()->routeIs('student.payments') ? 'text-indigo-600' : 'text-gray-600 dark:text-gray-300' }}">Payments</a>
                 </div>
@@ -88,5 +93,7 @@
                 </main>
             </div>
         </div>
+
+        @stack('scripts')
     </body>
 </html>

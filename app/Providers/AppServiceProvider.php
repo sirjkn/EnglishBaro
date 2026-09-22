@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\UserSession;
+use App\Policies\SessionPolicy;
 use App\Policies\StudentPolicy;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -36,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Registered::class, SendEmailVerificationNotification::class);
 
         Gate::policy(User::class, StudentPolicy::class);
+        Gate::policy(UserSession::class, SessionPolicy::class);
     }
 }

@@ -5,7 +5,7 @@
         <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
             <dl class="space-y-2 text-sm">
                 <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Student</dt><dd class="text-gray-900 dark:text-white">{{ $payment->user->name }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Course</dt><dd class="text-gray-900 dark:text-white">{{ $payment->course->title }}</dd></div>
+                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Track</dt><dd class="text-gray-900 dark:text-white">{{ $payment->track->track_code }} — {{ $payment->track->name }}</dd></div>
                 <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Amount</dt><dd class="text-gray-900 dark:text-white">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</dd></div>
                 <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Method</dt><dd class="text-gray-900 dark:text-white">{{ ucfirst($payment->payment_method) }}</dd></div>
                 <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Status</dt><dd><x-payment-status :status="$payment->status" /></dd></div>

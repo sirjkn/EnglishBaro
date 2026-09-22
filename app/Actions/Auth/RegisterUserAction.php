@@ -2,7 +2,7 @@
 
 namespace App\Actions\Auth;
 
-use App\Models\Level;
+use App\Models\Track;
 use App\Models\Role;
 use App\Models\StudentProfile;
 use App\Models\User;
@@ -31,8 +31,8 @@ class RegisterUserAction
                 'is_active' => true,
             ]);
 
-            $defaultLevel = Level::query()->where('is_default', true)->first()
-                ?? Level::query()->orderBy('order')->first();
+            $defaultTrack = Track::query()->where('is_default', true)->first()
+                ?? Track::query()->orderBy('order')->first();
 
             $studentId = $this->generateUniqueStudentId();
 
@@ -42,7 +42,7 @@ class RegisterUserAction
                 'phone' => $data['phone'],
                 'country' => $data['country'],
                 'referral_email' => $data['referral_email'] ?? null,
-                'level_id' => $defaultLevel?->id,
+                'track_id' => $defaultTrack?->id,
             ]);
 
             $studentRole = Role::query()->where('slug', 'student')->first();

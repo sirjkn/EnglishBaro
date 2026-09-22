@@ -3,7 +3,7 @@
 use App\Http\Controllers\Student\AccountController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\LearningController;
-use App\Http\Controllers\Student\MyCourseController;
+use App\Http\Controllers\Student\MyTrackController;
 use App\Http\Controllers\Student\NotificationController;
 use App\Http\Controllers\Student\PaymentController;
 use App\Http\Controllers\Student\ProgressController;
@@ -16,11 +16,17 @@ Route::middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('dashboard', DashboardController::class)->name('dashboard');
 
-        Route::get('courses', [MyCourseController::class, 'index'])->name('courses.index');
-        Route::get('courses/{course:course_code}/learn', [LearningController::class, 'show'])->name('courses.show-learn');
-        Route::get('courses/{course:course_code}/learn/{lesson}', [LearningController::class, 'lesson'])->name('courses.learn');
-        Route::post('courses/{course:course_code}/learn/{lesson}/complete', [LearningController::class, 'complete'])->name('courses.complete-lesson');
-        Route::post('courses/{course:course_code}/learn/{lesson}/progress', [LearningController::class, 'updateVideoProgress'])->name('courses.video-progress');
+        Route::get('tracks', [MyTrackController::class, 'index'])->name('tracks.index');
+        Route::get('tracks/{track}', [MyTrackController::class, 'show'])->name('tracks.show');
+
+        Route::scopeBindings()->group(function () {
+            Route::get('tracks/{track}/levels/{level}', [LearningController::class, 'level'])->name('tracks.level');
+            Route::get('tracks/{track}/levels/{level}/learn', [LearningController::class, 'resume'])->name('tracks.resume');
+            Route::get('tracks/{track}/levels/{level}/lessons/{lesson}', [LearningController::class, 'lesson'])->name('tracks.learn');
+            Route::post('tracks/{track}/levels/{level}/lessons/{lesson}/complete', [LearningController::class, 'complete'])->name('tracks.complete-lesson');
+            Route::post('tracks/{track}/levels/{level}/lessons/{lesson}/check-answers', [LearningController::class, 'checkAnswers'])->name('tracks.check-answers');
+            Route::post('tracks/{track}/levels/{level}/lessons/{lesson}/progress', [LearningController::class, 'updateVideoProgress'])->name('tracks.video-progress');
+        });
 
         Route::get('progress', ProgressController::class)->name('progress');
 

@@ -2,9 +2,8 @@
 
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\ContactMessageController;
-use App\Http\Controllers\Admin\CourseController;
-use App\Http\Controllers\Admin\CourseSectionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\LevelController;
 use App\Http\Controllers\Admin\PaymentController;
@@ -12,6 +11,7 @@ use App\Http\Controllers\Admin\SessionController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\TrackController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'admin'])
@@ -20,16 +20,25 @@ Route::middleware(['auth', 'verified', 'admin'])
     ->group(function () {
         Route::get('dashboard', DashboardController::class)->name('dashboard');
 
-        Route::resource('courses', CourseController::class)->except(['show']);
-        Route::post('courses/{course}/sections', [CourseSectionController::class, 'store'])->name('courses.sections.store');
-        Route::put('courses/{course}/sections/{section}', [CourseSectionController::class, 'update'])->name('courses.sections.update');
-        Route::delete('courses/{course}/sections/{section}', [CourseSectionController::class, 'destroy'])->name('courses.sections.destroy');
+        Route::get('tracks', [TrackController::class, 'index'])->name('tracks.index');
+        Route::get('tracks/{track}/edit', [TrackController::class, 'edit'])->name('tracks.edit');
+        Route::put('tracks/{track}', [TrackController::class, 'update'])->name('tracks.update');
 
-        Route::post('courses/{course}/sections/{section}/lessons', [LessonController::class, 'store'])->name('courses.lessons.store');
-        Route::put('courses/{course}/lessons/{lesson}', [LessonController::class, 'update'])->name('courses.lessons.update');
-        Route::delete('courses/{course}/lessons/{lesson}', [LessonController::class, 'destroy'])->name('courses.lessons.destroy');
+        Route::get('levels', [LevelController::class, 'all'])->name('levels.index');
 
-        Route::resource('levels', LevelController::class)->except(['show']);
+        Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
+
+        Route::scopeBindings()->group(function () {
+            Route::get('tracks/{track}/levels', [LevelController::class, 'index'])->name('tracks.levels.index');
+            Route::post('tracks/{track}/levels', [LevelController::class, 'store'])->name('tracks.levels.store');
+            Route::get('tracks/{track}/levels/{level}/edit', [LevelController::class, 'edit'])->name('tracks.levels.edit');
+            Route::put('tracks/{track}/levels/{level}', [LevelController::class, 'update'])->name('tracks.levels.update');
+            Route::delete('tracks/{track}/levels/{level}', [LevelController::class, 'destroy'])->name('tracks.levels.destroy');
+
+            Route::post('tracks/{track}/levels/{level}/sections/{section}/lessons', [LessonController::class, 'store'])->name('tracks.lessons.store');
+            Route::put('tracks/{track}/levels/{level}/lessons/{lesson}', [LessonController::class, 'update'])->name('tracks.lessons.update');
+            Route::delete('tracks/{track}/levels/{level}/lessons/{lesson}', [LessonController::class, 'destroy'])->name('tracks.lessons.destroy');
+        });
 
         Route::get('students', [StudentController::class, 'index'])->name('students.index');
         Route::get('students/create', [StudentController::class, 'create'])->name('students.create');

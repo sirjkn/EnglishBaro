@@ -9,7 +9,7 @@ class Subscription extends Model
 {
     protected $fillable = [
         'user_id',
-        'course_id',
+        'track_id',
         'enrollment_id',
         'payment_id',
         'starts_at',
@@ -31,9 +31,9 @@ class Subscription extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function course(): BelongsTo
+    public function track(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Track::class);
     }
 
     public function enrollment(): BelongsTo

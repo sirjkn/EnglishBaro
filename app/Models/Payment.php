@@ -12,7 +12,7 @@ class Payment extends Model
         'transaction_id',
         'gateway_reference',
         'user_id',
-        'course_id',
+        'track_id',
         'amount',
         'currency',
         'payment_method',
@@ -36,9 +36,9 @@ class Payment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function course(): BelongsTo
+    public function track(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Track::class);
     }
 
     public function transactions(): HasMany

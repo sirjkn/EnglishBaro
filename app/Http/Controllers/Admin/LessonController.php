@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Course;
-use App\Models\CourseSection;
 use App\Models\Lesson;
+use App\Models\Level;
+use App\Models\Section;
+use App\Models\Track;
 use App\Services\AuditLogger;
 use App\Services\MediaService;
 use Illuminate\Http\RedirectResponse;
@@ -13,16 +14,14 @@ use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
-    public function store(Request $request, Course $course, CourseSection $section, MediaService $mediaService): RedirectResponse
+    public function store(Request $request, Track $track, Level $level, Section $section, MediaService $mediaService): RedirectResponse
     {
-        $this->authorize('update', $course);
-        abort_unless($section->course_id === $course->id, 404);
+        $this->authorize('update', $track);
 
         $validated = $this->validated($request);
         $validated['video_media_id'] = $this->handleVideo($request, $mediaService);
 
         $lesson = $section->lessons()->create($validated + [
-            'course_id' => $course->id,
             'order' => $section->lessons()->max('order') + 1,
         ]);
 
@@ -31,10 +30,10 @@ class LessonController extends Controller
         return back()->with('status', 'Lesson added.');
     }
 
-    public function update(Request $request, Course $course, Lesson $lesson, MediaService $mediaService): RedirectResponse
+    public function update(Request $request, Track $track, Level $level, Lesson $lesson, MediaService $mediaService): RedirectResponse
     {
-        $this->authorize('update', $course);
-        abort_unless($lesson->course_id === $course->id, 404);
+        $this->authorize('update', $track);
+        $this->ensureLessonBelongsToLevel($level, $lesson);
 
         $validated = $this->validated($request);
         $videoId = $this->handleVideo($request, $mediaService);
@@ -52,16 +51,21 @@ class LessonController extends Controller
         return back()->with('status', 'Lesson updated.');
     }
 
-    public function destroy(Course $course, Lesson $lesson): RedirectResponse
+    public function destroy(Track $track, Level $level, Lesson $lesson): RedirectResponse
     {
-        $this->authorize('update', $course);
-        abort_unless($lesson->course_id === $course->id, 404);
+        $this->authorize('update', $track);
+        $this->ensureLessonBelongsToLevel($level, $lesson);
 
         AuditLogger::log('admin.lesson.deleted', $lesson, $lesson->toArray());
 
         $lesson->delete();
 
         return back()->with('status', 'Lesson deleted.');
+    }
+
+    private function ensureLessonBelongsToLevel(Level $level, Lesson $lesson): void
+    {
+        abort_unless($lesson->section->level_id === $level->id, 404);
     }
 
     private function validated(Request $request): array

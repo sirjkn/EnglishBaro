@@ -12,11 +12,11 @@ class PaymentController extends Controller
     {
         $user = Auth::user();
 
-        $payments = $user->payments()->with('course')->latest()->paginate(10);
+        $payments = $user->payments()->with('track')->latest()->paginate(10);
 
         $upcomingSubscriptions = $user->subscriptions()
             ->where('status', 'active')
-            ->with('course')
+            ->with('track')
             ->orderBy('expires_at')
             ->get();
 

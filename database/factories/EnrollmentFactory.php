@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Course;
+use App\Models\Track;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,7 +15,7 @@ class EnrollmentFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'course_id' => Course::factory(),
+            'track_id' => Track::factory(),
             'status' => 'active',
             'enrolled_at' => now(),
         ];

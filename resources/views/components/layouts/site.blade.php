@@ -8,6 +8,11 @@
         <title>{{ isset($title) ? $title.' - '.config('app.name') : config('app.name') }}</title>
         <meta name="description" content="{{ $description ?? 'EnglishBaro is an online English learning platform with video lessons, eBooks, and assessments.' }}">
 
+        <link rel="icon" href="{{ asset('images/favicon.svg') }}" type="image/svg+xml">
+        <link rel="icon" href="{{ asset('images/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+        <link rel="icon" href="{{ asset('images/favicon-16x16.png') }}" sizes="16x16" type="image/png">
+        <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
@@ -41,7 +46,7 @@
                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Links</h3>
                         <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
                             <li><a href="{{ route('home') }}" class="hover:text-indigo-600">Home</a></li>
-                            <li><a href="{{ route('courses.index') }}" class="hover:text-indigo-600">Courses</a></li>
+                            <li><a href="{{ route('tracks.index') }}" class="hover:text-indigo-600">Tracks</a></li>
                             <li><a href="{{ route('contact') }}" class="hover:text-indigo-600">Contact</a></li>
                         </ul>
                     </div>

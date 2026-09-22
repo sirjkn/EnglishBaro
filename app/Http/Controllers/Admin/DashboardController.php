@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Course;
+use App\Models\Track;
 use App\Models\Enrollment;
 use App\Models\Payment;
 use App\Models\User;
@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $stats = [
             'total_students' => User::query()->where('user_type', 'student')->count(),
             'active_students' => User::query()->where('user_type', 'student')->where('is_active', true)->count(),
-            'total_courses' => Course::query()->count(),
+            'total_tracks' => Track::query()->count(),
             'active_enrollments' => Enrollment::query()->where('status', 'active')->count(),
             'revenue' => (float) Payment::query()->where('status', 'successful')->sum('amount'),
             'pending_payments' => Payment::query()->whereIn('status', ['pending', 'processing'])->count(),
@@ -41,11 +41,11 @@ class DashboardController extends Controller
             ->orderBy('day')
             ->pluck('total', 'day');
 
-        $coursePopularity = Course::query()
+        $trackPopularity = Track::query()
             ->withCount(['enrollments' => fn ($query) => $query->where('status', 'active')])
             ->orderByDesc('enrollments_count')
             ->take(5)
-            ->get(['id', 'title']);
+            ->get(['id', 'name']);
 
         $paymentStatusBreakdown = Payment::query()
             ->select('status', DB::raw('count(*) as total'))
@@ -56,7 +56,7 @@ class DashboardController extends Controller
             'stats' => $stats,
             'revenueByDay' => $this->fillDateRange($revenueByDay, 14),
             'studentsByDay' => $this->fillDateRange($studentsByDay, 14),
-            'coursePopularity' => $coursePopularity,
+            'trackPopularity' => $trackPopularity,
             'paymentStatusBreakdown' => $paymentStatusBreakdown,
         ]);
     }

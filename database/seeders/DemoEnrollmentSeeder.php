@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Course;
-use App\Models\CourseProgress;
 use App\Models\Enrollment;
 use App\Models\LessonProgress;
 use App\Models\Subscription;
+use App\Models\Track;
+use App\Models\TrackProgress;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -15,14 +15,14 @@ class DemoEnrollmentSeeder extends Seeder
     public function run(): void
     {
         $student = User::query()->where('email', 'student@englishbaro.test')->first();
-        $course = Course::query()->where('slug', 'english-foundations-for-beginners')->first();
+        $track = Track::query()->where('track_code', 'A1')->first();
 
-        if (! $student || ! $course) {
+        if (! $student || ! $track) {
             return;
         }
 
         $enrollment = Enrollment::query()->updateOrCreate(
-            ['user_id' => $student->id, 'course_id' => $course->id],
+            ['user_id' => $student->id, 'track_id' => $track->id],
             ['status' => 'active', 'enrolled_at' => now()->subDays(4)]
         );
 
@@ -30,16 +30,21 @@ class DemoEnrollmentSeeder extends Seeder
             ['enrollment_id' => $enrollment->id],
             [
                 'user_id' => $student->id,
-                'course_id' => $course->id,
+                'track_id' => $track->id,
                 'starts_at' => now()->subDays(4),
-                'expires_at' => now()->addDays(8),
-                'duration_days' => 12,
+                'expires_at' => now()->addDays($track->subscription_days - 4),
+                'duration_days' => $track->subscription_days,
                 'status' => 'active',
             ]
         );
 
-        $lessons = $course->lessons()->orderBy('order')->get();
-        $totalLessons = $lessons->count();
+        $firstLevel = $track->levels()->first();
+
+        if (! $firstLevel) {
+            return;
+        }
+
+        $lessons = $firstLevel->lessons()->get();
         $completedLessons = $lessons->take(3);
 
         foreach ($completedLessons as $lesson) {
@@ -76,14 +81,18 @@ class DemoEnrollmentSeeder extends Seeder
             ]);
         }
 
+        $totalLessons = $track->lessonCount();
+        $totalLevels = $track->levels()->count();
         $percent = $totalLessons > 0 ? round(($completedLessons->count() / $totalLessons) * 100, 2) : 0;
 
-        CourseProgress::query()->updateOrCreate(
-            ['user_id' => $student->id, 'course_id' => $course->id],
+        TrackProgress::query()->updateOrCreate(
+            ['user_id' => $student->id, 'track_id' => $track->id],
             [
                 'enrollment_id' => $enrollment->id,
                 'lessons_completed' => $completedLessons->count(),
                 'total_lessons' => $totalLessons,
+                'levels_completed' => 0,
+                'total_levels' => $totalLevels,
                 'percent_complete' => $percent,
             ]
         );

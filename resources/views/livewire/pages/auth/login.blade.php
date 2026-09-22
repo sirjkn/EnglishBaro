@@ -13,6 +13,8 @@ new #[Layout('layouts.auth-split')] class extends Component
 {
     public LoginForm $form;
 
+    public ?string $sessionLimitMessage = null;
+
     #[Url(except: '')]
     public string $redirect = '';
 
@@ -21,6 +23,8 @@ new #[Layout('layouts.auth-split')] class extends Component
      */
     public function login(SessionQuotaService $sessionQuota): void
     {
+        $this->sessionLimitMessage = null;
+
         $this->validate();
 
         $this->form->authenticate();
@@ -28,15 +32,13 @@ new #[Layout('layouts.auth-split')] class extends Component
         $user = Auth::user();
 
         if ($user->isStudent() && $sessionQuota->exceedsMonthlyLimit($user)) {
-            $message = $sessionQuota->blockedMessage($user);
+            $this->sessionLimitMessage = $sessionQuota->blockedMessage($user);
 
             $sessionQuota->revokeLatestSession($user);
 
             Auth::guard('web')->logout();
             Session::invalidate();
             Session::regenerateToken();
-
-            $this->addError('form.email', $message);
 
             return;
         }
@@ -59,6 +61,15 @@ new #[Layout('layouts.auth-split')] class extends Component
 
     <!-- Session Status -->
     <x-auth-session-status class="mt-4" :status="session('status')" />
+
+    @if ($sessionLimitMessage)
+        <div class="mt-4 flex items-start gap-3 rounded-lg border border-red-300 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/40">
+            <svg class="mt-0.5 h-5 w-5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <p class="text-sm font-medium text-red-800 dark:text-red-200">{{ $sessionLimitMessage }}</p>
+        </div>
+    @endif
 
     <form wire:submit="login" class="mt-6 space-y-4">
         <!-- Email Address -->

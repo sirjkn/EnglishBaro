@@ -31,11 +31,11 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Level</label>
-            <select name="level_id" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Track</label>
+            <select name="track_id" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                 <option value="">Not set</option>
-                @foreach ($levels as $level)
-                    <option value="{{ $level->id }}" @selected(old('level_id', $student->studentProfile?->level_id) == $level->id)>{{ $level->name }}</option>
+                @foreach ($tracks as $track)
+                    <option value="{{ $track->id }}" @selected(old('track_id', $student->studentProfile?->track_id) == $track->id)>{{ $track->track_code }} — {{ $track->name }}</option>
                 @endforeach
             </select>
         </div>

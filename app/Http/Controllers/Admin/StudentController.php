@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\Auth\RegisterUserAction;
 use App\Http\Controllers\Controller;
-use App\Models\Level;
+use App\Models\Track;
 use App\Models\User;
 use App\Services\AuditLogger;
 use App\Support\Countries;
@@ -19,7 +19,7 @@ class StudentController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $query = User::query()->where('user_type', 'student')->with(['studentProfile.level']);
+        $query = User::query()->where('user_type', 'student')->with(['studentProfile.track']);
 
         if ($search = $request->string('search')->trim()->value()) {
             $query->where(function ($q) use ($search) {
@@ -29,8 +29,8 @@ class StudentController extends Controller
             });
         }
 
-        if ($levelId = $request->integer('level')) {
-            $query->whereHas('studentProfile', fn ($q) => $q->where('level_id', $levelId));
+        if ($trackId = $request->integer('track')) {
+            $query->whereHas('studentProfile', fn ($q) => $q->where('track_id', $trackId));
         }
 
         if ($country = $request->string('country')->value()) {
@@ -45,13 +45,13 @@ class StudentController extends Controller
 
         return view('admin.students.index', [
             'students' => $students,
-            'levels' => Level::query()->orderBy('order')->get(),
+            'tracks' => Track::query()->orderBy('order')->get(),
             'overview' => [
                 'total' => User::query()->where('user_type', 'student')->count(),
                 'active' => User::query()->where('user_type', 'student')->where('is_active', true)->count(),
                 'new_this_month' => User::query()->where('user_type', 'student')->where('created_at', '>=', now()->startOfMonth())->count(),
             ],
-            'filters' => $request->only(['search', 'level', 'country', 'status']),
+            'filters' => $request->only(['search', 'track', 'country', 'status']),
         ]);
     }
 
@@ -86,7 +86,7 @@ class StudentController extends Controller
         abort_unless($student->user_type === 'student', 404);
         $this->authorize('view', $student);
 
-        $student->load(['studentProfile.level', 'enrollments.course', 'enrollments.subscription', 'userSessions', 'payments.course']);
+        $student->load(['studentProfile.track', 'enrollments.track', 'enrollments.subscription', 'userSessions', 'payments.track']);
 
         $sessionQuota = app(\App\Services\SessionQuotaService::class);
 
@@ -118,7 +118,7 @@ class StudentController extends Controller
 
         return view('admin.students.edit', [
             'student' => $student,
-            'levels' => Level::query()->orderBy('order')->get(),
+            'tracks' => Track::query()->orderBy('order')->get(),
             'countries' => Countries::all(),
         ]);
     }
@@ -132,7 +132,7 @@ class StudentController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
             'country' => ['nullable', 'string', 'max:100'],
-            'level_id' => ['nullable', 'exists:levels,id'],
+            'track_id' => ['nullable', 'exists:tracks,id'],
             'is_active' => ['boolean'],
         ]);
 
@@ -144,7 +144,7 @@ class StudentController extends Controller
         $student->studentProfile()->update([
             'phone' => $validated['phone'] ?? null,
             'country' => $validated['country'] ?? null,
-            'level_id' => $validated['level_id'] ?? null,
+            'track_id' => $validated['track_id'] ?? null,
         ]);
 
         AuditLogger::log('admin.student.updated', $student, [], $validated);

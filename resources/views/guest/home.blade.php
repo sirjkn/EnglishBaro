@@ -21,10 +21,17 @@
                 <div class="mt-8 border-t border-white/20 pt-6">
                     <div class="flex flex-wrap gap-x-10 gap-y-4">
                         <div>
-                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Courses</p>
+                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Tracks</p>
                             <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
                                 <x-icons.book-open class="h-4 w-4 text-amber-300" />
-                                {{ $stats['courses'] }}
+                                {{ $stats['tracks'] }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Levels</p>
+                            <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
+                                <x-icons.map class="h-4 w-4 text-amber-300" />
+                                {{ $stats['levels'] }}
                             </p>
                         </div>
                         <div>
@@ -35,7 +42,7 @@
                             </p>
                         </div>
                         <div>
-                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Course Access</p>
+                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Track Access</p>
                             <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
                                 <x-icons.medal class="h-4 w-4 text-amber-300" />
                                 {{ $stats['access_days'] }} Days
@@ -45,8 +52,8 @@
                 </div>
 
                 <div class="mt-8 flex flex-wrap gap-3">
-                    <a href="{{ route('courses.index') }}" class="flex items-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-sm font-semibold text-indigo-950 shadow-sm hover:bg-amber-300">
-                        Explore Courses
+                    <a href="{{ route('tracks.index') }}" class="flex items-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-sm font-semibold text-indigo-950 shadow-sm hover:bg-amber-300">
+                        Explore Tracks
                         <x-icons.arrow-right class="h-4 w-4" />
                     </a>
                     <a href="{{ route('register.create') }}" class="flex items-center gap-2 rounded-lg border border-white/30 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur hover:bg-white/10">
@@ -87,19 +94,19 @@
         </div>
     </section>
 
-    {{-- Featured courses --}}
+    {{-- Featured tracks --}}
     <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Featured Courses</h2>
-            <a href="{{ route('courses.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">View all &rarr;</a>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Featured Tracks</h2>
+            <a href="{{ route('tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">View all &rarr;</a>
         </div>
 
-        @if ($featuredCourses->isEmpty())
-            <x-empty-state class="mt-8" message="No featured courses yet. Check back soon." />
+        @if ($featuredTracks->isEmpty())
+            <x-empty-state class="mt-8" message="No featured tracks yet. Check back soon." />
         @else
-            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($featuredCourses as $course)
-                    <x-course-card :course="$course" :pricing-region="$pricingRegion" />
+            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ($featuredTracks as $track)
+                    <x-track-card :track="$track" :pricing-region="$pricingRegion" />
                 @endforeach
             </div>
         @endif
@@ -111,7 +118,7 @@
             <h2 class="text-center text-2xl font-bold text-gray-900 dark:text-white">How It Works</h2>
             <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
                 @foreach ([
-                    ['icon' => '🔍', 'title' => 'Identify a Course'],
+                    ['icon' => '🔍', 'title' => 'Identify a Track'],
                     ['icon' => '👤', 'title' => 'Create an Account'],
                     ['icon' => '💳', 'title' => 'Pay For Your '.$stats['access_days'].' Days Subscription'],
                     ['icon' => '🎓', 'title' => 'Start Learning'],

@@ -12,8 +12,7 @@ class Lesson extends Model
     use HasFactory;
 
     protected $fillable = [
-        'course_section_id',
-        'course_id',
+        'section_id',
         'title',
         'description',
         'video_media_id',
@@ -32,12 +31,7 @@ class Lesson extends Model
 
     public function section(): BelongsTo
     {
-        return $this->belongsTo(CourseSection::class, 'course_section_id');
-    }
-
-    public function course(): BelongsTo
-    {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Section::class);
     }
 
     public function video(): BelongsTo

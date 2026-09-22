@@ -57,7 +57,7 @@ class SettingsController extends Controller
 
         AuditLogger::log('admin.settings.company_updated', null, [], $validated);
 
-        return back()->with('status', 'Company settings updated.');
+        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', 'Company settings updated.');
     }
 
     public function updatePayment(Request $request): RedirectResponse
@@ -80,7 +80,7 @@ class SettingsController extends Controller
 
         AuditLogger::log('admin.settings.payment_updated', null, [], ['gateway' => $validated['gateway']]);
 
-        return back()->with('status', ucfirst($validated['gateway']).' settings updated.');
+        return redirect()->route('admin.settings.edit', ['tab' => 'payment'])->with('status', ucfirst($validated['gateway']).' settings updated.');
     }
 
     public function updateSystem(Request $request): RedirectResponse
@@ -96,6 +96,6 @@ class SettingsController extends Controller
 
         AuditLogger::log('admin.settings.system_updated', null, [], $validated);
 
-        return back()->with('status', 'System settings updated.');
+        return redirect()->route('admin.settings.edit', ['tab' => 'system'])->with('status', 'System settings updated.');
     }
 }

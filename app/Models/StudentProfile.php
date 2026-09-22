@@ -13,7 +13,7 @@ class StudentProfile extends Model
         'phone',
         'country',
         'referral_email',
-        'level_id',
+        'track_id',
         'profile_image_id',
     ];
 
@@ -22,9 +22,9 @@ class StudentProfile extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function level(): BelongsTo
+    public function track(): BelongsTo
     {
-        return $this->belongsTo(Level::class);
+        return $this->belongsTo(Track::class);
     }
 
     public function profileImage(): BelongsTo
