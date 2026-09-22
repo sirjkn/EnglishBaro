@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Level;
+use App\Services\CourseCodeGenerator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -32,6 +33,8 @@ class CourseSeeder extends Seeder
             ['title' => 'Advanced Academic Writing', 'level' => 'Advanced', 'price' => 59.99, 'featured' => true],
         ];
 
+        $courseCodeGenerator = app(CourseCodeGenerator::class);
+
         foreach ($courses as $data) {
             $level = Level::query()->where('name', $data['level'])->first();
 
@@ -39,10 +42,13 @@ class CourseSeeder extends Seeder
                 ->mapWithKeys(fn ($multiplier, $column) => [$column => round($data['price'] * $multiplier, 2)])
                 ->all();
 
+            $existing = Course::query()->where('slug', Str::slug($data['title']))->first();
+
             $course = Course::query()->updateOrCreate(
                 ['slug' => Str::slug($data['title'])],
                 [
                     'title' => $data['title'],
+                    'course_code' => $existing?->course_code ?? $courseCodeGenerator->generate($level),
                     'description' => "A comprehensive {$data['level']} level English course covering listening, speaking, reading, and writing skills.",
                     'learning_outcomes' => 'By the end of this course you will be able to communicate confidently in real-world English scenarios.',
                     'level_id' => $level?->id,

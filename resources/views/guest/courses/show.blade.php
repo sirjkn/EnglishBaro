@@ -66,7 +66,7 @@
             </div>
 
             <div>
-                <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-6 lg:sticky lg:top-8">
+                <div class="relative z-10 rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 p-6 lg:sticky lg:top-24">
                     <p class="text-3xl font-bold text-gray-900 dark:text-white">
                         {{ $course->currency }} {{ number_format($course->priceForRegion($pricingRegion), 2) }}
                     </p>
@@ -79,9 +79,16 @@
                         <div class="flex justify-between"><dt>Lessons</dt><dd>{{ $totalLessons }}</dd></div>
                     </dl>
 
-                    <div class="mt-6">
+                    <div class="mt-6 space-y-2">
                         @auth
-                            @if ($isEnrolled)
+                            @if (auth()->user()->isAdmin())
+                                <a href="{{ route('admin.courses.edit', $course) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
+                                    Edit Course
+                                </a>
+                                <a href="{{ route('admin.courses.index') }}" class="block w-full rounded-md border border-gray-300 px-4 py-2.5 text-center text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">
+                                    Back to Course List
+                                </a>
+                            @elseif ($isEnrolled)
                                 <a href="{{ route('dashboard') }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
                                     Continue Learning
                                 </a>

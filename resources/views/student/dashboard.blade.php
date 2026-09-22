@@ -9,14 +9,14 @@
         <x-subscription-countdown :subscription="$upcomingPayment" />
     </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-            <p class="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Active Courses</p>
-            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ $enrollments->count() }}</p>
+    <div class="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
+        <div class="rounded-lg border border-gray-200 bg-white p-2.5 sm:rounded-xl sm:p-5 dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-[10px] font-medium uppercase text-gray-500 sm:text-xs dark:text-gray-400">Active Courses</p>
+            <p class="mt-1 text-base font-bold text-gray-900 sm:text-2xl dark:text-white">{{ $enrollments->count() }}</p>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-            <p class="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Upcoming Payment</p>
-            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+        <div class="rounded-lg border border-gray-200 bg-white p-2.5 sm:rounded-xl sm:p-5 dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-[10px] font-medium uppercase text-gray-500 sm:text-xs dark:text-gray-400">Upcoming Payment</p>
+            <p class="mt-1 text-sm font-bold text-gray-900 sm:text-2xl dark:text-white">
                 @if ($upcomingPayment)
                     {{ $upcomingPayment->expires_at->format('M d, Y') }}
                 @else
@@ -24,9 +24,9 @@
                 @endif
             </p>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-            <p class="text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Notifications</p>
-            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ $recentNotifications->whereNull('read_at')->count() }} unread</p>
+        <div class="rounded-lg border border-gray-200 bg-white p-2.5 sm:rounded-xl sm:p-5 dark:border-gray-700 dark:bg-gray-800">
+            <p class="text-[10px] font-medium uppercase text-gray-500 sm:text-xs dark:text-gray-400">Notifications</p>
+            <p class="mt-1 text-base font-bold text-gray-900 sm:text-2xl dark:text-white">{{ $recentNotifications->whereNull('read_at')->count() }} unread</p>
         </div>
     </div>
 
@@ -42,11 +42,11 @@
             <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($enrollments as $enrollment)
                     <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-                        <div class="flex items-start justify-between gap-2">
-                            <span class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">{{ $enrollment->course->level?->name ?? 'All Levels' }}</span>
-                            <x-subscription-countdown :subscription="$enrollment->subscription" class="shrink-0" />
+                        <span class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">{{ $enrollment->course->level?->name ?? 'All Levels' }}</span>
+                        <div class="mt-2">
+                            <x-subscription-countdown :subscription="$enrollment->subscription" class="inline-flex" />
                         </div>
-                        <h3 class="mt-1 font-semibold text-gray-900 dark:text-white">{{ $enrollment->course->title }}</h3>
+                        <h3 class="mt-2 font-semibold text-gray-900 dark:text-white">{{ $enrollment->course->title }}</h3>
 
                         <div class="mt-3 h-2 w-full rounded-full bg-gray-100 dark:bg-gray-700">
                             <div class="h-2 rounded-full bg-indigo-600" style="width: {{ $enrollment->progress->percent_complete ?? 0 }}%"></div>

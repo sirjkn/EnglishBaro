@@ -35,10 +35,10 @@
                             </p>
                         </div>
                         <div>
-                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Access</p>
+                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Course Access</p>
                             <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
                                 <x-icons.medal class="h-4 w-4 text-amber-300" />
-                                120 Days
+                                {{ $stats['access_days'] }} Days
                             </p>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                 @foreach ([
                     ['icon' => '🔍', 'title' => 'Identify a Course'],
                     ['icon' => '👤', 'title' => 'Create an Account'],
-                    ['icon' => '💳', 'title' => 'Pay For Your 120 Days Subscription'],
+                    ['icon' => '💳', 'title' => 'Pay For Your '.$stats['access_days'].' Days Subscription'],
                     ['icon' => '🎓', 'title' => 'Start Learning'],
                     ['icon' => '🏆', 'title' => 'Earn a Certificate'],
                 ] as $index => $step)

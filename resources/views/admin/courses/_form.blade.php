@@ -1,4 +1,12 @@
 <div class="space-y-4">
+    @if ($course?->course_code)
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course Code</label>
+            <input type="text" value="{{ $course->course_code }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 font-mono text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
+            <p class="mt-1 text-xs text-gray-400">Auto-generated from the course level and cannot be changed.</p>
+        </div>
+    @endif
+
     <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
         <input type="text" name="title" value="{{ old('title', $course?->title) }}" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">

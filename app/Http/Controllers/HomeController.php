@@ -31,6 +31,7 @@ class HomeController extends Controller
         $stats = [
             'courses' => Course::query()->where('status', 'published')->count(),
             'lessons' => Lesson::query()->count(),
+            'access_days' => Course::query()->where('status', 'published')->min('subscription_days') ?? 0,
         ];
 
         return view('guest.home', [

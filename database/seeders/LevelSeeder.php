@@ -11,12 +11,12 @@ class LevelSeeder extends Seeder
     public function run(): void
     {
         $levels = [
-            ['name' => 'Beginner', 'order' => 1, 'is_default' => true],
-            ['name' => 'Elementary', 'order' => 2],
-            ['name' => 'Pre-Intermediate', 'order' => 3],
-            ['name' => 'Intermediate', 'order' => 4],
-            ['name' => 'Upper-Intermediate', 'order' => 5],
-            ['name' => 'Advanced', 'order' => 6],
+            ['name' => 'Beginner', 'code' => 'A1', 'order' => 1, 'is_default' => true],
+            ['name' => 'Elementary', 'code' => 'A2', 'order' => 2],
+            ['name' => 'Pre-Intermediate', 'code' => 'B1', 'order' => 3],
+            ['name' => 'Intermediate', 'code' => 'B2', 'order' => 4],
+            ['name' => 'Upper-Intermediate', 'code' => 'C1', 'order' => 5],
+            ['name' => 'Advanced', 'code' => 'C2', 'order' => 6],
         ];
 
         foreach ($levels as $level) {
@@ -24,6 +24,7 @@ class LevelSeeder extends Seeder
                 ['slug' => Str::slug($level['name'])],
                 [
                     'name' => $level['name'],
+                    'code' => $level['code'],
                     'order' => $level['order'],
                     'is_default' => $level['is_default'] ?? false,
                     'is_active' => true,

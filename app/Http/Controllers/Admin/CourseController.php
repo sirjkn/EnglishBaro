@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Level;
 use App\Services\AuditLogger;
+use App\Services\CourseCodeGenerator;
 use App\Services\MediaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -53,7 +54,7 @@ class CourseController extends Controller
         return view('admin.courses.create', ['levels' => Level::query()->orderBy('order')->get()]);
     }
 
-    public function store(Request $request, MediaService $mediaService): RedirectResponse
+    public function store(Request $request, MediaService $mediaService, CourseCodeGenerator $courseCodeGenerator): RedirectResponse
     {
         $this->authorize('create', Course::class);
 
@@ -61,6 +62,9 @@ class CourseController extends Controller
         $validated['thumbnail_id'] = $this->handleThumbnail($request, $mediaService);
         $validated['slug'] = Str::slug($validated['title']).'-'.Str::random(4);
         $validated['created_by'] = $request->user()->id;
+
+        $level = $validated['level_id'] ? Level::find($validated['level_id']) : null;
+        $validated['course_code'] = $courseCodeGenerator->generate($level);
 
         $course = Course::create($validated);
 

@@ -35,6 +35,7 @@
         <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
             <thead>
                 <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
+                    <th class="px-4 py-2">Code</th>
                     <th class="px-4 py-2">Course</th>
                     <th class="px-4 py-2">Level</th>
                     <th class="px-4 py-2">Price</th>
@@ -47,6 +48,7 @@
             <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
                 @forelse ($courses as $course)
                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900">
+                        <td class="px-4 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{{ $course->course_code ?? '—' }}</td>
                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $course->title }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $course->level?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $course->currency }} {{ number_format((float) $course->price, 2) }}</td>
@@ -66,7 +68,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No courses found.</td></tr>
+                    <tr><td colspan="8" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No courses found.</td></tr>
                 @endforelse
             </tbody>
         </table>

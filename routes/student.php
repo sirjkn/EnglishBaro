@@ -17,10 +17,10 @@ Route::middleware(['auth', 'verified'])
         Route::get('dashboard', DashboardController::class)->name('dashboard');
 
         Route::get('courses', [MyCourseController::class, 'index'])->name('courses.index');
-        Route::get('courses/{course}/learn', [LearningController::class, 'show'])->name('courses.show-learn');
-        Route::get('courses/{course}/learn/{lesson}', [LearningController::class, 'lesson'])->name('courses.learn');
-        Route::post('courses/{course}/learn/{lesson}/complete', [LearningController::class, 'complete'])->name('courses.complete-lesson');
-        Route::post('courses/{course}/learn/{lesson}/progress', [LearningController::class, 'updateVideoProgress'])->name('courses.video-progress');
+        Route::get('courses/{course:course_code}/learn', [LearningController::class, 'show'])->name('courses.show-learn');
+        Route::get('courses/{course:course_code}/learn/{lesson}', [LearningController::class, 'lesson'])->name('courses.learn');
+        Route::post('courses/{course:course_code}/learn/{lesson}/complete', [LearningController::class, 'complete'])->name('courses.complete-lesson');
+        Route::post('courses/{course:course_code}/learn/{lesson}/progress', [LearningController::class, 'updateVideoProgress'])->name('courses.video-progress');
 
         Route::get('progress', ProgressController::class)->name('progress');
 

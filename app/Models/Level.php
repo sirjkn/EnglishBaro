@@ -10,7 +10,7 @@ class Level extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description', 'order', 'is_default', 'is_active'];
+    protected $fillable = ['name', 'slug', 'code', 'description', 'order', 'is_default', 'is_active'];
 
     protected function casts(): array
     {
