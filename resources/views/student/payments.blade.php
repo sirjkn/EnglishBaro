@@ -10,7 +10,7 @@
             <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
                 <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                     <thead>
-                        <tr class="bg-indigo-900 text-left text-xs uppercase text-white dark:bg-indigo-950 divide-x divide-white/40">
+                        <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
                             <th class="px-4 py-2">Course</th>
                             <th class="px-4 py-2">Due Date</th>
                             <th class="px-4 py-2">Status</th>
@@ -39,7 +39,7 @@
             <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
                 <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                     <thead>
-                        <tr class="bg-indigo-900 text-left text-xs uppercase text-white dark:bg-indigo-950 divide-x divide-white/40">
+                        <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
                             <th class="px-4 py-2">Transaction ID</th>
                             <th class="px-4 py-2">Course</th>
                             <th class="px-4 py-2">Amount</th>

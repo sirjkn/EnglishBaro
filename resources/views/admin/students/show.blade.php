@@ -60,7 +60,7 @@
         <div class="mt-4 overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                 <thead>
-                    <tr class="bg-indigo-900 text-left text-xs uppercase text-white dark:bg-indigo-950 divide-x divide-white/40">
+                    <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
                         <th class="py-2 pr-4">Device</th>
                         <th class="py-2 pr-4">Browser</th>
                         <th class="py-2 pr-4">IP</th>
@@ -101,7 +101,7 @@
             <div class="mt-4 overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                     <thead>
-                        <tr class="bg-indigo-900 text-left text-xs uppercase text-white dark:bg-indigo-950 divide-x divide-white/40">
+                        <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
                             <th class="py-2 pr-4">Transaction</th>
                             <th class="py-2 pr-4">Course</th>
                             <th class="py-2 pr-4">Amount</th>
