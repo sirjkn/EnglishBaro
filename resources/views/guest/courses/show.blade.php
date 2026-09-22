@@ -68,8 +68,11 @@
             <div>
                 <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-6 lg:sticky lg:top-8">
                     <p class="text-3xl font-bold text-gray-900 dark:text-white">
-                        {{ $course->currency }} {{ number_format((float) $course->price, 2) }}
+                        {{ $course->currency }} {{ number_format($course->priceForRegion($pricingRegion), 2) }}
                     </p>
+                    @if ($pricingRegion)
+                        <p class="mt-1 text-xs text-gray-400">Pricing shown for your region: {{ $pricingRegion }}</p>
+                    @endif
                     <dl class="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                         <div class="flex justify-between"><dt>Level</dt><dd>{{ $course->level?->name ?? 'All Levels' }}</dd></div>
                         <div class="flex justify-between"><dt>Subscription</dt><dd>{{ $course->subscription_days }} days</dd></div>

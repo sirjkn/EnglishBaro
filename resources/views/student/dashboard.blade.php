@@ -1,8 +1,13 @@
 <x-layouts.student :title="'Dashboard'">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {{ auth()->user()->name }}</h1>
-    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-        Student ID: {{ $studentProfile?->student_id ?? '—' }} &middot; Level: {{ $studentProfile?->level?->name ?? 'Not set' }}
-    </p>
+    <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome back, {{ auth()->user()->name }}</h1>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Student ID: {{ $studentProfile?->student_id ?? '—' }} &middot; Level: {{ $studentProfile?->level?->name ?? 'Not set' }}
+            </p>
+        </div>
+        <x-subscription-countdown :subscription="$upcomingPayment" />
+    </div>
 
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
@@ -37,7 +42,10 @@
             <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($enrollments as $enrollment)
                     <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-                        <span class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">{{ $enrollment->course->level?->name ?? 'All Levels' }}</span>
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">{{ $enrollment->course->level?->name ?? 'All Levels' }}</span>
+                            <x-subscription-countdown :subscription="$enrollment->subscription" class="shrink-0" />
+                        </div>
                         <h3 class="mt-1 font-semibold text-gray-900 dark:text-white">{{ $enrollment->course->title }}</h3>
 
                         <div class="mt-3 h-2 w-full rounded-full bg-gray-100 dark:bg-gray-700">

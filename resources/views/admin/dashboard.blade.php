@@ -42,13 +42,13 @@
 
         new Chart(document.getElementById('revenueChart'), {
             type: 'line',
-            data: { labels: Object.keys(revenueData), datasets: [{ label: 'Revenue', data: Object.values(revenueData), borderColor: '#4f46e5', backgroundColor: 'rgba(79,70,229,0.1)', fill: true, tension: 0.3 }] },
+            data: { labels: Object.keys(revenueData), datasets: [{ label: 'Revenue', data: Object.values(revenueData), borderColor: '#0084FF', backgroundColor: 'rgba(0,132,255,0.12)', fill: true, tension: 0.3 }] },
             options: { plugins: { legend: { display: false } } }
         });
 
         new Chart(document.getElementById('studentsChart'), {
             type: 'bar',
-            data: { labels: Object.keys(studentsData), datasets: [{ label: 'New Students', data: Object.values(studentsData), backgroundColor: '#4f46e5' }] },
+            data: { labels: Object.keys(studentsData), datasets: [{ label: 'New Students', data: Object.values(studentsData), backgroundColor: '#0084FF' }] },
             options: { plugins: { legend: { display: false } } }
         });
 
@@ -60,7 +60,7 @@
 
         new Chart(document.getElementById('paymentChart'), {
             type: 'doughnut',
-            data: { labels: paymentLabels, datasets: [{ data: paymentValues, backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#6366f1', '#9ca3af'] }] },
+            data: { labels: paymentLabels, datasets: [{ data: paymentValues, backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#0084FF', '#9ca3af'] }] },
         });
     </script>
     @endpush

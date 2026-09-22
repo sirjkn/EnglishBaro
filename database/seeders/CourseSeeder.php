@@ -10,6 +10,17 @@ use Illuminate\Support\Str;
 
 class CourseSeeder extends Seeder
 {
+    /**
+     * Regional price multipliers relative to the base price, derived from the
+     * reference pricing example (Africa $25 / Europe $40 / North America $45 / Asia $30).
+     */
+    private const REGION_MULTIPLIERS = [
+        'price_africa' => 1.0,
+        'price_europe' => 1.6,
+        'price_north_america' => 1.8,
+        'price_asia' => 1.2,
+    ];
+
     public function run(): void
     {
         $courses = [
@@ -24,6 +35,10 @@ class CourseSeeder extends Seeder
         foreach ($courses as $data) {
             $level = Level::query()->where('name', $data['level'])->first();
 
+            $regionalPrices = collect(self::REGION_MULTIPLIERS)
+                ->mapWithKeys(fn ($multiplier, $column) => [$column => round($data['price'] * $multiplier, 2)])
+                ->all();
+
             $course = Course::query()->updateOrCreate(
                 ['slug' => Str::slug($data['title'])],
                 [
@@ -33,10 +48,11 @@ class CourseSeeder extends Seeder
                     'level_id' => $level?->id,
                     'price' => $data['price'],
                     'currency' => 'USD',
-                    'duration_days' => 120,
-                    'subscription_days' => 120,
+                    'duration_days' => 12,
+                    'subscription_days' => 12,
                     'status' => 'published',
                     'is_featured' => $data['featured'],
+                    ...$regionalPrices,
                 ]
             );
 

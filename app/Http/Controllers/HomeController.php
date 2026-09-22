@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Testimonial;
+use App\Services\RegionPricingService;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(Request $request, RegionPricingService $regionPricingService): View
     {
         $featuredCourses = Course::query()
             ->where('status', 'published')
@@ -35,6 +37,7 @@ class HomeController extends Controller
             'featuredCourses' => $featuredCourses,
             'testimonials' => $testimonials,
             'stats' => $stats,
+            'pricingRegion' => $regionPricingService->resolveRegion($request),
         ]);
     }
 }

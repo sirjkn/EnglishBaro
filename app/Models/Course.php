@@ -23,6 +23,10 @@ class Course extends Model
         'level_id',
         'thumbnail_id',
         'price',
+        'price_africa',
+        'price_europe',
+        'price_north_america',
+        'price_asia',
         'currency',
         'duration_days',
         'subscription_days',
@@ -37,8 +41,29 @@ class Course extends Model
     {
         return [
             'price' => 'decimal:2',
+            'price_africa' => 'decimal:2',
+            'price_europe' => 'decimal:2',
+            'price_north_america' => 'decimal:2',
+            'price_asia' => 'decimal:2',
             'is_featured' => 'boolean',
         ];
+    }
+
+    public function priceForRegion(?string $region): float
+    {
+        $column = match ($region) {
+            'Africa' => 'price_africa',
+            'Europe' => 'price_europe',
+            'North America' => 'price_north_america',
+            'Asia' => 'price_asia',
+            default => null,
+        };
+
+        if ($column && $this->{$column} !== null) {
+            return (float) $this->{$column};
+        }
+
+        return (float) $this->price;
     }
 
     public function level(): BelongsTo

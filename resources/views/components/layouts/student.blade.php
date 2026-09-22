@@ -18,7 +18,7 @@
             <aside class="hidden w-64 shrink-0 border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800 md:block">
                 <div class="flex h-16 items-center border-b border-gray-200 px-6 dark:border-gray-800">
                     <a href="{{ route('student.dashboard') }}">
-                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
+                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-9 w-auto">
                     </a>
                 </div>
                 <nav class="space-y-1 p-4">
@@ -26,6 +26,7 @@
                         $studentNav = [
                             ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                             ['route' => 'student.courses.index', 'label' => 'My Courses', 'icon' => 'book-open'],
+                            ['route' => 'courses.index', 'label' => 'All Courses', 'icon' => 'map'],
                             ['route' => 'student.progress', 'label' => 'My Progress', 'icon' => 'medal'],
                             ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                             ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card'],
@@ -59,7 +60,7 @@
             <div class="flex-1">
                 {{-- Mobile top bar --}}
                 <header class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
-                    <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
+                    <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-8 w-auto">
                     <div class="flex items-center gap-3">
                         <a href="{{ route('student.account') }}" class="text-sm font-medium text-gray-600 dark:text-gray-300">Account</a>
                         <form method="POST" action="{{ route('logout') }}">

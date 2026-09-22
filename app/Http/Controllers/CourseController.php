@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Level;
+use App\Services\RegionPricingService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CourseController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, RegionPricingService $regionPricingService): View
     {
         $query = Course::query()
             ->where('status', 'published')
@@ -48,10 +49,11 @@ class CourseController extends Controller
             'courses' => $courses,
             'levels' => $levels,
             'filters' => $request->only(['search', 'level', 'min_price', 'max_price', 'sort']),
+            'pricingRegion' => $regionPricingService->resolveRegion($request),
         ]);
     }
 
-    public function show(Course $course): View
+    public function show(Course $course, Request $request, RegionPricingService $regionPricingService): View
     {
         abort_unless($course->status === 'published', 404);
 
@@ -64,6 +66,7 @@ class CourseController extends Controller
             'course' => $course,
             'isEnrolled' => $isEnrolled,
             'totalLessons' => $course->sections->sum(fn ($section) => $section->lessons->count()),
+            'pricingRegion' => $regionPricingService->resolveRegion($request),
         ]);
     }
 }

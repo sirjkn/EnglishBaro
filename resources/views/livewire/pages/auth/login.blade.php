@@ -1,7 +1,9 @@
 <?php
 
 use App\Livewire\Forms\LoginForm;
+use App\Services\SessionQuotaService;
 use App\Support\SafeRedirect;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -17,11 +19,27 @@ new #[Layout('layouts.auth-split')] class extends Component
     /**
      * Handle an incoming authentication request.
      */
-    public function login(): void
+    public function login(SessionQuotaService $sessionQuota): void
     {
         $this->validate();
 
         $this->form->authenticate();
+
+        $user = Auth::user();
+
+        if ($user->isStudent() && $sessionQuota->exceedsMonthlyLimit($user)) {
+            $message = $sessionQuota->blockedMessage($user);
+
+            $sessionQuota->revokeLatestSession($user);
+
+            Auth::guard('web')->logout();
+            Session::invalidate();
+            Session::regenerateToken();
+
+            $this->addError('form.email', $message);
+
+            return;
+        }
 
         Session::regenerate();
 

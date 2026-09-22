@@ -23,7 +23,7 @@ class DemoEnrollmentSeeder extends Seeder
 
         $enrollment = Enrollment::query()->updateOrCreate(
             ['user_id' => $student->id, 'course_id' => $course->id],
-            ['status' => 'active', 'enrolled_at' => now()->subDays(10)]
+            ['status' => 'active', 'enrolled_at' => now()->subDays(4)]
         );
 
         Subscription::query()->updateOrCreate(
@@ -31,9 +31,9 @@ class DemoEnrollmentSeeder extends Seeder
             [
                 'user_id' => $student->id,
                 'course_id' => $course->id,
-                'starts_at' => now()->subDays(10),
-                'expires_at' => now()->addDays(110),
-                'duration_days' => 120,
+                'starts_at' => now()->subDays(4),
+                'expires_at' => now()->addDays(8),
+                'duration_days' => 12,
                 'status' => 'active',
             ]
         );
@@ -49,9 +49,9 @@ class DemoEnrollmentSeeder extends Seeder
                     'enrollment_id' => $enrollment->id,
                     'status' => 'completed',
                     'video_progress_seconds' => $lesson->duration_seconds,
-                    'started_at' => now()->subDays(9),
-                    'completed_at' => now()->subDays(8),
-                    'last_viewed_at' => now()->subDays(8),
+                    'started_at' => now()->subDays(3),
+                    'completed_at' => now()->subDays(3),
+                    'last_viewed_at' => now()->subDays(3),
                 ]
             );
         }

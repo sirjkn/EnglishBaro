@@ -1,4 +1,8 @@
-@props(['course'])
+@props(['course', 'pricingRegion' => null])
+
+@php
+    $displayPrice = $course->priceForRegion($pricingRegion);
+@endphp
 
 <a href="{{ route('courses.show', $course) }}" class="group flex flex-col overflow-hidden rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm transition hover:shadow-md">
     <div class="aspect-video w-full overflow-hidden bg-gradient-to-br from-indigo-100 to-indigo-300 dark:from-indigo-900 dark:to-indigo-700 flex items-center justify-center">
@@ -17,7 +21,10 @@
         </h3>
         <div class="mt-auto flex items-center justify-between pt-4">
             <span class="text-sm font-bold text-gray-900 dark:text-white">
-                {{ $course->currency }} {{ number_format((float) $course->price, 2) }}
+                {{ $course->currency }} {{ number_format($displayPrice, 2) }}
+                @if ($pricingRegion)
+                    <span class="ml-1 text-[10px] font-normal uppercase text-gray-400" title="Price for {{ $pricingRegion }}">{{ $pricingRegion }}</span>
+                @endif
             </span>
             <span class="text-sm font-medium text-indigo-600 dark:text-indigo-400">More Details &rarr;</span>
         </div>

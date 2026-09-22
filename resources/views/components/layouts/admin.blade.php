@@ -17,7 +17,7 @@
             <aside class="hidden w-64 shrink-0 border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800 md:block">
                 <div class="flex h-16 items-center border-b border-gray-200 px-6 dark:border-gray-800">
                     <a href="{{ route('admin.dashboard') }}">
-                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
+                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-9 w-auto">
                     </a>
                 </div>
                 <nav class="space-y-1 overflow-y-auto p-4" style="max-height: calc(100vh - 4rem)">
@@ -61,7 +61,7 @@
 
             <div class="min-w-0 flex-1">
                 <header class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
-                    <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
+                    <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-8 w-auto">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-sm font-medium text-gray-600 dark:text-gray-300">Logout</button>

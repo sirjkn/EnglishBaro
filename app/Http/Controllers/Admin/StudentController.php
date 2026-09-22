@@ -88,7 +88,25 @@ class StudentController extends Controller
 
         $student->load(['studentProfile.level', 'enrollments.course', 'enrollments.subscription', 'userSessions', 'payments.course']);
 
-        return view('admin.students.show', ['student' => $student]);
+        $sessionQuota = app(\App\Services\SessionQuotaService::class);
+
+        return view('admin.students.show', [
+            'student' => $student,
+            'sessionsThisMonth' => $sessionQuota->countThisMonth($student),
+            'sessionMonthlyLimit' => \App\Services\SessionQuotaService::MONTHLY_LIMIT,
+        ]);
+    }
+
+    public function resetSessionQuota(User $student): RedirectResponse
+    {
+        abort_unless($student->user_type === 'student', 404);
+        $this->authorize('update', $student);
+
+        $cleared = app(\App\Services\SessionQuotaService::class)->resetForCurrentMonth($student);
+
+        AuditLogger::log('admin.student.session_quota_reset', $student, [], ['cleared' => $cleared]);
+
+        return back()->with('status', "Session quota reset. {$cleared} inactive session(s) cleared for this month.");
     }
 
     public function edit(User $student): View

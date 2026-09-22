@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\RegisterOauthUserAction;
 use App\Http\Controllers\Controller;
+use App\Services\SessionQuotaService;
 use App\Support\SafeRedirect;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +33,7 @@ class SocialAuthController extends Controller
         return Socialite::driver($provider)->redirect();
     }
 
-    public function callback(string $provider, RegisterOauthUserAction $registerOauthUserAction): RedirectResponse
+    public function callback(string $provider, RegisterOauthUserAction $registerOauthUserAction, SessionQuotaService $sessionQuota): RedirectResponse
     {
         $this->ensureProviderIsSupported($provider);
 
@@ -52,6 +54,18 @@ class SocialAuthController extends Controller
         }
 
         Auth::login($user, remember: true);
+
+        if ($user->isStudent() && $sessionQuota->exceedsMonthlyLimit($user)) {
+            $message = $sessionQuota->blockedMessage($user);
+
+            $sessionQuota->revokeLatestSession($user);
+
+            Auth::guard('web')->logout();
+            Session::invalidate();
+            Session::regenerateToken();
+
+            return redirect()->route('login')->with('status', $message);
+        }
 
         return redirect()->to($intended);
     }
