@@ -2,13 +2,13 @@
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
 
     <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <x-stat-card label="Total Students" :value="$stats['total_students']" />
-        <x-stat-card label="Active Students" :value="$stats['active_students']" />
-        <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" />
-        <x-stat-card label="Active Enrollments" :value="$stats['active_enrollments']" />
-        <x-stat-card label="Revenue" :value="'$'.number_format($stats['revenue'], 2)" />
-        <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" />
-        <x-stat-card label="Active Sessions" :value="$stats['active_sessions']" />
+        <x-stat-card label="Total Students" :value="$stats['total_students']" icon="users" icon-bg="bg-indigo-500 text-white" blob="bg-indigo-500/10" />
+        <x-stat-card label="Active Students" :value="$stats['active_students']" icon="user-check" icon-bg="bg-emerald-500 text-white" blob="bg-emerald-500/10" />
+        <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" icon="book-open" icon-bg="bg-purple-500 text-white" blob="bg-purple-500/10" />
+        <x-stat-card label="Active Enrollments" :value="$stats['active_enrollments']" icon="clipboard-check" icon-bg="bg-amber-500 text-white" blob="bg-amber-500/10" />
+        <x-stat-card label="Revenue" :value="'$'.number_format($stats['revenue'], 2)" icon="currency-dollar" icon-bg="bg-teal-500 text-white" blob="bg-teal-500/10" />
+        <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" icon="clock" icon-bg="bg-rose-500 text-white" blob="bg-rose-500/10" />
+        <x-stat-card label="Active Sessions" :value="$stats['active_sessions']" icon="bolt" icon-bg="bg-cyan-500 text-white" blob="bg-cyan-500/10" />
     </div>
 
     <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
