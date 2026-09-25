@@ -59,10 +59,15 @@
                                                 <th class="px-3 py-2">Enrolled</th>
                                                 <th class="px-3 py-2">Progress</th>
                                                 <th class="px-3 py-2">Expires</th>
+                                                <th class="px-3 py-2">Status</th>
+                                                <th class="px-3 py-2"></th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
                                             @forelse ($track->enrollments as $enrollment)
+                                                @php
+                                                    $enrollmentCancelMessage = "This revokes their access to {$track->track_code}. Their payment record is kept — this does not refund them.";
+                                                @endphp
                                                 <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                                                     <td class="px-3 py-2">
                                                         <p class="font-medium text-gray-900 dark:text-white">{{ $enrollment->user?->name }}</p>
@@ -71,9 +76,21 @@
                                                     <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ $enrollment->enrolled_at?->format('M d, Y') }}</td>
                                                     <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ $enrollment->progress?->percent_complete ?? 0 }}%</td>
                                                     <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ $enrollment->subscription?->expires_at?->format('M d, Y') ?? '—' }}</td>
+                                                    <td class="px-3 py-2"><x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'">{{ ucfirst($enrollment->status) }}</x-badge></td>
+                                                    <td class="px-3 py-2 text-right">
+                                                        @if ($enrollment->status === 'active')
+                                                            <x-double-confirm-form
+                                                                :action="route('admin.enrollments.cancel', $enrollment)"
+                                                                label="Cancel"
+                                                                title="Cancel {{ $enrollment->user?->name }}'s enrollment?"
+                                                                :message="$enrollmentCancelMessage"
+                                                                class="text-xs font-medium text-red-600 hover:text-red-500"
+                                                            />
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @empty
-                                                <tr><td colspan="4" class="px-3 py-6 text-center text-gray-500 dark:text-gray-400">No students enrolled yet.</td></tr>
+                                                <tr><td colspan="6" class="px-3 py-6 text-center text-gray-500 dark:text-gray-400">No students enrolled yet.</td></tr>
                                             @endforelse
                                         </tbody>
                                     </table>

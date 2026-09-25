@@ -46,6 +46,7 @@ Route::middleware(['auth', 'verified'])
         Route::delete('sessions', [SessionController::class, 'destroyOthers'])->name('sessions.destroy-others');
 
         Route::get('payments', PaymentController::class)->name('payments');
+        Route::get('payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');
 
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications');
         Route::post('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');

@@ -47,6 +47,7 @@
                             <th class="px-4 py-2">Method</th>
                             <th class="px-4 py-2">Status</th>
                             <th class="px-4 py-2">Date</th>
+                            <th class="px-4 py-2"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
@@ -58,6 +59,9 @@
                                 <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ ucfirst($payment->payment_method) }}</td>
                                 <td class="px-4 py-3"><x-payment-status :status="$payment->status" /></td>
                                 <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->created_at->format('M d, Y') }}</td>
+                                <td class="px-4 py-3 text-right">
+                                    <a href="{{ route('student.payments.receipt', $payment) }}" target="_blank" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Receipt</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

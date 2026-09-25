@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('levels', [LevelController::class, 'all'])->name('levels.index');
 
         Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
+        Route::delete('enrollments/{enrollment}', [EnrollmentController::class, 'cancel'])->name('enrollments.cancel');
 
         Route::get('placement-test', [PlacementQuestionController::class, 'index'])->name('placement-test.index');
         Route::post('placement-test', [PlacementQuestionController::class, 'store'])->name('placement-test.store');
@@ -75,6 +76,9 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
 
         Route::get('sessions', [SessionController::class, 'index'])->name('sessions.index');
+        Route::delete('sessions/all/students', [SessionController::class, 'destroyAllStudents'])->name('sessions.destroy-all-students');
+        Route::delete('sessions/all/admins', [SessionController::class, 'destroyAllAdmins'])->name('sessions.destroy-all-admins');
+        Route::delete('sessions/user/{user}', [SessionController::class, 'destroyOthers'])->name('sessions.destroy-others');
         Route::delete('sessions/{session}', [SessionController::class, 'destroy'])->name('sessions.destroy');
 
         Route::resource('testimonials', TestimonialController::class)->except(['show']);

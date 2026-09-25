@@ -11,6 +11,8 @@
                     'correct' => (bool) $answer->is_correct,
                     'correct_option_id' => $correctOption?->id,
                     'correct_text' => $q?->type === 'short_answer' ? $q->correct_short_answer : null,
+                    'pending_review' => $answer->isPendingReview(),
+                    'review_remarks' => $answer->review_remarks,
                 ];
             }
         }
@@ -70,7 +72,16 @@
                         </div>
                     @endif
 
-                    <template x-if="feedback[{{ $question->id }}]">
+                    <template x-if="feedback[{{ $question->id }}] && feedback[{{ $question->id }}].pending_review">
+                        <div class="mt-2 rounded-md bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                            <span>&#8987; Pending admin review — short answers can be phrased in more than one way.</span>
+                            <template x-if="feedback[{{ $question->id }}].review_remarks">
+                                <p class="mt-1 font-normal">Admin remarks: <span x-text="feedback[{{ $question->id }}].review_remarks"></span></p>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template x-if="feedback[{{ $question->id }}] && !feedback[{{ $question->id }}].pending_review">
                         <p class="mt-2 text-xs font-medium" :class="feedback[{{ $question->id }}].correct ? 'text-green-600' : 'text-red-600'">
                             <span x-show="feedback[{{ $question->id }}].correct">&#10003; Correct</span>
                             <span x-show="!feedback[{{ $question->id }}].correct">
@@ -79,6 +90,9 @@
                                     <span>Correct answer: <span x-text="feedback[{{ $question->id }}].correct_text"></span></span>
                                 </template>
                             </span>
+                            <template x-if="feedback[{{ $question->id }}].review_remarks">
+                                <span class="block font-normal text-gray-500">Admin remarks: <span x-text="feedback[{{ $question->id }}].review_remarks"></span></span>
+                            </template>
                         </p>
                     </template>
                 </div>

@@ -26,6 +26,9 @@
             @else
                 <div class="mt-4 space-y-3">
                     @foreach ($student->enrollments as $enrollment)
+                        @php
+                            $cancelMessage = "This revokes {$student->name}'s access to {$enrollment->track->track_code}. Their payment record is kept — this does not refund them.";
+                        @endphp
                         <div class="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-900">
                             <div>
                                 <p class="font-medium text-gray-900 dark:text-white">{{ $enrollment->track->track_code }} — {{ $enrollment->track->name }}</p>
@@ -36,7 +39,18 @@
                                     @endif
                                 </p>
                             </div>
-                            <x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'">{{ ucfirst($enrollment->status) }}</x-badge>
+                            <div class="flex items-center gap-3">
+                                <x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'">{{ ucfirst($enrollment->status) }}</x-badge>
+                                @if ($enrollment->status === 'active')
+                                    <x-double-confirm-form
+                                        :action="route('admin.enrollments.cancel', $enrollment)"
+                                        label="Cancel"
+                                        title="Cancel this enrollment?"
+                                        :message="$cancelMessage"
+                                        class="text-xs font-medium text-red-600 hover:text-red-500"
+                                    />
+                                @endif
+                            </div>
                         </div>
                     @endforeach
                 </div>

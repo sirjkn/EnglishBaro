@@ -3,11 +3,27 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanySetting;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
+    public function receipt(Payment $payment): View
+    {
+        abort_unless($payment->user_id === Auth::id(), 404);
+
+        return view('student.payment-receipt', [
+            'payment' => $payment->load('track', 'user'),
+            'company' => [
+                'name' => CompanySetting::get('company_name', config('app.name')),
+                'address' => CompanySetting::get('address'),
+                'email' => CompanySetting::get('support_email') ?? CompanySetting::get('email'),
+            ],
+        ]);
+    }
+
     public function __invoke(): View
     {
         $user = Auth::user();

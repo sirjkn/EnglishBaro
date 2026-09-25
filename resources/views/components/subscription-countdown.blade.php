@@ -8,12 +8,12 @@
             ? 'bg-red-500 text-white shadow-lg shadow-red-500/40 animate-pulse'
             : 'bg-amber-400 text-indigo-950 shadow-lg shadow-amber-400/40';
     @endphp
-    <div {{ $attributes->merge(['class' => 'flex items-center gap-2 rounded-full px-5 py-2.5 text-base font-extrabold tracking-tight '.$colorClasses]) }}>
-        <x-icons.medal class="h-5 w-5" />
+    <div {{ $attributes->merge(['class' => 'flex max-w-full items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-extrabold tracking-tight sm:gap-2 sm:px-5 sm:py-2.5 sm:text-base '.$colorClasses]) }}>
+        <x-icons.medal class="h-3.5 w-3.5 shrink-0 sm:h-5 sm:w-5" />
         @if ($daysLeft > 0)
-            {{ $daysLeft }} day{{ $daysLeft === 1 ? '' : 's' }} left on subscription
+            <span class="truncate">{{ $daysLeft }} day{{ $daysLeft === 1 ? '' : 's' }} left<span class="hidden sm:inline"> on subscription</span></span>
         @else
-            Subscription expired
+            <span class="truncate">Subscription expired</span>
         @endif
     </div>
 @endif
