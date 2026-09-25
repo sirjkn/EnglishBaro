@@ -6,7 +6,7 @@
                 Student ID: {{ $studentProfile?->student_id ?? '—' }} &middot; Track: {{ $studentProfile?->track?->track_code ?? 'Not set' }}
             </p>
         </div>
-        <x-subscription-countdown :subscription="$upcomingPayment" />
+        <x-subscription-countdown :subscription="$activeSubscription" />
     </div>
 
     <div class="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
@@ -16,13 +16,12 @@
         </div>
         <div class="rounded-lg border border-gray-200 bg-white p-2.5 sm:rounded-xl sm:p-5 dark:border-gray-700 dark:bg-gray-800">
             <p class="text-[10px] font-medium uppercase text-gray-500 sm:text-xs dark:text-gray-400">Upcoming Payment</p>
-            <p class="mt-1 text-sm font-bold text-gray-900 sm:text-2xl dark:text-white">
-                @if ($upcomingPayment)
-                    {{ $upcomingPayment->expires_at->format('M d, Y') }}
-                @else
-                    None
-                @endif
-            </p>
+            @if ($upcomingTrack)
+                <p class="mt-1 text-sm font-bold text-gray-900 sm:text-2xl dark:text-white">{{ $upcomingTrack->track_code }}</p>
+                <x-payment-method-modal :track="$upcomingTrack" label="Pay" class="mt-1 text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400" />
+            @else
+                <p class="mt-1 text-sm font-bold text-gray-900 sm:text-2xl dark:text-white">None</p>
+            @endif
         </div>
         <div class="rounded-lg border border-gray-200 bg-white p-2.5 sm:rounded-xl sm:p-5 dark:border-gray-700 dark:bg-gray-800">
             <p class="text-[10px] font-medium uppercase text-gray-500 sm:text-xs dark:text-gray-400">Notifications</p>

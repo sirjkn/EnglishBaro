@@ -57,6 +57,16 @@ class Track extends Model
         ];
     }
 
+    /**
+     * Columns holding this track's per-region overrides.
+     */
+    public const REGION_PRICE_COLUMNS = [
+        'price_africa',
+        'price_europe',
+        'price_north_america',
+        'price_asia',
+    ];
+
     public function priceForRegion(?string $region): float
     {
         $column = match ($region) {
@@ -71,7 +81,27 @@ class Track extends Model
             return (float) $this->{$column};
         }
 
-        return (float) $this->price;
+        // Unrecognized or unset region: default to the highest configured
+        // regional price (unless the admin has set a base price above it),
+        // so an unmatched region is never under-charged.
+        return $this->defaultPrice();
+    }
+
+    /**
+     * The base price used whenever no regional override applies: the highest
+     * of the base price and any configured regional price, unless an admin
+     * has explicitly set a lower base price.
+     */
+    public function defaultPrice(): float
+    {
+        $regionalPrices = collect(self::REGION_PRICE_COLUMNS)
+            ->map(fn ($column) => $this->{$column})
+            ->filter(fn ($value) => $value !== null)
+            ->map(fn ($value) => (float) $value);
+
+        return $regionalPrices->isEmpty()
+            ? (float) $this->price
+            : max((float) $this->price, $regionalPrices->max());
     }
 
     public function levels(): HasMany

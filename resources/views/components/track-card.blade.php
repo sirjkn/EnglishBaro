@@ -4,7 +4,7 @@
     $displayPrice = $track->priceForRegion($pricingRegion);
 @endphp
 
-<a href="{{ route('tracks.show', $track) }}" class="group flex flex-col overflow-hidden rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm transition hover:shadow-md">
+<a href="{{ route('tracks.show', $track) }}" class="group flex flex-col overflow-hidden rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md transition hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-xl dark:hover:bg-blue-950/20">
     <div class="aspect-video w-full overflow-hidden bg-gradient-to-br from-indigo-100 to-indigo-300 dark:from-indigo-900 dark:to-indigo-700 flex items-center justify-center">
         @if ($track->thumbnail?->resolved_url)
             <img src="{{ $track->thumbnail->resolved_url }}" alt="{{ $track->name }}" class="h-full w-full object-cover">

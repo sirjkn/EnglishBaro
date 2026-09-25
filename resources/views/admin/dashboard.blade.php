@@ -2,13 +2,12 @@
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
 
     <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <x-stat-card label="Total Students" :value="$stats['total_students']" />
-        <x-stat-card label="Active Students" :value="$stats['active_students']" />
-        <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" />
-        <x-stat-card label="Active Enrollments" :value="$stats['active_enrollments']" />
-        <x-stat-card label="Revenue" :value="'$'.number_format($stats['revenue'], 2)" />
-        <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" />
-        <x-stat-card label="Active Sessions" :value="$stats['active_sessions']" />
+        <x-stat-card label="Students" :value="$stats['total_students']" :sub="'Active '.$stats['active_students']" color="blue" />
+        <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" color="orange" />
+        <x-stat-card label="Active Enrollments" :value="$stats['active_enrollments']" color="yellow" />
+        <x-stat-card label="Revenue" :value="'$'.number_format($stats['revenue'], 2)" color="green" />
+        <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" color="red" />
+        <x-stat-card label="Active Sessions" :value="$stats['active_sessions']" color="blue" />
     </div>
 
     <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">

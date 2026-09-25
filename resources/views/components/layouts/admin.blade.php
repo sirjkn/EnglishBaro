@@ -48,6 +48,8 @@
                                     ['route' => 'admin.tracks.index', 'label' => 'Course Tracks', 'icon' => 'book-open'],
                                     ['route' => 'admin.levels.index', 'label' => 'Levels', 'icon' => 'book-open'],
                                     ['route' => 'admin.enrollments.index', 'label' => 'Enrollments', 'icon' => 'user-plus'],
+                                    ['route' => 'admin.placement-test.index', 'label' => 'Placement Test', 'icon' => 'medal'],
+                                    ['route' => 'admin.answer-reviews.index', 'label' => 'Answer Reviews', 'icon' => 'desk-phone'],
                                 ],
                             ],
                             [
@@ -78,6 +80,9 @@
                                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700' }}">
                                         <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
                                         {{ $item['label'] }}
+                                        @if ($item['route'] === 'admin.answer-reviews.index' && ($pendingAnswerReviewCount ?? 0) > 0)
+                                            <span class="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">{{ $pendingAnswerReviewCount }}</span>
+                                        @endif
                                     </a>
                                 @endforeach
                             </div>

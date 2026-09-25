@@ -60,7 +60,7 @@
         <div class="mt-4 overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                 <thead>
-                    <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
+                    <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                         <th class="py-2 pr-4">Device</th>
                         <th class="py-2 pr-4">Browser</th>
                         <th class="py-2 pr-4">IP</th>
@@ -71,7 +71,7 @@
                 </thead>
                 <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
                     @foreach ($student->userSessions as $session)
-                        <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900">
+                        <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->device }}</td>
                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->browser }}</td>
                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->ip_address }}</td>
@@ -101,7 +101,7 @@
             <div class="mt-4 overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                     <thead>
-                        <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
+                        <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                             <th class="py-2 pr-4">Transaction</th>
                             <th class="py-2 pr-4">Track</th>
                             <th class="py-2 pr-4">Amount</th>
@@ -111,7 +111,7 @@
                     </thead>
                     <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
                         @foreach ($student->payments as $payment)
-                            <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900">
+                            <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                                 <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $payment->transaction_id }}</td>
                                 <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $payment->track->track_code }}</td>
                                 <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</td>

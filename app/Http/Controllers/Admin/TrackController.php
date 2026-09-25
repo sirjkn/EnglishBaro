@@ -8,8 +8,11 @@ use App\Models\Level;
 use App\Models\Track;
 use App\Services\AuditLogger;
 use App\Services\MediaService;
+use App\Services\TrackCurriculumGenerator;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class TrackController extends Controller
@@ -31,6 +34,67 @@ class TrackController extends Controller
                 'enrollments' => Enrollment::query()->count(),
             ],
         ]);
+    }
+
+    public function create(): View
+    {
+        $this->authorize('create', Track::class);
+
+        return view('admin.tracks.create', [
+            'track' => new Track(['price' => 0, 'currency' => 'USD', 'subscription_days' => 120, 'status' => 'draft']),
+        ]);
+    }
+
+    public function store(Request $request, TrackCurriculumGenerator $curriculumGenerator): RedirectResponse
+    {
+        $this->authorize('create', Track::class);
+
+        $validated = $request->validate([
+            'track_code' => ['required', 'string', 'max:10', 'alpha_dash', 'uppercase', 'unique:tracks,track_code'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'learning_outcomes' => ['nullable', 'string'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'price_africa' => ['nullable', 'numeric', 'min:0'],
+            'price_europe' => ['nullable', 'numeric', 'min:0'],
+            'price_north_america' => ['nullable', 'numeric', 'min:0'],
+            'price_asia' => ['nullable', 'numeric', 'min:0'],
+            'currency' => ['required', 'string', 'size:3'],
+            'subscription_days' => ['required', 'integer', 'min:1'],
+            'status' => ['required', 'in:draft,published,archived'],
+            'is_featured' => ['boolean'],
+        ]) + ['is_featured' => $request->boolean('is_featured')];
+
+        $validated['slug'] = Str::slug($validated['track_code'].'-'.$validated['name']);
+        $validated['order'] = (int) Track::query()->max('order') + 1;
+        $validated['is_active'] = true;
+
+        $track = Track::query()->create($validated);
+
+        $curriculumGenerator->generate($track);
+
+        AuditLogger::log('admin.track.created', $track, [], $validated);
+
+        return redirect()->route('admin.tracks.edit', $track)
+            ->with('status', "Track {$track->track_code} created with 100 levels.");
+    }
+
+    public function destroy(Track $track): RedirectResponse
+    {
+        $this->authorize('delete', $track);
+
+        $code = $track->track_code;
+
+        try {
+            $track->delete();
+        } catch (QueryException $e) {
+            return redirect()->route('admin.tracks.index')
+                ->with('error', "Can't delete track {$code}: it still has linked students, payments, or placement test data. Archive it instead.");
+        }
+
+        AuditLogger::log('admin.track.deleted', null, ['track_code' => $code], []);
+
+        return redirect()->route('admin.tracks.index')->with('status', "Track {$code} deleted.");
     }
 
     public function edit(Track $track): View

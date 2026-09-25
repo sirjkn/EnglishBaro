@@ -86,10 +86,24 @@
                                 <a href="{{ route('student.tracks.show', $track) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
                                     Continue Learning
                                 </a>
-                            @else
+                            @elseif (! auth()->user()->studentProfile?->track_id)
+                                <a href="{{ route('student.placement-test') }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
+                                    Take Placement Test to Enroll
+                                </a>
+                                <p class="text-center text-xs text-gray-500 dark:text-gray-400">
+                                    New students take a quick placement test first so we can enroll you into the right track.
+                                </p>
+                            @elseif (auth()->user()->can('enroll', $track))
                                 <a href="{{ route('dashboard') }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
                                     Enroll / Pay
                                 </a>
+                            @else
+                                <button type="button" disabled class="block w-full cursor-not-allowed rounded-md bg-gray-200 px-4 py-2.5 text-center text-sm font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                                    Track Locked
+                                </button>
+                                <p class="text-center text-xs text-gray-500 dark:text-gray-400">
+                                    You were placed into {{ auth()->user()->studentProfile->track->track_code }}. You can enroll in {{ auth()->user()->studentProfile->track->track_code }} or any track below it.
+                                </p>
                             @endif
                         @else
                             <a href="{{ route('register.create', ['redirect' => route('tracks.show', $track, absolute: false)]) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">

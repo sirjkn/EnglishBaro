@@ -50,9 +50,32 @@ class TrackProgressService
         if ($percent >= 100 && ! $progress->completed_at) {
             $progress->update(['completed_at' => now()]);
             $this->issueCertificateIfMissing($user, $track);
+            $this->unlockNextTrackIfCurrent($user, $track);
         }
 
         return $progress;
+    }
+
+    /**
+     * A student may only enroll up to the track they were placed into. When
+     * they finish that ceiling track, promote them to the next one so they
+     * can enroll in it too — without this, TrackPolicy::enroll would keep
+     * them stuck on a track they've already completed. An admin can still
+     * move a student to any track manually at any time.
+     */
+    private function unlockNextTrackIfCurrent(User $user, Track $track): void
+    {
+        $profile = $user->studentProfile;
+
+        if (! $profile || $profile->track_id !== $track->id) {
+            return;
+        }
+
+        $nextTrack = Track::query()->where('order', '>', $track->order)->orderBy('order')->first();
+
+        if ($nextTrack) {
+            $profile->update(['track_id' => $nextTrack->id]);
+        }
     }
 
     private function issueCertificateIfMissing(User $user, Track $track): void

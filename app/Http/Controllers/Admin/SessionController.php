@@ -16,27 +16,50 @@ class SessionController extends Controller
     {
         $this->authorize('viewAny', \App\Models\User::class);
 
-        $query = UserSession::query()->with('user');
+        $query = UserSession::query()->with('user.studentProfile');
 
         if ($status = $request->string('status')->value()) {
             $query->where('status', $status);
         }
 
+        if ($device = $request->string('device')->value()) {
+            $query->where('device', $device);
+        }
+
+        if ($ip = trim((string) $request->string('ip')->value())) {
+            $query->where('ip_address', 'like', "%{$ip}%");
+        }
+
+        if ($student = trim((string) $request->string('student')->value())) {
+            $query->whereHas('user', function ($userQuery) use ($student) {
+                $userQuery->where('name', 'like', "%{$student}%")
+                    ->orWhereHas('studentProfile', function ($profileQuery) use ($student) {
+                        $profileQuery->where('student_id', 'like', "%{$student}%");
+                    });
+            });
+        }
+
         $sessions = $query->latest('last_activity_at')->paginate(20)->withQueryString();
 
-        return view('admin.sessions.index', ['sessions' => $sessions]);
+        return view('admin.sessions.index', [
+            'sessions' => $sessions,
+            'devices' => UserSession::query()->whereNotNull('device')->distinct()->orderBy('device')->pluck('device'),
+        ]);
     }
 
     public function destroy(UserSession $session): RedirectResponse
     {
         $this->authorize('terminate', $session);
 
-        $session->update(['status' => 'terminated', 'logout_at' => now()]);
+        AuditLogger::log('admin.session.terminated', $session);
 
         DB::table('sessions')->where('id', $session->session_id)->delete();
 
-        AuditLogger::log('admin.session.terminated', $session);
+        // Deleted (not just marked terminated) so this slot no longer counts
+        // toward the student's monthly session quota — an admin termination
+        // frees them to log in again immediately, unlike a normal logout.
+        $session->delete();
 
-        return back()->with('status', 'Session terminated.');
+        return back()->with('status', 'Session terminated. This frees up one of the student\'s monthly session slots.');
     }
 }

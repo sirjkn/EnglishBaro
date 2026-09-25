@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             TrackSeeder::class,
             TrackCurriculumSeeder::class,
+            PlacementTestSeeder::class,
             AdminUserSeeder::class,
             DemoStudentSeeder::class,
             DemoEnrollmentSeeder::class,

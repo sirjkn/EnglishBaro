@@ -16,6 +16,7 @@ class Subscription extends Model
         'expires_at',
         'duration_days',
         'status',
+        'region',
     ];
 
     protected function casts(): array

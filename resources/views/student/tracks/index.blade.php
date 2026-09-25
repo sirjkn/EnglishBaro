@@ -1,5 +1,5 @@
-<x-layouts.student :title="'My Course Tracks'">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Course Tracks</h1>
+<x-layouts.student :title="'My Courses'">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Courses</h1>
 
     @if ($enrollments->isEmpty())
         <x-empty-state class="mt-6" message="You have not enrolled in any tracks yet."></x-empty-state>
@@ -9,7 +9,7 @@
     @else
         <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($enrollments as $enrollment)
-                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+                <div class="relative overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
                     <div class="flex aspect-video items-center justify-center bg-gradient-to-br from-indigo-100 to-indigo-300 dark:from-indigo-900 dark:to-indigo-700">
                         @if ($enrollment->track->thumbnail?->resolved_url)
                             <img src="{{ $enrollment->track->thumbnail->resolved_url }}" alt="{{ $enrollment->track->name }}" class="h-full w-full object-cover">
@@ -17,6 +17,7 @@
                             <span class="text-4xl font-black text-indigo-700 dark:text-indigo-200">{{ $enrollment->track->track_code }}</span>
                         @endif
                     </div>
+                    <x-subscription-countdown :subscription="$enrollment->subscription" class="absolute right-3 top-3" />
                     <div class="p-5">
                         <span class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">Track {{ $enrollment->track->track_code }}</span>
                         <h3 class="mt-1 font-semibold text-gray-900 dark:text-white">{{ $enrollment->track->name }}</h3>
@@ -27,9 +28,6 @@
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             {{ $enrollment->progress->levels_completed ?? 0 }} / {{ $enrollment->progress->total_levels ?? 0 }} levels
                             &middot; {{ $enrollment->progress->lessons_completed ?? 0 }} / {{ $enrollment->progress->total_lessons ?? 0 }} lessons
-                            @if ($enrollment->subscription)
-                                &middot; Expires {{ $enrollment->subscription->expires_at->format('M d, Y') }}
-                            @endif
                         </p>
 
                         <a href="{{ route('student.tracks.show', $enrollment->track) }}" class="mt-4 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-indigo-500">

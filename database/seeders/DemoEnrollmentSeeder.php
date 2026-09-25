@@ -4,11 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\Enrollment;
 use App\Models\LessonProgress;
+use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\Track;
 use App\Models\TrackProgress;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class DemoEnrollmentSeeder extends Seeder
 {
@@ -26,15 +28,35 @@ class DemoEnrollmentSeeder extends Seeder
             ['status' => 'active', 'enrolled_at' => now()->subDays(4)]
         );
 
-        Subscription::query()->updateOrCreate(
+        // Tracks are prepaid in full up front, so this enrollment must be backed
+        // by a real (successful) Payment record — visible in Payment History,
+        // not shown as an "upcoming" payment since it's already been paid.
+        $payment = Payment::query()->updateOrCreate(
+            ['user_id' => $student->id, 'track_id' => $track->id],
+            [
+                'transaction_id' => 'DEMO-'.Str::upper(Str::random(10)),
+                'amount' => $track->priceForRegion('Africa'),
+                'currency' => $track->currency,
+                'region' => 'Africa',
+                'payment_method' => 'flutterwave',
+                'status' => 'successful',
+                'subscription_days' => $track->subscription_days,
+                'verified_at' => now()->subDays(4),
+                'created_at' => now()->subDays(4),
+            ]
+        );
+
+        $subscription = Subscription::query()->updateOrCreate(
             ['enrollment_id' => $enrollment->id],
             [
                 'user_id' => $student->id,
                 'track_id' => $track->id,
+                'payment_id' => $payment->id,
                 'starts_at' => now()->subDays(4),
                 'expires_at' => now()->addDays($track->subscription_days - 4),
                 'duration_days' => $track->subscription_days,
                 'status' => 'active',
+                'region' => 'Africa',
             ]
         );
 
