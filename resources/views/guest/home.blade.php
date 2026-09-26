@@ -5,11 +5,7 @@
             <div class="pointer-events-none absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 15% 20%, white 0, transparent 35%), radial-gradient(circle at 85% 15%, white 0, transparent 30%), radial-gradient(circle at 75% 85%, white 0, transparent 35%);"></div>
 
             <div class="relative max-w-2xl">
-                <span class="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white backdrop-blur">
-                    Online English Learning Platform
-                </span>
-
-                <h1 class="mt-5 text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-5xl">
+                <h1 class="text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-5xl">
                     Master English with a personal online tutor
                 </h1>
 
