@@ -7,7 +7,7 @@
         <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
             <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                 <thead>
-                    <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
+                    <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                         <th class="px-4 py-2">User</th>
                         <th class="px-4 py-2">Action</th>
                         <th class="px-4 py-2">Entity</th>
@@ -17,7 +17,7 @@
                 </thead>
                 <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
                     @foreach ($logs as $log)
-                        <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900">
+                        <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $log->user?->name ?? 'System' }}</td>
                             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $log->action }}</td>
                             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ class_basename($log->entity_type) }} #{{ $log->entity_id }}</td>

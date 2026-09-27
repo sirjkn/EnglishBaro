@@ -26,6 +26,29 @@
                     @empty
                         <li class="px-2 py-2 text-sm text-gray-400">No lessons yet.</li>
                     @endforelse
+                    @if ($section->activity)
+                        @php
+                            $lessonsDone = $section->lessons->pluck('id')->diff($completedLessonIds)->isEmpty() && $section->lessons->isNotEmpty();
+                        @endphp
+                        <li>
+                            @if ($lessonsDone)
+                                <a href="{{ route('student.tracks.section-activity', [$track, $level, $section]) }}"
+                                   class="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700">
+                                    @if ($checkedAssessmentIds->contains($section->activity->id))
+                                        <span class="text-green-500">&#10003;</span>
+                                    @else
+                                        <x-icons.medal class="h-3.5 w-3.5 text-indigo-500" />
+                                    @endif
+                                    Activity Questions
+                                </a>
+                            @else
+                                <span class="flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-gray-400 dark:text-gray-500" title="Finish this section's lessons first">
+                                    <x-icons.lock class="h-3.5 w-3.5" />
+                                    Activity Questions
+                                </span>
+                            @endif
+                        </li>
+                    @endif
                 </ul>
             </div>
         @endforeach

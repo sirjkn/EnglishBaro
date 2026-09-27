@@ -49,6 +49,39 @@ class GeoLocationService
         }
     }
 
+    /**
+     * Human-readable "City, Country" for admin display (e.g. on the Sessions
+     * page) — separate from regionForIp(), which only needs a continent for
+     * pricing. Returns null for private/local IPs or a failed lookup.
+     */
+    public function locationForIp(string $ip): ?string
+    {
+        if ($this->isPrivateOrReserved($ip)) {
+            return null;
+        }
+
+        return Cache::remember("geo:location:{$ip}", now()->addHours(self::CACHE_TTL_HOURS), function () use ($ip) {
+            try {
+                $response = Http::timeout(3)->get("http://ip-api.com/json/{$ip}", [
+                    'fields' => 'status,city,country',
+                ]);
+
+                if (! $response->ok() || $response->json('status') !== 'success') {
+                    return null;
+                }
+
+                $city = $response->json('city');
+                $country = $response->json('country');
+
+                return collect([$city, $country])->filter()->implode(', ') ?: null;
+            } catch (\Throwable $e) {
+                Log::warning('GeoLocationService location lookup failed', ['ip' => $ip, 'error' => $e->getMessage()]);
+
+                return null;
+            }
+        });
+    }
+
     private function isPrivateOrReserved(string $ip): bool
     {
         return filter_var(

@@ -11,6 +11,7 @@ class Assessment extends Model
     protected $fillable = [
         'level_id',
         'lesson_id',
+        'section_id',
         'title',
         'description',
         'type',
@@ -35,6 +36,11 @@ class Assessment extends Model
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class);
     }
 
     public function questions(): HasMany

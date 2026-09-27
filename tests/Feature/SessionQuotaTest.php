@@ -41,7 +41,7 @@ class SessionQuotaTest extends TestCase
 
         $component->call('login');
 
-        $component->assertHasErrors('form.email');
+        $component->assertSet('sessionLimitMessage', fn ($message) => ! empty($message));
         $this->assertGuest();
     }
 

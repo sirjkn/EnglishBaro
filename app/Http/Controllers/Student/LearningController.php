@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\Assessment;
-use App\Models\AssessmentAnswer;
 use App\Models\AssessmentAttempt;
 use App\Models\Enrollment;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
 use App\Models\Level;
+use App\Models\Section;
 use App\Models\Track;
+use App\Services\AssessmentGradingService;
+use App\Services\LevelAccessService;
+use App\Services\LevelSequenceService;
+use App\Services\RegionPricingService;
 use App\Services\TrackProgressService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -20,28 +23,42 @@ use Illuminate\View\View;
 
 class LearningController extends Controller
 {
-    public function level(Track $track, Level $level): View
+    public function level(Track $track, Level $level, LevelAccessService $levelAccess): View|RedirectResponse
     {
-        $this->authorize('learn', $track);
+        $this->authorize('learn', [$track, $this->currentRegion()]);
 
         $enrollment = $this->enrollmentFor($track);
-        $level->load(['sections.lessons.video']);
+
+        if (! $levelAccess->canAccess($enrollment, $level)) {
+            return $this->redirectToCheckpoint($track, $level, $levelAccess);
+        }
+
+        $level->load(['sections.lessons.video', 'sections.activity']);
 
         $completedLessonIds = LessonProgress::query()
             ->where('enrollment_id', $enrollment->id)
             ->where('status', 'completed')
             ->pluck('lesson_id');
 
+        $checkedAssessmentIds = $this->checkedAssessmentIds(Auth::user());
+
         return view('student.level', [
             'track' => $track,
             'level' => $level,
             'completedLessonIds' => $completedLessonIds,
+            'checkedAssessmentIds' => $checkedAssessmentIds,
         ]);
     }
 
-    public function resume(Track $track, Level $level): RedirectResponse
+    public function resume(Track $track, Level $level, LevelAccessService $levelAccess): RedirectResponse
     {
-        $this->authorize('learn', $track);
+        $this->authorize('learn', [$track, $this->currentRegion()]);
+
+        $enrollment = $this->enrollmentFor($track);
+
+        if (! $levelAccess->canAccess($enrollment, $level)) {
+            return $this->redirectToCheckpoint($track, $level, $levelAccess);
+        }
 
         $lesson = $level->lessons()->first();
 
@@ -50,33 +67,36 @@ class LearningController extends Controller
         return redirect()->route('student.tracks.learn', [$track, $level, $lesson]);
     }
 
-    public function lesson(Track $track, Level $level, Lesson $lesson): View|RedirectResponse
+    public function lesson(Track $track, Level $level, Lesson $lesson, LevelAccessService $levelAccess, LevelSequenceService $sequence): View|RedirectResponse
     {
-        $this->authorize('learn', $track);
+        $this->authorize('learn', [$track, $this->currentRegion()]);
         $this->authorize('view', $lesson);
         $this->ensureLessonBelongsToLevel($level, $lesson);
 
         $user = Auth::user();
         $enrollment = $this->enrollmentFor($track);
 
+        if (! $levelAccess->canAccess($enrollment, $level)) {
+            return $this->redirectToCheckpoint($track, $level, $levelAccess);
+        }
+
         $lesson->load(['video', 'ebook.file', 'resources.media', 'section']);
 
-        $sections = $level->sections()->with(['lessons' => fn ($query) => $query->orderBy('order')])->get();
+        $nodes = $sequence->nodes($level);
+        [$previousNode, $nextNode] = $sequence->neighboursOfLesson($nodes, $lesson);
+
+        // Sequential gating: a student cannot skip past a section's Activity
+        // Questions by jumping straight to the URL of the next section's lesson.
+        if ($previousNode && $previousNode->type === 'activity' && ! $this->grading()->hasSubmittedAttempt($previousNode->assessment, $user)) {
+            return redirect()
+                ->route('student.tracks.section-activity', [$track, $level, $previousNode->section])
+                ->with('status', 'Complete the Activity Questions before moving on.');
+        }
 
         $completedLessonIds = LessonProgress::query()
             ->where('enrollment_id', $enrollment->id)
             ->where('status', 'completed')
             ->pluck('lesson_id');
-
-        [$previousLesson, $nextLesson] = $this->neighbours($sections, $lesson);
-
-        // Sequential gating: a student cannot open a lesson by URL while an
-        // earlier lesson in this level still has an unchecked activity.
-        if ($previousLesson && $this->lessonRequiresCheckAndIsUnchecked($previousLesson, $user)) {
-            return redirect()
-                ->route('student.tracks.learn', [$track, $level, $previousLesson])
-                ->with('status', 'Check your answers on this activity before moving on.');
-        }
 
         $progress = LessonProgress::query()->firstOrCreate(
             ['user_id' => $user->id, 'lesson_id' => $lesson->id],
@@ -86,122 +106,117 @@ class LearningController extends Controller
         $progress->update(['last_viewed_at' => now()]);
         $enrollment->update(['last_viewed_lesson_id' => $lesson->id, 'last_viewed_at' => now()]);
 
-        $assessment = $this->activeAssessmentFor($lesson);
-        $assessment?->load('questions.options');
-
-        $attempt = $assessment
-            ? AssessmentAttempt::query()
-                ->where('assessment_id', $assessment->id)
-                ->where('user_id', $user->id)
-                ->where('status', 'submitted')
-                ->latest('submitted_at')
-                ->with('answers')
-                ->first()
-            : null;
-
         return view('student.learn', [
             'track' => $track,
             'level' => $level,
             'lesson' => $lesson,
-            'sections' => $sections,
+            'sections' => $level->sections()->with(['lessons' => fn ($query) => $query->orderBy('order'), 'activity'])->get(),
             'completedLessonIds' => $completedLessonIds,
-            'previousLesson' => $previousLesson,
-            'nextLesson' => $nextLesson,
+            'previousStep' => $this->stepLink($track, $level, $previousNode, 'Previous'),
+            'nextStep' => $this->stepLink($track, $level, $nextNode, $nextNode?->type === 'activity' ? 'Activity Questions' : 'Next'),
             'isCompleted' => $progress->status === 'completed',
-            'assessment' => $assessment,
-            'attempt' => $attempt,
-            'checked' => (bool) $attempt,
         ]);
     }
 
-    public function checkAnswers(Request $request, Track $track, Level $level, Lesson $lesson): JsonResponse
+    public function sectionActivity(Track $track, Level $level, Section $section, LevelAccessService $levelAccess, LevelSequenceService $sequence): View|RedirectResponse
     {
-        $this->authorize('learn', $track);
-        $this->authorize('view', $lesson);
-        $this->ensureLessonBelongsToLevel($level, $lesson);
+        $this->authorize('learn', [$track, $this->currentRegion()]);
+        abort_unless($section->level_id === $level->id, 404);
 
-        $assessment = $this->activeAssessmentFor($lesson);
+        $user = Auth::user();
+        $enrollment = $this->enrollmentFor($track);
 
+        if (! $levelAccess->canAccess($enrollment, $level)) {
+            return $this->redirectToCheckpoint($track, $level, $levelAccess);
+        }
+
+        $assessment = $sequence->activityFor($section);
+        abort_unless($assessment, 404);
+        $assessment->load('questions.options');
+
+        $incompleteLesson = $this->firstIncompleteLesson($enrollment, $section);
+
+        if ($incompleteLesson) {
+            return redirect()
+                ->route('student.tracks.learn', [$track, $level, $incompleteLesson])
+                ->with('status', 'Finish this section\'s lessons before the Activity Questions.');
+        }
+
+        $nodes = $sequence->nodes($level);
+        [$previousNode, $nextNode] = $sequence->neighboursOfActivity($nodes, $section);
+
+        if ($previousNode && $previousNode->type === 'activity' && ! $this->grading()->hasSubmittedAttempt($previousNode->assessment, $user)) {
+            return redirect()
+                ->route('student.tracks.section-activity', [$track, $level, $previousNode->section])
+                ->with('status', 'Complete the Activity Questions before moving on.');
+        }
+
+        $attempt = $this->grading()->latestSubmittedAttempt($assessment, $user);
+
+        return view('student.section-activity', [
+            'track' => $track,
+            'level' => $level,
+            'section' => $section,
+            'assessment' => $assessment,
+            'attempt' => $attempt,
+            'checked' => (bool) $attempt,
+            'previousStep' => $this->stepLink($track, $level, $previousNode, 'Previous'),
+            'nextStep' => $this->stepLink($track, $level, $nextNode, $nextNode?->type === 'activity' ? 'Activity Questions' : 'Next'),
+            'isLastStep' => ! $nextNode,
+        ]);
+    }
+
+    public function checkSectionAnswers(Request $request, Track $track, Level $level, Section $section, LevelSequenceService $sequence): JsonResponse
+    {
+        $this->authorize('learn', [$track, $this->currentRegion()]);
+        abort_unless($section->level_id === $level->id, 404);
+
+        $assessment = $sequence->activityFor($section);
         abort_unless($assessment, 404);
 
-        $assessment->load('questions.options');
+        $user = Auth::user();
+        $enrollment = $this->enrollmentFor($track);
+
+        abort_if($this->firstIncompleteLesson($enrollment, $section), 403, 'Finish this section\'s lessons first.');
+
+        $nodes = $sequence->nodes($level);
+        [$previousNode] = $sequence->neighboursOfActivity($nodes, $section);
+
+        if ($previousNode && $previousNode->type === 'activity' && ! $this->grading()->hasSubmittedAttempt($previousNode->assessment, $user)) {
+            abort(403, 'Complete the previous section\'s Activity Questions first.');
+        }
 
         $validated = $request->validate([
             'answers' => ['required', 'array'],
             'answers.*' => ['nullable'],
         ]);
 
-        $user = Auth::user();
-        $submittedAnswers = $validated['answers'];
-
-        $attemptNumber = AssessmentAttempt::query()
-            ->where('assessment_id', $assessment->id)
-            ->where('user_id', $user->id)
-            ->max('attempt_number') + 1;
-
-        $attempt = AssessmentAttempt::query()->create([
-            'assessment_id' => $assessment->id,
-            'user_id' => $user->id,
-            'attempt_number' => $attemptNumber,
-            'status' => 'submitted',
-            'started_at' => now(),
-            'submitted_at' => now(),
-        ]);
-
-        $totalPoints = 0;
-        $earnedPoints = 0;
-        $feedback = [];
-
-        foreach ($assessment->questions as $question) {
-            $totalPoints += $question->points;
-            $given = $submittedAnswers[$question->id] ?? null;
-
-            [$isCorrect, $correctOptionId, $correctText] = $this->gradeQuestion($question, $given);
-
-            if ($isCorrect) {
-                $earnedPoints += $question->points;
-            }
-
-            AssessmentAnswer::query()->create([
-                'assessment_attempt_id' => $attempt->id,
-                'assessment_question_id' => $question->id,
-                'assessment_option_id' => $question->type !== 'short_answer' ? $given : null,
-                'short_answer_text' => $question->type === 'short_answer' ? $given : null,
-                'is_correct' => $isCorrect,
-            ]);
-
-            $feedback[] = [
-                'question_id' => $question->id,
-                'correct' => $isCorrect,
-                'correct_option_id' => $correctOptionId,
-                'correct_text' => $correctText,
-            ];
-        }
-
-        $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100, 2) : 100;
-        $passed = $score >= $assessment->passing_score;
-
-        $attempt->update(['score' => $score, 'passed' => $passed]);
+        $result = $this->grading()->grade($assessment, $user, $validated['answers']);
 
         return response()->json([
-            'score' => $score,
-            'passed' => $passed,
+            'score' => $result['score'],
+            'passed' => $result['passed'],
             'passing_score' => $assessment->passing_score,
-            'feedback' => $feedback,
+            'feedback' => $result['feedback'],
         ]);
     }
 
-    public function complete(Track $track, Level $level, Lesson $lesson, TrackProgressService $trackProgressService): RedirectResponse
+    public function complete(Track $track, Level $level, Lesson $lesson, TrackProgressService $trackProgressService, LevelSequenceService $sequence): RedirectResponse
     {
-        $this->authorize('learn', $track);
+        $this->authorize('learn', [$track, $this->currentRegion()]);
         $this->authorize('view', $lesson);
         $this->ensureLessonBelongsToLevel($level, $lesson);
 
         $user = Auth::user();
         $enrollment = $this->enrollmentFor($track);
 
-        if ($this->lessonRequiresCheckAndIsUnchecked($lesson, $user)) {
-            return back()->with('status', 'Check your answers on this activity before continuing.');
+        $nodes = $sequence->nodes($level);
+        [$previousNode, $nextNode] = $sequence->neighboursOfLesson($nodes, $lesson);
+
+        if ($previousNode && $previousNode->type === 'activity' && ! $this->grading()->hasSubmittedAttempt($previousNode->assessment, $user)) {
+            return redirect()
+                ->route('student.tracks.section-activity', [$track, $level, $previousNode->section])
+                ->with('status', 'Complete the Activity Questions before moving on.');
         }
 
         LessonProgress::query()->updateOrCreate(
@@ -216,12 +231,14 @@ class LearningController extends Controller
 
         $trackProgressService->recalculate($user, $track, $enrollment);
 
-        $sections = $level->sections()->with(['lessons' => fn ($query) => $query->orderBy('order')])->get();
-        [, $nextLesson] = $this->neighbours($sections, $lesson);
-
-        if ($nextLesson) {
-            return redirect()->route('student.tracks.learn', [$track, $level, $nextLesson])
+        if ($nextNode?->type === 'lesson') {
+            return redirect()->route('student.tracks.learn', [$track, $level, $nextNode->lesson])
                 ->with('status', 'Lesson marked as completed!');
+        }
+
+        if ($nextNode?->type === 'activity') {
+            return redirect()->route('student.tracks.section-activity', [$track, $level, $nextNode->section])
+                ->with('status', 'Lesson marked as completed! Now try the Activity Questions.');
         }
 
         $nextLevel = $track->levels()->where('number', '>', $level->number)->first();
@@ -237,7 +254,7 @@ class LearningController extends Controller
 
     public function updateVideoProgress(Request $request, Track $track, Level $level, Lesson $lesson): JsonResponse
     {
-        $this->authorize('learn', $track);
+        $this->authorize('learn', [$track, $this->currentRegion()]);
         $this->authorize('view', $lesson);
         $this->ensureLessonBelongsToLevel($level, $lesson);
 
@@ -266,75 +283,73 @@ class LearningController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    private function redirectToCheckpoint(Track $track, Level $level, LevelAccessService $levelAccess): RedirectResponse
+    {
+        $checkpointNumber = $levelAccess->nearestCheckpointNumber($level->number);
+        $checkpoint = $track->levels()->where('number', $checkpointNumber)->first();
+
+        abort_unless($checkpoint, 404);
+
+        return redirect()
+            ->route('student.tracks.level', [$track, $checkpoint])
+            ->with('status', "Level {$level->number} isn't unlocked yet. You can start at level {$checkpointNumber} or finish level ".($level->number - 1).' first.');
+    }
+
     private function ensureLessonBelongsToLevel(Level $level, Lesson $lesson): void
     {
         abort_unless($lesson->section->level_id === $level->id, 404);
     }
 
-    private function activeAssessmentFor(Lesson $lesson): ?Assessment
+    /**
+     * @return ?array{url: string, label: string}
+     */
+    private function stepLink(Track $track, Level $level, ?object $node, string $label): ?array
     {
-        return Assessment::query()
-            ->where('lesson_id', $lesson->id)
-            ->where('is_active', true)
+        if (! $node) {
+            return null;
+        }
+
+        $url = $node->type === 'lesson'
+            ? route('student.tracks.learn', [$track, $level, $node->lesson])
+            : route('student.tracks.section-activity', [$track, $level, $node->section]);
+
+        return ['url' => $url, 'label' => $label];
+    }
+
+    /**
+     * The first lesson in this section the student hasn't completed yet, or
+     * null if every lesson is done — used to lock Activity Questions until
+     * the section's lessons are finished.
+     */
+    private function firstIncompleteLesson(Enrollment $enrollment, Section $section): ?Lesson
+    {
+        $completedLessonIds = LessonProgress::query()
+            ->where('enrollment_id', $enrollment->id)
+            ->where('status', 'completed')
+            ->pluck('lesson_id');
+
+        return $section->lessons()
+            ->whereNotIn('id', $completedLessonIds)
+            ->orderBy('order')
             ->first();
     }
 
-    /**
-     * A lesson "requires a check" when it carries an active interactive
-     * activity (currently: Grammar). The student must have a submitted
-     * attempt before they may open the next lesson or mark this one complete.
-     */
-    private function lessonRequiresCheckAndIsUnchecked(Lesson $lesson, $user): bool
+    private function checkedAssessmentIds($user)
     {
-        $assessment = $this->activeAssessmentFor($lesson);
-
-        if (! $assessment) {
-            return false;
-        }
-
-        return ! AssessmentAttempt::query()
-            ->where('assessment_id', $assessment->id)
+        return AssessmentAttempt::query()
             ->where('user_id', $user->id)
             ->where('status', 'submitted')
-            ->exists();
+            ->pluck('assessment_id');
     }
 
-    /**
-     * @return array{0: bool, 1: ?int, 2: ?string} [isCorrect, correctOptionId, correctText]
-     */
-    private function gradeQuestion($question, $given): array
+    private function grading(): AssessmentGradingService
     {
-        if ($question->type === 'short_answer') {
-            $correctText = $question->correct_short_answer;
-            $isCorrect = $given !== null
-                && $correctText !== null
-                && trim(mb_strtolower($given)) === trim(mb_strtolower($correctText));
-
-            return [$isCorrect, null, $correctText];
-        }
-
-        $correctOption = $question->options->firstWhere('is_correct', true);
-        $isCorrect = $given !== null && $correctOption && (int) $given === $correctOption->id;
-
-        return [$isCorrect, $correctOption?->id, null];
+        return app(AssessmentGradingService::class);
     }
 
-    /**
-     * @return array{0: ?Lesson, 1: ?Lesson}
-     */
-    private function neighbours($sections, Lesson $lesson): array
+    private function currentRegion(): ?string
     {
-        $allLessons = $sections->flatMap->lessons->values();
-        $index = $allLessons->search(fn ($item) => $item->id === $lesson->id);
-
-        if ($index === false) {
-            return [null, null];
-        }
-
-        return [
-            $index > 0 ? $allLessons[$index - 1] : null,
-            $index < $allLessons->count() - 1 ? $allLessons[$index + 1] : null,
-        ];
+        return app(RegionPricingService::class)->resolveRegion(request());
     }
 
     private function enrollmentFor(Track $track): Enrollment

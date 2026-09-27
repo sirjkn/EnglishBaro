@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\LessonProgress;
 use App\Models\Track;
+use App\Services\LevelAccessService;
+use App\Services\RegionPricingService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -22,9 +24,9 @@ class MyTrackController extends Controller
         ]);
     }
 
-    public function show(Track $track): View
+    public function show(Track $track, LevelAccessService $levelAccess, RegionPricingService $regionPricingService): View
     {
-        $this->authorize('learn', $track);
+        $this->authorize('learn', [$track, $regionPricingService->resolveRegion(request())]);
 
         $enrollment = Auth::user()->enrollments()
             ->where('track_id', $track->id)
@@ -40,11 +42,16 @@ class MyTrackController extends Controller
                 ->pluck('lesson_id')
             : collect();
 
+        $accessibleLevelNumbers = $enrollment
+            ? $levels->getCollection()->filter(fn ($level) => $levelAccess->canAccess($enrollment, $level))->pluck('number')
+            : collect();
+
         return view('student.tracks.show', [
             'track' => $track,
             'levels' => $levels,
             'enrollment' => $enrollment,
             'completedLessonIds' => $completedLessonIds,
+            'accessibleLevelNumbers' => $accessibleLevelNumbers,
         ]);
     }
 }

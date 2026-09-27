@@ -15,6 +15,7 @@ class Payment extends Model
         'track_id',
         'amount',
         'currency',
+        'region',
         'payment_method',
         'status',
         'gateway_response',

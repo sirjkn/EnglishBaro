@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\AssessmentAnswer;
 use App\Models\User;
 use App\Models\UserSession;
 use App\Policies\SessionPolicy;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -39,5 +41,12 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(User::class, StudentPolicy::class);
         Gate::policy(UserSession::class, SessionPolicy::class);
+
+        View::composer('components.layouts.admin', function ($view) {
+            $view->with('pendingAnswerReviewCount', AssessmentAnswer::query()
+                ->where('review_status', AssessmentAnswer::REVIEW_PENDING)
+                ->count()
+            );
+        });
     }
 }

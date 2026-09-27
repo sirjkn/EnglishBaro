@@ -10,7 +10,7 @@
     <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
         <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
             <thead>
-                <tr class="bg-indigo-100 text-left text-xs uppercase text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200 divide-x divide-white">
+                <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                     <th class="px-4 py-2">Level</th>
                     <th class="px-4 py-2">Sections</th>
                     <th class="px-4 py-2">Progress</th>
@@ -22,15 +22,22 @@
                     @php
                         $lessonIds = $level->sections->flatMap->lessons->pluck('id');
                         $done = $lessonIds->intersect($completedLessonIds)->count();
+                        $accessible = $accessibleLevelNumbers->contains($level->number);
                     @endphp
-                    <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900">
+                    <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $level->title }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
                             {{ $level->sections->map(fn ($section) => $section->title)->implode(' · ') }}
                         </td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $done }} / {{ $lessonIds->count() }} lessons</td>
                         <td class="px-4 py-3 text-right">
-                            <a href="{{ route('student.tracks.level', [$track, $level]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Open</a>
+                            @if ($accessible)
+                                <a href="{{ route('student.tracks.level', [$track, $level]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Open</a>
+                            @else
+                                <span class="inline-flex items-center gap-1 text-sm font-medium text-gray-400 dark:text-gray-500" title="Finish level {{ $level->number - 1 }}, or jump to a checkpoint level (multiples of 10)">
+                                    <x-icons.lock class="h-3.5 w-3.5" /> Locked
+                                </span>
+                            @endif
                         </td>
                     </tr>
                 @empty
