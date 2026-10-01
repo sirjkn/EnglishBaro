@@ -100,9 +100,9 @@
         @if ($featuredTracks->isEmpty())
             <x-empty-state class="mt-8" message="No featured tracks yet. Check back soon." />
         @else
-            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($featuredTracks as $track)
-                    <x-track-card :track="$track" :pricing-region="$pricingRegion" />
+                    <x-featured-track-card :track="$track" :pricing-region="$pricingRegion" />
                 @endforeach
             </div>
         @endif
