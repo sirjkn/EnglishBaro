@@ -59,7 +59,7 @@ class LevelAccessService
 
         $lessonIdsByLevel = Level::query()
             ->where('track_id', $track->id)
-            ->with('lessons:id,section_id')
+            ->with('lessons:lessons.id,lessons.section_id')
             ->get()
             ->mapWithKeys(fn (Level $level) => [$level->number => $level->lessons->pluck('id')]);
 
