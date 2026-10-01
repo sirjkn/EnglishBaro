@@ -47,6 +47,7 @@ class LearningController extends Controller
             'level' => $level,
             'completedLessonIds' => $completedLessonIds,
             'checkedAssessmentIds' => $checkedAssessmentIds,
+            'levelStatuses' => $levelAccess->statusesFor($enrollment, $track),
         ]);
     }
 
