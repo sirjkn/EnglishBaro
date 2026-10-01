@@ -46,7 +46,10 @@ class TrackController extends Controller
 
         $track->load('thumbnail');
 
-        $levels = $track->levels()->with('sections')->paginate(20)->withQueryString();
+        // All of a track's levels are fetched in one go (never more than a few
+        // hundred) so the landing page can reveal them client-side in batches
+        // of 10, with no page-number pagination or extra requests.
+        $levels = $track->levels()->with('sections')->get();
 
         $isEnrolled = auth()->check()
             && $track->enrollments()->where('user_id', auth()->id())->where('status', 'active')->exists();

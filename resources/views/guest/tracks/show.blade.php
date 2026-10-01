@@ -42,12 +42,12 @@
                     @endif
                     <dl class="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                         <div class="flex justify-between"><dt>Track</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $track->track_code }}</dd></div>
-                        <div class="flex justify-between"><dt>Levels</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $levels->total() }}</dd></div>
+                        <div class="flex justify-between"><dt>Levels</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $levels->count() }}</dd></div>
                         <div class="flex justify-between"><dt>Lessons</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $totalLessons }}</dd></div>
                         <div class="flex justify-between"><dt>Subscription</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $track->subscription_days }} days</dd></div>
                     </dl>
                     <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                        One payment unlocks all {{ $levels->total() }} levels of this track. The next track is purchased separately.
+                        One payment unlocks all {{ $levels->count() }} levels of this track. The next track is purchased separately.
                     </p>
 
                     <div class="mt-6 space-y-2">
@@ -138,7 +138,7 @@
         </section>
 
         {{-- Levels --}}
-        <section id="levels" class="scroll-mt-16 border-b border-gray-200 py-12 dark:border-gray-800" x-data="{ expanded: false }">
+        <section id="levels" class="scroll-mt-16 border-b border-gray-200 py-12 dark:border-gray-800" x-data="{ visible: 6, total: {{ $levels->count() }}, step: 10 }">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Levels</h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
                 Each level contains Grammar, Listening, Speaking and Reading sections.
@@ -148,7 +148,7 @@
                 @forelse ($levels as $index => $level)
                     <a
                         href="{{ route('tracks.level', [$track, $level]) }}"
-                        @if ($index >= 6) x-show="expanded" x-cloak @endif
+                        @if ($index >= 6) x-show="{{ $index }} < visible" x-cloak @endif
                         class="rounded-lg border border-gray-200 p-4 transition hover:border-indigo-400 dark:border-gray-700"
                     >
                         <p class="font-medium text-gray-900 dark:text-white">{{ $level->title }}</p>
@@ -162,18 +162,20 @@
             </div>
 
             @if ($levels->count() > 6)
-                <button
-                    type="button"
-                    @click="expanded = !expanded"
-                    class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
-                >
-                    <span x-text="expanded ? 'Show less' : 'Show more levels'"></span>
-                    <svg class="h-4 w-4 transition-transform" :class="{ 'rotate-180': expanded }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                </button>
-            @endif
-
-            @if ($levels->hasPages())
-                <div class="mt-6">{{ $levels->links() }}</div>
+                <div class="mt-5 flex items-center gap-4">
+                    <button
+                        type="button"
+                        x-show="visible < total"
+                        @click="visible = Math.min(visible + step, total)"
+                        class="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+                    >
+                        Show more levels
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                    </button>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        Showing <span x-text="Math.min(visible, total)"></span> of {{ $levels->count() }} levels
+                    </p>
+                </div>
             @endif
         </section>
 
