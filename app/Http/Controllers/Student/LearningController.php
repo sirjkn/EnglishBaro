@@ -112,10 +112,25 @@ class LearningController extends Controller
             'lesson' => $lesson,
             'sections' => $level->sections()->with(['lessons' => fn ($query) => $query->orderBy('order'), 'activity'])->get(),
             'completedLessonIds' => $completedLessonIds,
+            'levelStatuses' => $levelAccess->statusesFor($enrollment, $track),
+            'nextTrack' => $this->nextTrackAfter($track),
             'previousStep' => $this->stepLink($track, $level, $previousNode, 'Previous'),
             'nextStep' => $this->stepLink($track, $level, $nextNode, $nextNode?->type === 'activity' ? 'Activity Questions' : 'Next'),
             'isCompleted' => $progress->status === 'completed',
         ]);
+    }
+
+    /**
+     * The next track a student would move on to after this one, shown as an
+     * upsell in the learning page's sidebar.
+     */
+    private function nextTrackAfter(Track $track): ?Track
+    {
+        return Track::query()
+            ->where('status', 'published')
+            ->where('order', '>', $track->order)
+            ->orderBy('order')
+            ->first();
     }
 
     public function sectionActivity(Track $track, Level $level, Section $section, LevelAccessService $levelAccess, LevelSequenceService $sequence): View|RedirectResponse

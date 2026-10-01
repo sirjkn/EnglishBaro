@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Enrollment;
 use App\Models\Level;
 use App\Models\LessonProgress;
+use App\Models\Track;
 
 class LevelAccessService
 {
@@ -43,6 +44,48 @@ class LevelAccessService
     public function nearestCheckpointNumber(int $number): int
     {
         return $number === 1 ? 1 : intdiv($number - 1, 10) * 10;
+    }
+
+    /**
+     * Unlocked/completed status for every level in the track, keyed by level
+     * number — computed in a handful of queries instead of per-level ones,
+     * since a track can hold up to 100 levels.
+     *
+     * @return array<int, array{level: Level, unlocked: bool, completed: bool}>
+     */
+    public function statusesFor(Enrollment $enrollment, Track $track): array
+    {
+        $levels = $track->levels()->get()->keyBy('number');
+
+        $lessonIdsByLevel = Level::query()
+            ->where('track_id', $track->id)
+            ->with('lessons:id,section_id')
+            ->get()
+            ->mapWithKeys(fn (Level $level) => [$level->number => $level->lessons->pluck('id')]);
+
+        $completedLessonIds = LessonProgress::query()
+            ->where('enrollment_id', $enrollment->id)
+            ->where('status', 'completed')
+            ->pluck('lesson_id');
+
+        $statuses = [];
+        $previousCompleted = true;
+
+        foreach ($levels as $number => $level) {
+            $lessonIds = $lessonIdsByLevel->get($number, collect());
+            $completed = $lessonIds->isNotEmpty() && $lessonIds->diff($completedLessonIds)->isEmpty();
+            $unlocked = $this->isCheckpoint($number) || $previousCompleted;
+
+            $statuses[$number] = [
+                'level' => $level,
+                'unlocked' => $unlocked,
+                'completed' => $completed,
+            ];
+
+            $previousCompleted = $completed;
+        }
+
+        return $statuses;
     }
 
     private function isLevelCompleted(Enrollment $enrollment, Level $level): bool
