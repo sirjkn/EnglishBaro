@@ -1,64 +1,83 @@
 <x-layouts.site :title="'Home'">
-    {{-- Hero --}}
+    {{-- Hero: full-bleed, auto-advancing "most popular" showcase --}}
     <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 px-6 py-10 shadow-xl sm:px-10 sm:py-14 lg:px-14">
-            <div class="pointer-events-none absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 15% 20%, white 0, transparent 35%), radial-gradient(circle at 85% 15%, white 0, transparent 30%), radial-gradient(circle at 75% 85%, white 0, transparent 35%);"></div>
+        @if ($popularTracks->isNotEmpty())
+            <div
+                x-data="{
+                    active: 0,
+                    count: {{ $popularTracks->count() }},
+                    timer: null,
+                    reduceMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+                    start() {
+                        if (this.reduceMotion) return;
+                        this.stop();
+                        this.timer = setInterval(() => { this.active = (this.active + 1) % this.count; }, 5000);
+                    },
+                    stop() { clearInterval(this.timer); },
+                }"
+                x-init="start()"
+                @mouseenter="stop()"
+                @mouseleave="start()"
+                class="relative overflow-hidden rounded-3xl shadow-xl"
+            >
+                <div class="relative h-[420px] sm:h-[460px] lg:h-[520px]">
+                    @foreach ($popularTracks as $index => $track)
+                        <div
+                            x-show="active === {{ $index }}"
+                            x-transition:enter="transition ease-out duration-700"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-500"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="absolute inset-0"
+                        >
+                            @if ($track->thumbnail?->resolved_url)
+                                <img src="{{ $track->thumbnail->resolved_url }}" alt="{{ $track->name }}" class="h-full w-full object-cover">
+                            @else
+                                <div class="h-full w-full bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900"></div>
+                            @endif
 
-            <div class="relative max-w-2xl">
-                <h1 class="text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-5xl">
-                    Master English with a personal online tutor
-                </h1>
+                            <div class="absolute inset-0 bg-gradient-to-t from-indigo-950/90 via-indigo-950/30 to-transparent"></div>
 
-                <p class="mt-4 max-w-xl text-base leading-7 text-indigo-100 sm:text-lg">
-                    Video lessons, downloadable eBooks, and real assessments — everything you need to speak, write,
-                    and think confidently in English, at your own pace.
-                </p>
-
-                <div class="mt-8 border-t border-white/20 pt-6">
-                    <div class="flex flex-wrap gap-x-10 gap-y-4">
-                        <div>
-                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Tracks</p>
-                            <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
-                                <x-icons.book-open class="h-4 w-4 text-amber-300" />
-                                {{ $stats['tracks'] }}
-                            </p>
+                            <div class="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
+                                <span class="inline-flex items-center rounded-full bg-amber-400 px-3 py-1 text-xs font-bold uppercase tracking-wide text-indigo-950">
+                                    Most Popular
+                                </span>
+                                <h1 class="mt-4 max-w-xl text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-5xl">
+                                    {{ $track->name }}
+                                </h1>
+                                <p class="mt-2 max-w-xl text-sm leading-6 text-indigo-100 sm:text-base">
+                                    {{ Str::limit(strip_tags($track->description), 130) }}
+                                </p>
+                                <div class="mt-6 flex flex-wrap items-center gap-4">
+                                    <a href="{{ route('tracks.show', $track) }}" class="flex items-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-sm font-semibold text-indigo-950 shadow-sm hover:bg-amber-300">
+                                        Explore {{ $track->track_code }}
+                                        <x-icons.arrow-right class="h-4 w-4" />
+                                    </a>
+                                    <span class="text-sm font-semibold text-white">
+                                        {{ $track->currency }} {{ number_format($track->priceForRegion($pricingRegion), 2) }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Levels</p>
-                            <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
-                                <x-icons.map class="h-4 w-4 text-amber-300" />
-                                {{ $stats['levels'] }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Video Lessons</p>
-                            <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
-                                <x-icons.play-circle class="h-4 w-4 text-amber-300" />
-                                {{ $stats['lessons'] }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium uppercase tracking-wide text-indigo-200">Track Access</p>
-                            <p class="mt-1 flex items-center gap-1.5 text-lg font-bold text-white">
-                                <x-icons.medal class="h-4 w-4 text-amber-300" />
-                                {{ $stats['access_days'] }} Days
-                            </p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
 
-                <div class="mt-8 flex flex-wrap gap-3">
-                    <a href="{{ route('tracks.index') }}" class="flex items-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-sm font-semibold text-indigo-950 shadow-sm hover:bg-amber-300">
-                        Explore Tracks
-                        <x-icons.arrow-right class="h-4 w-4" />
-                    </a>
-                    <a href="{{ route('register.create') }}" class="flex items-center gap-2 rounded-lg border border-white/30 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur hover:bg-white/10">
-                        <x-icons.map class="h-4 w-4" />
-                        Join EnglishBaro
-                    </a>
+                {{-- Dot navigation --}}
+                <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2 sm:bottom-6">
+                    @foreach ($popularTracks as $index => $track)
+                        <button
+                            type="button"
+                            @click="active = {{ $index }}; stop(); start()"
+                            :class="active === {{ $index }} ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/70'"
+                            class="h-2 rounded-full transition-all"
+                            aria-label="Show {{ $track->name }}"
+                        ></button>
+                    @endforeach
                 </div>
             </div>
-        </div>
+        @endif
     </section>
 
     {{-- Featured tracks --}}

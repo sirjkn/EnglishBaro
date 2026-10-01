@@ -22,6 +22,18 @@ class HomeController extends Controller
             ->orderBy('order')
             ->get();
 
+        // "Most popular" by actual enrollment count. With most tracks tied at
+        // zero enrollments today, this just falls back to catalog order — it
+        // will naturally reorder itself as real enrollments come in.
+        $popularTracks = Track::query()
+            ->where('status', 'published')
+            ->with('thumbnail')
+            ->withCount('enrollments')
+            ->orderByDesc('enrollments_count')
+            ->orderBy('order')
+            ->take(4)
+            ->get();
+
         $testimonials = Testimonial::query()
             ->where('is_published', true)
             ->with('avatar')
@@ -38,6 +50,7 @@ class HomeController extends Controller
 
         return view('guest.home', [
             'featuredTracks' => $featuredTracks,
+            'popularTracks' => $popularTracks,
             'testimonials' => $testimonials,
             'stats' => $stats,
             'pricingRegion' => $regionPricingService->resolveRegion($request),
