@@ -33,32 +33,34 @@
             {{ $slot }}
         </main>
 
-        <footer class="mt-24 border-t border-gray-200 dark:border-gray-800">
+        <footer class="mt-24 bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                     <div>
-                        <div class="text-lg font-bold text-indigo-600 dark:text-indigo-400">EnglishBaro</div>
-                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        <div class="text-lg font-bold text-white">EnglishBaro</div>
+                        <p class="mt-2 text-sm text-indigo-200">
                             {{ \App\Models\CompanySetting::get('footer_text', 'Learn English online with video lessons, eBooks, and assessments.') }}
                         </p>
                     </div>
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Links</h3>
-                        <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                            <li><a href="{{ route('home') }}" class="hover:text-indigo-600">Home</a></li>
-                            <li><a href="{{ route('tracks.index') }}" class="hover:text-indigo-600">Tracks</a></li>
-                            <li><a href="{{ route('contact') }}" class="hover:text-indigo-600">Contact</a></li>
+                        <h3 class="text-sm font-semibold text-white">Links</h3>
+                        <ul class="mt-3 space-y-2 text-sm text-indigo-200">
+                            <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
+                            <li><a href="{{ route('tracks.index') }}" class="hover:text-white">Tracks</a></li>
+                            <li><a href="{{ route('contact') }}" class="hover:text-white">Contact</a></li>
+                            <li><a href="{{ route('privacy') }}" class="hover:text-white">Data Privacy</a></li>
+                            <li><a href="{{ route('terms') }}" class="hover:text-white">Terms &amp; Conditions</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Contact</h3>
-                        <ul class="mt-3 space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                        <h3 class="text-sm font-semibold text-white">Contact</h3>
+                        <ul class="mt-3 space-y-2 text-sm text-indigo-200">
                             <li>{{ \App\Models\CompanySetting::get('support_email', 'support@englishbaro.test') }}</li>
                             <li>{{ \App\Models\CompanySetting::get('phone', '+000 000 0000') }}</li>
                         </ul>
                     </div>
                 </div>
-                <p class="mt-8 text-xs text-gray-400 dark:text-gray-500">
+                <p class="mt-8 text-xs text-indigo-300">
                     {{ \App\Models\CompanySetting::get('copyright', '© '.date('Y').' EnglishBaro. All rights reserved.') }}
                 </p>
             </div>

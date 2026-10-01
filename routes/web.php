@@ -16,6 +16,9 @@ Route::get('tracks/{track}/levels/{level}', [TrackController::class, 'level'])->
 Route::get('contact', [ContactController::class, 'create'])->name('contact');
 Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
 
+Route::view('privacy-policy', 'guest.privacy')->name('privacy');
+Route::view('terms-of-service', 'guest.terms')->name('terms');
+
 Route::get('dashboard', DashboardRedirectController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
