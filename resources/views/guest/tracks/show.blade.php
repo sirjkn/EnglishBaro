@@ -129,11 +129,41 @@
                 @endif
             </div>
 
-            <div class="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800">
-                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Certificate</h3>
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                    Complete every level in this track to earn a verifiable EnglishBaro certificate.
-                </p>
+            <div class="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-700 dark:bg-gray-800 sm:p-8">
+                {{-- Certificate mockup --}}
+                <div class="mx-auto w-full max-w-xl">
+                    <svg viewBox="0 0 400 280" class="w-full rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0" y="0" width="400" height="280" rx="8" fill="currentColor" class="text-white dark:text-gray-900" />
+                        <rect x="10" y="10" width="380" height="260" rx="4" fill="none" stroke="#6366f1" stroke-width="2" />
+                        <rect x="16" y="16" width="368" height="248" rx="3" fill="none" stroke="#c7d2fe" stroke-width="1" />
+
+                        <circle cx="200" cy="48" r="14" fill="#6366f1" />
+                        <path d="M194 48l4 4 8-8" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+
+                        <text x="200" y="84" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#4338ca" letter-spacing="2">CERTIFICATE OF COMPLETION</text>
+                        <line x1="140" y1="94" x2="260" y2="94" stroke="#c7d2fe" stroke-width="1" />
+
+                        <text x="200" y="118" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#9ca3af">THIS CERTIFIES THAT</text>
+                        <text x="200" y="142" text-anchor="middle" font-family="'Brush Script MT', cursive" font-size="20" fill="#1f2937">Jane Student</text>
+                        <line x1="110" y1="150" x2="290" y2="150" stroke="#e5e7eb" stroke-width="1" />
+
+                        <text x="200" y="172" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#9ca3af">has successfully completed the</text>
+                        <text x="200" y="190" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="bold" fill="#312e81">{{ $track->title }}</text>
+
+                        <line x1="40" y1="232" x2="130" y2="232" stroke="#9ca3af" stroke-width="1" />
+                        <text x="85" y="244" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#9ca3af">Date</text>
+
+                        <line x1="270" y1="232" x2="360" y2="232" stroke="#9ca3af" stroke-width="1" />
+                        <text x="315" y="244" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#9ca3af">EnglishBaro</text>
+                    </svg>
+                </div>
+
+                <div class="mx-auto mt-6 max-w-xl text-center">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Certificate</h3>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                        Complete every level in this track to earn a verifiable EnglishBaro certificate.
+                    </p>
+                </div>
             </div>
         </section>
 
