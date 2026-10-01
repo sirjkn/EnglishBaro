@@ -20,13 +20,29 @@
     <body class="font-sans text-gray-900 antialiased bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
         <div class="flex min-h-screen">
             {{-- Sidebar --}}
-            <aside class="hidden w-64 shrink-0 border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800 md:block">
-                <div class="flex h-16 items-center border-b border-gray-200 px-6 dark:border-gray-800">
+            <aside
+                x-data="{ collapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
+                x-init="$watch('collapsed', value => localStorage.setItem('sidebarCollapsed', value))"
+                :class="collapsed ? 'w-20' : 'w-64'"
+                class="relative hidden shrink-0 border-r border-gray-200 bg-white transition-all duration-200 dark:border-gray-800 dark:bg-gray-800 md:block"
+            >
+                <button
+                    type="button"
+                    @click="collapsed = !collapsed"
+                    :aria-expanded="(!collapsed).toString()"
+                    aria-label="Toggle sidebar"
+                    class="absolute -right-3 top-6 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-sm hover:bg-gray-50 hover:text-indigo-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+                >
+                    <x-icons.chevron-left class="h-3.5 w-3.5 transition-transform duration-200" x-bind:class="collapsed ? 'rotate-180' : ''" />
+                </button>
+
+                <div class="flex h-16 items-center border-b border-gray-200 px-6 dark:border-gray-800" :class="collapsed ? 'justify-center px-0' : ''">
                     <a href="{{ route('student.dashboard') }}">
-                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-9 w-auto">
+                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-9 w-auto" x-show="!collapsed">
+                        <img src="{{ asset('images/favicon-32x32.png') }}" alt="EnglishBaro" class="h-8 w-8" x-show="collapsed" x-cloak>
                     </a>
                 </div>
-                <nav class="space-y-4 overflow-y-auto p-4" style="max-height: calc(100vh - 4rem)">
+                <nav class="space-y-4 overflow-y-auto overflow-x-hidden p-4" style="max-height: calc(100vh - 4rem)">
                     @php
                         $studentNavGroups = [
                             [
@@ -57,14 +73,16 @@
                     @foreach ($studentNavGroups as $group)
                         <div>
                             @if ($group['label'])
-                                <p class="px-3 pb-1 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ $group['label'] }}</p>
+                                <p class="px-3 pb-1 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400" x-show="!collapsed" x-cloak>{{ $group['label'] }}</p>
                             @endif
                             <div class="space-y-1">
                                 @foreach ($group['items'] as $item)
                                     <a href="{{ route($item['route']) }}"
+                                       :title="collapsed ? '{{ $item['label'] }}' : ''"
+                                       :class="collapsed ? 'justify-center px-0' : 'justify-start'"
                                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700' }}">
-                                        <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
-                                        {{ $item['label'] }}
+                                        <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4 shrink-0" />
+                                        <span x-show="!collapsed" x-cloak>{{ $item['label'] }}</span>
                                     </a>
                                 @endforeach
                             </div>
@@ -72,16 +90,22 @@
                     @endforeach
 
                     <div class="border-t border-gray-200 pt-3 dark:border-gray-700">
-                        <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
-                            <x-icons.home class="h-4 w-4" />
-                            Back to Site
+                        <a href="{{ route('home') }}"
+                           :title="collapsed ? 'Back to Site' : ''"
+                           :class="collapsed ? 'justify-center px-0' : 'justify-start'"
+                           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                            <x-icons.home class="h-4 w-4 shrink-0" />
+                            <span x-show="!collapsed" x-cloak>Back to Site</span>
                         </a>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
-                                <x-icons.logout class="h-4 w-4" />
-                                Log Out
+                            <button type="submit"
+                                    :title="collapsed ? 'Log Out' : ''"
+                                    :class="collapsed ? 'justify-center px-0' : 'justify-start'"
+                                    class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                                <x-icons.logout class="h-4 w-4 shrink-0" />
+                                <span x-show="!collapsed" x-cloak>Log Out</span>
                             </button>
                         </form>
                     </div>
