@@ -32,7 +32,7 @@
         @if ($tracks->isEmpty())
             <x-empty-state class="mt-10" message="No tracks match your filters." />
         @else
-            <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($tracks as $track)
                     <x-track-card :track="$track" :pricing-region="$pricingRegion" />
                 @endforeach
