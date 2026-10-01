@@ -99,22 +99,69 @@
     </section>
 
     {{-- How it works --}}
-    <section class="bg-gray-50 dark:bg-gray-800/50 py-16">
+    <section class="bg-gray-50 py-16 dark:bg-gray-800/50">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 class="text-center text-2xl font-bold text-gray-900 dark:text-white">How It Works</h2>
+            <div class="flex items-center justify-center gap-4">
+                <span class="hidden h-px w-12 bg-indigo-200 dark:bg-indigo-800 sm:block"></span>
+                <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">How It Works</h2>
+                <span class="hidden h-px w-12 bg-indigo-200 dark:bg-indigo-800 sm:block"></span>
+            </div>
+            <p class="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
+                Your learning journey, simplified in 5 easy steps.
+            </p>
+
             <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
                 @foreach ([
-                    ['icon' => '🔍', 'title' => 'Identify a Track'],
-                    ['icon' => '👤', 'title' => 'Create an Account'],
-                    ['icon' => '💳', 'title' => 'Pay For Your '.$stats['access_days'].' Days Subscription'],
-                    ['icon' => '🎓', 'title' => 'Start Learning'],
-                    ['icon' => '🏆', 'title' => 'Earn a Certificate'],
+                    [
+                        'icon' => 'search',
+                        'title' => 'Identify a Track',
+                        'description' => 'Explore our tracks and choose the one that matches your level and goals.',
+                        'image' => asset('images/how-it-works/identify-track.png'),
+                    ],
+                    [
+                        'icon' => 'user-plus',
+                        'title' => 'Create an Account',
+                        'description' => 'Sign up in minutes and get instant access to your personal learning dashboard.',
+                        'image' => asset('images/how-it-works/create-account.png'),
+                    ],
+                    [
+                        'icon' => 'credit-card',
+                        'title' => 'Pay For Your '.$stats['access_days'].' Days Subscription',
+                        'description' => 'Choose your preferred payment method and activate your '.$stats['access_days'].'-day access.',
+                        'image' => asset('images/how-it-works/pay-subscription.png'),
+                    ],
+                    [
+                        'icon' => 'play-circle',
+                        'title' => 'Start Learning',
+                        'description' => 'Dive into video lessons, eBooks and assessments at your own pace.',
+                        'image' => asset('images/how-it-works/start-learning.png'),
+                    ],
+                    [
+                        'icon' => 'medal',
+                        'title' => 'Earn a Certificate',
+                        'description' => 'Complete every level in your track and receive a verifiable certificate.',
+                        'image' => asset('images/how-it-works/earn-certificate.png'),
+                    ],
                 ] as $index => $step)
-                    <div class="text-center">
-                        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-2xl text-white">
-                            {{ $step['icon'] }}
+                    <div class="flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg shadow-gray-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-gray-700 dark:bg-gray-800 dark:shadow-black/30">
+                        <div class="p-5">
+                            <div class="flex items-center gap-2">
+                                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                                    {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                                </span>
+                                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300">
+                                    <x-dynamic-component :component="'icons.' . $step['icon']" class="h-4 w-4" />
+                                </span>
+                            </div>
+                            <p class="mt-4 text-base font-bold text-gray-900 dark:text-white">{{ $step['title'] }}</p>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ $step['description'] }}</p>
                         </div>
-                        <p class="mt-3 text-sm font-medium text-gray-900 dark:text-white">{{ $index + 1 }}. {{ $step['title'] }}</p>
+
+                        <div class="mt-auto p-3 pt-0">
+                            <div class="aspect-[4/3] w-full overflow-hidden rounded-xl bg-indigo-50 dark:bg-indigo-950">
+                                <img src="{{ $step['image'] }}" alt="{{ $step['title'] }}" class="h-full w-full object-cover">
+                            </div>
+                        </div>
                     </div>
                 @endforeach
             </div>
