@@ -61,35 +61,6 @@
         </div>
     </section>
 
-    {{-- Feature section --}}
-    <section class="bg-gray-50 dark:bg-gray-800/50 py-16">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-                <div class="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-sm">
-                    <div class="text-3xl">🎥</div>
-                    <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Video Lessons</h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        Look over the shoulder of your personal tutor - learn visually.
-                    </p>
-                </div>
-                <div class="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-sm">
-                    <div class="text-3xl">📖</div>
-                    <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Download eBooks</h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        For deeper learning download e-books from our resource library.
-                    </p>
-                </div>
-                <div class="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-sm">
-                    <div class="text-3xl">📝</div>
-                    <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Online Assessments</h3>
-                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                        Take tests and quizzes from our huge database of past papers.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     {{-- Featured tracks --}}
     <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
