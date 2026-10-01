@@ -153,4 +153,71 @@
             </div>
         @endif
     </section>
+
+    {{-- FAQ --}}
+    <section class="bg-gray-50 py-16 dark:bg-gray-800/50">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <h2 class="text-center text-2xl font-bold text-gray-900 dark:text-white">Frequently Asked Questions</h2>
+            <p class="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
+                Can't find what you're looking for? <a href="{{ route('contact') }}" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">Contact us</a>.
+            </p>
+
+            <div class="mt-10 space-y-3">
+                @foreach ([
+                    [
+                        'q' => 'How do tracks and levels work?',
+                        'a' => 'Each track (A1 through C2, plus our language tracks) is broken into 100 levels, and every level covers Grammar, Listening, Speaking and Reading. You move through levels in order, one lesson at a time.',
+                    ],
+                    [
+                        'q' => 'Which track should I start with?',
+                        'a' => 'New students take a short placement test after signing up, and we automatically enroll you into the right starting track based on your result.',
+                    ],
+                    [
+                        'q' => 'What does one payment unlock?',
+                        'a' => 'A single payment unlocks every level of that specific track for the subscription period shown on the track page (120 days by default). Other tracks are purchased separately.',
+                    ],
+                    [
+                        'q' => 'What happens when my subscription ends?',
+                        'a' => "You'll keep any certificates you've already earned, but you'll need to renew to continue accessing new lessons in that track.",
+                    ],
+                    [
+                        'q' => 'Do I get a certificate?',
+                        'a' => 'Yes — completing every level in a track earns you a verifiable EnglishBaro certificate for that track.',
+                    ],
+                    [
+                        'q' => 'Can I access EnglishBaro on my phone?',
+                        'a' => 'Yes, the platform works in any modern mobile browser, so you can watch lessons, read eBooks and take assessments from your phone or tablet.',
+                    ],
+                    [
+                        'q' => 'How many times can I log in?',
+                        'a' => 'Student accounts are limited to 3 logins per month to help keep accounts personal and secure. This resets automatically each month.',
+                    ],
+                ] as $index => $faq)
+                    <div
+                        x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }"
+                        class="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+                    >
+                        <button
+                            type="button"
+                            @click="open = !open"
+                            class="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                        >
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $faq['q'] }}</span>
+                            <svg class="h-4 w-4 flex-none text-gray-400 transition-transform" :class="{ 'rotate-180': open }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                        </button>
+                        <div
+                            x-show="open"
+                            x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            class="px-5 pb-4 text-sm text-gray-600 dark:text-gray-300"
+                        >
+                            {{ $faq['a'] }}
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 </x-layouts.site>
