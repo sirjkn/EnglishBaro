@@ -259,8 +259,7 @@
         <div class="order-3">
             @if ($nextTrack)
                 <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 lg:sticky lg:top-24">
-                    <p class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
-                        <x-icons.bolt class="h-3.5 w-3.5" />
+                    <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
                         Next Course
                     </p>
 
