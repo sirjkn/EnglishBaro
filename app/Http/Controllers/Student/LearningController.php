@@ -35,6 +35,11 @@ class LearningController extends Controller
 
         $level->load(['sections.lessons.video', 'sections.activity']);
 
+        // The page shows every level of the track in one scroll, so every
+        // level's sections/lessons/activity are loaded up front rather than
+        // one at a time, to avoid N+1 queries while rendering the list.
+        $allLevels = $track->levels()->with(['sections.lessons.video', 'sections.activity'])->get();
+
         $completedLessonIds = LessonProgress::query()
             ->where('enrollment_id', $enrollment->id)
             ->where('status', 'completed')
@@ -51,26 +56,28 @@ class LearningController extends Controller
         return view('student.level', [
             'track' => $track,
             'level' => $level,
+            'allLevels' => $allLevels,
             'completedLessonIds' => $completedLessonIds,
             'checkedAssessmentIds' => $checkedAssessmentIds,
             'levelStatuses' => $levelAccess->statusesFor($enrollment, $track),
             'resumeNode' => $resumeNode,
             'resumeStep' => $this->stepLink($track, $level, $resumeNode, 'Resume'),
-            'stats' => $this->levelStats($level, $completedLessonIds, $checkedAssessmentIds),
+            'stats' => $this->trackStats($allLevels, $completedLessonIds, $checkedAssessmentIds),
             'nextTrack' => $this->nextTrackAfter($track),
         ]);
     }
 
     /**
-     * Header stats for the level page: video count, remaining watch time
-     * across incomplete lessons, and how many of this level's Activity
-     * Questions have been submitted.
+     * Header stats for the course: total video count, remaining watch time
+     * across every incomplete lesson in the track, and how many Activity
+     * Questions have been submitted track-wide.
      *
+     * @param  \Illuminate\Support\Collection<int, Level>  $allLevels
      * @return array{videoCount: int, timeLeft: string, examsDone: int, examsTotal: int}
      */
-    private function levelStats(Level $level, $completedLessonIds, $checkedAssessmentIds): array
+    private function trackStats($allLevels, $completedLessonIds, $checkedAssessmentIds): array
     {
-        $lessons = $level->sections->flatMap->lessons;
+        $lessons = $allLevels->flatMap->sections->flatMap->lessons;
 
         $videoCount = $lessons->filter(fn ($lesson) => $lesson->video_media_id !== null)->count();
 
@@ -78,7 +85,7 @@ class LearningController extends Controller
             ->reject(fn ($lesson) => $completedLessonIds->contains($lesson->id))
             ->sum('duration_seconds');
 
-        $assessments = $level->sections->pluck('activity')->filter();
+        $assessments = $allLevels->flatMap->sections->pluck('activity')->filter();
 
         return [
             'videoCount' => $videoCount,

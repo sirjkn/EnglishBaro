@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Level;
 use App\Models\Track;
+use App\Models\TrackProgress;
 use App\Services\RegionPricingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class TrackController extends Controller
@@ -37,7 +39,29 @@ class TrackController extends Controller
             'tracks' => $query->get(),
             'filters' => $request->only(['search', 'sort']),
             'pricingRegion' => $regionPricingService->resolveRegion($request),
+            'progressByTrackId' => $this->progressByTrackId(),
         ]);
+    }
+
+    /**
+     * The signed-in student's progress on each track they're actively
+     * enrolled in, shown as a progress bar on the track listing so they can
+     * see where they stand before clicking back into a course.
+     *
+     * @return array<int, TrackProgress>
+     */
+    private function progressByTrackId(): array
+    {
+        if (! Auth::check()) {
+            return [];
+        }
+
+        return TrackProgress::query()
+            ->whereHas('enrollment', fn ($query) => $query->where('status', 'active'))
+            ->where('user_id', Auth::id())
+            ->get()
+            ->keyBy('track_id')
+            ->all();
     }
 
     public function show(Track $track, Request $request, RegionPricingService $regionPricingService): View

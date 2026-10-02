@@ -34,7 +34,7 @@
         @else
             <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($tracks as $track)
-                    <x-track-card :track="$track" :pricing-region="$pricingRegion" />
+                    <x-track-card :track="$track" :pricing-region="$pricingRegion" :progress="$progressByTrackId[$track->id] ?? null" />
                 @endforeach
             </div>
         @endif

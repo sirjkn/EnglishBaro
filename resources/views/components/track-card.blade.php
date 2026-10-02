@@ -1,4 +1,4 @@
-@props(['track', 'pricingRegion' => null])
+@props(['track', 'pricingRegion' => null, 'progress' => null])
 
 @php
     $displayPrice = $track->priceForRegion($pricingRegion);
@@ -22,6 +22,21 @@
         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Track {{ $track->track_code }} &middot; {{ $track->levels_count ?? $track->levels()->count() }} levels &middot; {{ $track->subscription_days }} days access
         </p>
+
+        @if ($progress)
+            <div class="mt-4">
+                <div class="flex items-center justify-between text-xs font-medium text-gray-500 dark:text-gray-400">
+                    <span>{{ $progress->isComplete() ? 'Completed' : 'Your progress' }}</span>
+                    <span class="text-indigo-600 dark:text-indigo-400">{{ (int) $progress->percent_complete }}%</span>
+                </div>
+                <div class="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
+                    <div class="h-full rounded-full bg-indigo-600" style="width: {{ (float) $progress->percent_complete }}%"></div>
+                </div>
+                <p class="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
+                    Level {{ $progress->levels_completed }} of {{ $progress->total_levels }} complete
+                </p>
+            </div>
+        @endif
 
         <div class="mt-auto flex items-center justify-between pt-5">
             <span class="text-sm font-bold text-gray-900 dark:text-white">
