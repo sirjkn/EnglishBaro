@@ -23,7 +23,7 @@ use Illuminate\View\View;
 
 class LearningController extends Controller
 {
-    public function level(Track $track, Level $level, LevelAccessService $levelAccess): View|RedirectResponse
+    public function level(Track $track, Level $level, LevelAccessService $levelAccess, LevelSequenceService $sequence): View|RedirectResponse
     {
         $this->authorize('learn', [$track, $this->currentRegion()]);
 
@@ -42,13 +42,62 @@ class LearningController extends Controller
 
         $checkedAssessmentIds = $this->checkedAssessmentIds(Auth::user());
 
+        $nodes = $sequence->nodes($level);
+
+        $resumeNode = $nodes->first(fn ($node) => $node->type === 'lesson'
+            ? ! $completedLessonIds->contains($node->lesson->id)
+            : ! $checkedAssessmentIds->contains($node->assessment->id));
+
         return view('student.level', [
             'track' => $track,
             'level' => $level,
             'completedLessonIds' => $completedLessonIds,
             'checkedAssessmentIds' => $checkedAssessmentIds,
             'levelStatuses' => $levelAccess->statusesFor($enrollment, $track),
+            'resumeNode' => $resumeNode,
+            'resumeStep' => $this->stepLink($track, $level, $resumeNode, 'Resume'),
+            'stats' => $this->levelStats($level, $completedLessonIds, $checkedAssessmentIds),
+            'nextTrack' => $this->nextTrackAfter($track),
         ]);
+    }
+
+    /**
+     * Header stats for the level page: video count, remaining watch time
+     * across incomplete lessons, and how many of this level's Activity
+     * Questions have been submitted.
+     *
+     * @return array{videoCount: int, timeLeft: string, examsDone: int, examsTotal: int}
+     */
+    private function levelStats(Level $level, $completedLessonIds, $checkedAssessmentIds): array
+    {
+        $lessons = $level->sections->flatMap->lessons;
+
+        $videoCount = $lessons->filter(fn ($lesson) => $lesson->video_media_id !== null)->count();
+
+        $remainingSeconds = $lessons
+            ->reject(fn ($lesson) => $completedLessonIds->contains($lesson->id))
+            ->sum('duration_seconds');
+
+        $assessments = $level->sections->pluck('activity')->filter();
+
+        return [
+            'videoCount' => $videoCount,
+            'timeLeft' => $this->formatDuration((int) $remainingSeconds),
+            'examsDone' => $assessments->filter(fn ($assessment) => $checkedAssessmentIds->contains($assessment->id))->count(),
+            'examsTotal' => $assessments->count(),
+        ];
+    }
+
+    private function formatDuration(int $seconds): string
+    {
+        if ($seconds <= 0) {
+            return '0m';
+        }
+
+        $hours = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+
+        return trim(($hours > 0 ? "{$hours}h " : '')."{$minutes}m");
     }
 
     public function resume(Track $track, Level $level, LevelAccessService $levelAccess): RedirectResponse

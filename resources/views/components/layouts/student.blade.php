@@ -113,12 +113,74 @@
             </aside>
 
             <div class="flex-1">
+                @php
+                    $unreadNotifications = \App\Models\AppNotification::query()
+                        ->where('user_id', auth()->id())
+                        ->whereNull('read_at')
+                        ->count();
+                @endphp
+
+                {{-- Desktop top bar: search, notifications, account --}}
+                <header class="hidden items-center gap-4 border-b border-gray-200 bg-white px-6 py-3 dark:border-gray-800 dark:bg-gray-800 md:flex">
+                    <form action="{{ route('tracks.index') }}" method="GET" class="min-w-0 flex-1 max-w-xl">
+                        <div class="relative">
+                            <x-icons.search class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="search"
+                                name="search"
+                                placeholder="Search courses, lessons..."
+                                class="w-full rounded-full border-0 bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-500 dark:focus:bg-gray-900"
+                            >
+                        </div>
+                    </form>
+
+                    <div class="ml-auto flex flex-none items-center gap-4">
+                        <a href="{{ route('student.notifications') }}" class="relative text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
+                            <x-icons.bell class="h-5 w-5" />
+                            @if ($unreadNotifications > 0)
+                                <span class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-500 dark:border-gray-800"></span>
+                            @endif
+                        </a>
+
+                        <div x-data="{ open: false }" class="relative">
+                            <button type="button" @click="open = !open" @click.outside="open = false" class="flex items-center gap-1.5">
+                                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+                                    {{ \Illuminate\Support\Str::of(auth()->user()->name)->explode(' ')->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('') }}
+                                </span>
+                                <x-icons.chevron-left class="h-4 w-4 text-gray-400" x-bind:class="open ? 'rotate-90' : '-rotate-90'" />
+                            </button>
+
+                            <div x-show="open" x-cloak x-transition
+                                 class="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-gray-200 bg-white py-1.5 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                                <p class="truncate px-3 pb-1.5 pt-1 text-sm font-medium text-gray-900 dark:text-white">{{ auth()->user()->name }}</p>
+                                <div class="border-t border-gray-100 dark:border-gray-700"></div>
+                                <a href="{{ route('student.account') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                                    <x-icons.user-circle class="h-4 w-4" /> Account
+                                </a>
+                                <a href="{{ route('student.payments') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                                    <x-icons.credit-card class="h-4 w-4" /> Payments
+                                </a>
+                                <div class="border-t border-gray-100 dark:border-gray-700"></div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                                        <x-icons.logout class="h-4 w-4" /> Log Out
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
                 {{-- Mobile top bar --}}
                 <header class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
                     <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-8 w-auto">
                     <div class="flex items-center gap-3">
-                        <a href="{{ route('student.notifications') }}" class="text-gray-500 dark:text-gray-300">
+                        <a href="{{ route('student.notifications') }}" class="relative text-gray-500 dark:text-gray-300">
                             <x-icons.bell class="h-5 w-5" />
+                            @if ($unreadNotifications > 0)
+                                <span class="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-500 dark:border-gray-800"></span>
+                            @endif
                         </a>
                     </div>
                 </header>
