@@ -35,7 +35,7 @@
 
         <footer class="mt-24 bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                <div class="grid grid-cols-1 gap-8 md:grid-cols-5">
                     <div>
                         <div class="text-lg font-bold text-white">EnglishBaro</div>
                         <p class="mt-2 text-sm text-indigo-200">
@@ -46,8 +46,13 @@
                         <h3 class="text-sm font-semibold text-white">Links</h3>
                         <ul class="mt-3 space-y-2 text-sm text-indigo-200">
                             <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
-                            <li><a href="{{ route('tracks.index') }}" class="hover:text-white">Tracks</a></li>
+                            <li><a href="{{ route('tracks.index') }}" class="hover:text-white">Courses</a></li>
                             <li><a href="{{ route('contact') }}" class="hover:text-white">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-white">Legal</h3>
+                        <ul class="mt-3 space-y-2 text-sm text-indigo-200">
                             <li><a href="{{ route('privacy') }}" class="hover:text-white">Data Privacy</a></li>
                             <li><a href="{{ route('terms') }}" class="hover:text-white">Terms &amp; Conditions</a></li>
                         </ul>
@@ -57,6 +62,12 @@
                         <ul class="mt-3 space-y-2 text-sm text-indigo-200">
                             <li>{{ \App\Models\CompanySetting::get('support_email', 'support@englishbaro.test') }}</li>
                             <li>{{ \App\Models\CompanySetting::get('phone', '+000 000 0000') }}</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-white">FAQ</h3>
+                        <ul class="mt-3 space-y-2 text-sm text-indigo-200">
+                            <li><a href="{{ route('home') }}#faq" class="hover:text-white">Frequently Asked Questions</a></li>
                         </ul>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
-<x-layouts.site :title="'Explore Course Tracks'">
+<x-layouts.site :title="'Explore Course'">
     <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Course Tracks</h1>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Course</h1>
         <p class="mt-2 text-gray-600 dark:text-gray-300">
             Four tracks, 100 levels each. One payment unlocks every level in a track.
         </p>
