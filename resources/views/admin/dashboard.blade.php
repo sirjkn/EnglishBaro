@@ -12,9 +12,25 @@
     </div>
 
     <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-            <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Revenue (Last 14 Days)</h2>
-            <canvas id="revenueChart" height="180"></canvas>
+        <div class="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Revenue ({{ $selectedRevenueMonthLabel }})</h2>
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
+                    <select name="revenue_year" onchange="this.form.submit()" class="rounded-md border-gray-300 text-xs font-medium text-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        @foreach ($revenueYearOptions as $year)
+                            <option value="{{ $year }}" @selected($year === $selectedRevenueYear)>{{ $year }}</option>
+                        @endforeach
+                    </select>
+                    <select name="revenue_month" onchange="this.form.submit()" class="rounded-md border-gray-300 text-xs font-medium text-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        @foreach ($monthNames as $value => $label)
+                            <option value="{{ $value }}" @selected($value === $selectedRevenueMonthNum)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+            <div class="mt-2 min-h-[180px] flex-1">
+                <canvas id="revenueChart"></canvas>
+            </div>
         </div>
         <div class="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
             <div class="flex flex-wrap items-center justify-between gap-3">
@@ -26,7 +42,7 @@
                         @endforeach
                     </select>
                     <select name="month" onchange="this.form.submit()" class="rounded-md border-gray-300 text-xs font-medium text-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                        @foreach ($monthOptions as $value => $label)
+                        @foreach ($monthNames as $value => $label)
                             <option value="{{ $value }}" @selected($value === $selectedMonthNum)>{{ $label }}</option>
                         @endforeach
                     </select>
@@ -56,13 +72,32 @@
         const paymentLabels = @json($paymentStatusBreakdown->keys());
         const paymentValues = @json($paymentStatusBreakdown->values());
 
+        const dayOfMonth = (day) => parseInt(day.split('-')[2], 10);
+        const revenueDayLabels = Object.keys(revenueData).map(dayOfMonth);
+
         new Chart(document.getElementById('revenueChart'), {
             type: 'line',
-            data: { labels: Object.keys(revenueData), datasets: [{ label: 'Revenue', data: Object.values(revenueData), borderColor: '#0084FF', backgroundColor: 'rgba(0,132,255,0.12)', fill: true, tension: 0.3 }] },
-            options: { plugins: { legend: { display: false } } }
+            data: { labels: revenueDayLabels, datasets: [{ label: 'Revenue', data: Object.values(revenueData), borderColor: '#0084FF', backgroundColor: 'rgba(0,132,255,0.12)', fill: true, tension: 0.3 }] },
+            options: {
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: (items) => `Day ${items[0].label}`,
+                            label: (item) => `Revenue: $${item.raw}`,
+                        },
+                    },
+                },
+                scales: {
+                    y: { min: 0, max: 200, ticks: { stepSize: 50 } },
+                    x: { ticks: { autoSkip: false, maxRotation: 0, minRotation: 0, font: { size: 9 } } },
+                },
+            }
         });
 
-        const studentDayLabels = Object.keys(studentsData).map(day => parseInt(day.split('-')[2], 10));
+        const studentDayLabels = Object.keys(studentsData).map(dayOfMonth);
 
         new Chart(document.getElementById('studentsChart'), {
             type: 'bar',

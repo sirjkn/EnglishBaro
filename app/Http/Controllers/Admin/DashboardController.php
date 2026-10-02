@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\User;
 use App\Models\UserSession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -26,38 +27,30 @@ class DashboardController extends Controller
             'active_sessions' => UserSession::query()->where('status', 'active')->count(),
         ];
 
-        $revenueByDay = Payment::query()
-            ->where('status', 'successful')
-            ->where('created_at', '>=', now()->subDays(13))
-            ->selectRaw('DATE(created_at) as day, SUM(amount) as total')
-            ->groupBy('day')
-            ->orderBy('day')
-            ->pluck('total', 'day');
+        $earliestStudentDate = User::query()->where('user_type', 'student')->min('created_at');
+        $earliestPaymentDate = Payment::query()->where('status', 'successful')->min('created_at');
 
-        $earliestStudentYear = User::query()->where('user_type', 'student')->min('created_at');
-        $earliestYear = $earliestStudentYear ? (int) \Illuminate\Support\Carbon::parse($earliestStudentYear)->format('Y') : now()->year;
-
-        $selectedYear = (int) ($request->integer('year') ?: now()->year);
-        $selectedMonthNum = (int) ($request->integer('month') ?: now()->month);
-        $selectedMonthNum = max(1, min(12, $selectedMonthNum));
-
-        $monthStart = \Illuminate\Support\Carbon::create($selectedYear, $selectedMonthNum, 1)->startOfMonth();
-        $monthEnd = $monthStart->copy()->endOfMonth();
-        $daysInMonth = $monthStart->daysInMonth;
-        $selectedMonth = $monthStart->format('Y-m');
+        $students = $this->monthSelection($request, 'year', 'month', $earliestStudentDate);
+        $revenue = $this->monthSelection($request, 'revenue_year', 'revenue_month', $earliestPaymentDate);
 
         $studentsByDay = User::query()
             ->where('user_type', 'student')
-            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->whereBetween('created_at', [$students['start'], $students['end']])
             ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
             ->groupBy('day')
             ->orderBy('day')
             ->pluck('total', 'day');
 
-        $yearOptions = collect(range(now()->year, $earliestYear))->values();
+        $revenueByDay = Payment::query()
+            ->where('status', 'successful')
+            ->whereBetween('created_at', [$revenue['start'], $revenue['end']])
+            ->selectRaw('DATE(created_at) as day, SUM(amount) as total')
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('total', 'day');
 
-        $monthOptions = collect(range(1, 12))
-            ->mapWithKeys(fn ($m) => [$m => \Illuminate\Support\Carbon::create($selectedYear, $m, 1)->format('F')]);
+        $monthNames = collect(range(1, 12))
+            ->mapWithKeys(fn ($m) => [$m => Carbon::create(2000, $m, 1)->format('F')]);
 
         $trackPopularity = Track::query()
             ->withCount(['enrollments' => fn ($query) => $query->where('status', 'active')])
@@ -72,37 +65,58 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', [
             'stats' => $stats,
-            'revenueByDay' => $this->fillDateRange($revenueByDay, 14),
-            'studentsByDay' => $this->fillMonthRange($studentsByDay, $monthStart, $daysInMonth),
-            'selectedMonth' => $selectedMonth,
-            'selectedMonthLabel' => $monthStart->format('F Y'),
-            'selectedYear' => $selectedYear,
-            'selectedMonthNum' => $selectedMonthNum,
-            'monthOptions' => $monthOptions,
-            'yearOptions' => $yearOptions,
+            'monthNames' => $monthNames,
+
+            'studentsByDay' => $this->fillMonthRange($studentsByDay, $students['start'], $students['daysInMonth']),
+            'selectedMonthLabel' => $students['label'],
+            'selectedYear' => $students['year'],
+            'selectedMonthNum' => $students['month'],
+            'yearOptions' => $students['yearOptions'],
+
+            'revenueByDay' => $this->fillMonthRange($revenueByDay, $revenue['start'], $revenue['daysInMonth']),
+            'selectedRevenueMonthLabel' => $revenue['label'],
+            'selectedRevenueYear' => $revenue['year'],
+            'selectedRevenueMonthNum' => $revenue['month'],
+            'revenueYearOptions' => $revenue['yearOptions'],
+
             'trackPopularity' => $trackPopularity,
             'paymentStatusBreakdown' => $paymentStatusBreakdown,
         ]);
     }
 
-    private function fillDateRange($data, int $days): array
+    /**
+     * Resolves the year/month a chart's filter is set to from the request
+     * (defaulting to the current month), and everything needed to query and
+     * render a full month of that chart's data.
+     *
+     * @return array{year: int, month: int, start: Carbon, end: Carbon, daysInMonth: int, label: string, yearOptions: \Illuminate\Support\Collection<int, int>}
+     */
+    private function monthSelection(Request $request, string $yearKey, string $monthKey, ?string $earliestDate): array
     {
-        $result = [];
+        $earliestYear = $earliestDate ? (int) Carbon::parse($earliestDate)->format('Y') : now()->year;
 
-        for ($i = $days - 1; $i >= 0; $i--) {
-            $date = now()->subDays($i)->format('Y-m-d');
-            $result[$date] = (float) ($data[$date] ?? 0);
-        }
+        $year = (int) ($request->integer($yearKey) ?: now()->year);
+        $month = max(1, min(12, (int) ($request->integer($monthKey) ?: now()->month)));
 
-        return $result;
+        $start = Carbon::create($year, $month, 1)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        return [
+            'year' => $year,
+            'month' => $month,
+            'start' => $start,
+            'end' => $end,
+            'daysInMonth' => $start->daysInMonth,
+            'label' => $start->format('F Y'),
+            'yearOptions' => collect(range(now()->year, $earliestYear))->values(),
+        ];
     }
 
     /**
-     * Fills in every day of the selected month (up to today, if it's the
-     * current month) with 0 where there's no data, so the chart always
-     * draws a full month of x-axis labels.
+     * Fills in every day of the selected month with 0 where there's no data,
+     * so the chart always draws a full month of x-axis labels.
      */
-    private function fillMonthRange($data, \Illuminate\Support\Carbon $monthStart, int $daysInMonth): array
+    private function fillMonthRange($data, Carbon $monthStart, int $daysInMonth): array
     {
         $result = [];
 
