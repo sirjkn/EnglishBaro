@@ -16,9 +16,25 @@
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Revenue (Last 14 Days)</h2>
             <canvas id="revenueChart" height="180"></canvas>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-            <h2 class="text-sm font-semibold text-gray-900 dark:text-white">New Students (Last 14 Days)</h2>
-            <canvas id="studentsChart" height="180"></canvas>
+        <div class="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-white">New Students ({{ $selectedMonthLabel }})</h2>
+                <form method="GET" action="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
+                    <select name="year" onchange="this.form.submit()" class="rounded-md border-gray-300 text-xs font-medium text-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        @foreach ($yearOptions as $year)
+                            <option value="{{ $year }}" @selected($year === $selectedYear)>{{ $year }}</option>
+                        @endforeach
+                    </select>
+                    <select name="month" onchange="this.form.submit()" class="rounded-md border-gray-300 text-xs font-medium text-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        @foreach ($monthOptions as $value => $label)
+                            <option value="{{ $value }}" @selected($value === $selectedMonthNum)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+            <div class="mt-2 min-h-[180px] flex-1">
+                <canvas id="studentsChart"></canvas>
+            </div>
         </div>
         <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Track Popularity</h2>
@@ -46,10 +62,28 @@
             options: { plugins: { legend: { display: false } } }
         });
 
+        const studentDayLabels = Object.keys(studentsData).map(day => parseInt(day.split('-')[2], 10));
+
         new Chart(document.getElementById('studentsChart'), {
             type: 'bar',
-            data: { labels: Object.keys(studentsData), datasets: [{ label: 'New Students', data: Object.values(studentsData), backgroundColor: '#0084FF' }] },
-            options: { plugins: { legend: { display: false } } }
+            data: { labels: studentDayLabels, datasets: [{ label: 'Students Enrolled', data: Object.values(studentsData), backgroundColor: '#0084FF' }] },
+            options: {
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: (items) => `Day ${items[0].label}`,
+                            label: (item) => `Total students enrolled: ${item.raw}`,
+                        },
+                    },
+                },
+                scales: {
+                    y: { min: 0, max: 20, ticks: { stepSize: 5 } },
+                    x: { ticks: { autoSkip: false, maxRotation: 0, minRotation: 0, font: { size: 9 } } },
+                },
+            }
         });
 
         new Chart(document.getElementById('trackChart'), {
