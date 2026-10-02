@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\LessonProgress;
+use App\Models\Enrollment;
+use App\Models\Level;
 use App\Models\Track;
 use App\Services\LevelAccessService;
 use App\Services\RegionPricingService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -24,7 +26,12 @@ class MyTrackController extends Controller
         ]);
     }
 
-    public function show(Track $track, LevelAccessService $levelAccess, RegionPricingService $regionPricingService): View
+    /**
+     * There's no standalone track overview page: a student goes straight
+     * into their course material, landing on whichever level they're
+     * currently on (or level 1 if they haven't started).
+     */
+    public function show(Track $track, LevelAccessService $levelAccess, RegionPricingService $regionPricingService): RedirectResponse
     {
         $this->authorize('learn', [$track, $regionPricingService->resolveRegion(request())]);
 
@@ -33,25 +40,25 @@ class MyTrackController extends Controller
             ->where('status', 'active')
             ->first();
 
-        $levels = $track->levels()->with('sections.lessons:id,section_id')->paginate(20);
+        $targetLevel = $enrollment
+            ? $this->currentLevelFor($enrollment, $track, $levelAccess)
+            : $track->levels()->orderBy('number')->first();
 
-        $completedLessonIds = $enrollment
-            ? LessonProgress::query()
-                ->where('enrollment_id', $enrollment->id)
-                ->where('status', 'completed')
-                ->pluck('lesson_id')
-            : collect();
+        abort_unless($targetLevel, 404);
 
-        $accessibleLevelNumbers = $enrollment
-            ? $levels->getCollection()->filter(fn ($level) => $levelAccess->canAccess($enrollment, $level))->pluck('number')
-            : collect();
+        return redirect()->route('student.tracks.level', [$track, $targetLevel]);
+    }
 
-        return view('student.tracks.show', [
-            'track' => $track,
-            'levels' => $levels,
-            'enrollment' => $enrollment,
-            'completedLessonIds' => $completedLessonIds,
-            'accessibleLevelNumbers' => $accessibleLevelNumbers,
-        ]);
+    /**
+     * The first unlocked level the student hasn't finished yet, or the last
+     * level in the track if everything's complete.
+     */
+    private function currentLevelFor(Enrollment $enrollment, Track $track, LevelAccessService $levelAccess): ?Level
+    {
+        $statuses = $levelAccess->statusesFor($enrollment, $track);
+
+        $current = collect($statuses)->first(fn ($status) => $status['unlocked'] && ! $status['completed']);
+
+        return $current['level'] ?? $track->levels()->orderByDesc('number')->first();
     }
 }
