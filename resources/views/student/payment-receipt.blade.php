@@ -24,7 +24,10 @@
             <div class="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
                 <div class="flex items-start justify-between border-b border-gray-200 pb-6">
                     <div>
-                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="{{ $company['name'] }}" class="h-8 w-auto">
+                        <div class="flex items-center gap-2">
+                            <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-7 w-7">
+                            <img src="{{ asset('images/logo-wordmark.png') }}" alt="{{ $company['name'] }}" class="h-6 w-auto">
+                        </div>
                         @if ($company['address'])
                             <p class="mt-2 text-xs text-gray-500">{{ $company['address'] }}</p>
                         @endif

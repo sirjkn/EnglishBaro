@@ -37,9 +37,9 @@
                 </button>
 
                 <div class="flex h-16 items-center border-b border-gray-200 px-6 dark:border-gray-800" :class="collapsed ? 'justify-center px-0' : ''">
-                    <a href="{{ route('student.dashboard') }}">
-                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-9 w-auto" x-show="!collapsed">
-                        <img src="{{ asset('images/favicon-32x32.png') }}" alt="EnglishBaro" class="h-8 w-8" x-show="collapsed" x-cloak>
+                    <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2">
+                        <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-8 w-8 flex-none">
+                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-7 w-auto" x-show="!collapsed">
                     </a>
                 </div>
                 <nav class="space-y-4 overflow-y-auto overflow-x-hidden p-4" style="max-height: calc(100vh - 4rem)">
@@ -168,7 +168,10 @@
 
                 {{-- Mobile top bar --}}
                 <header class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
-                    <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-8 w-auto">
+                    <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2">
+                        <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-7 w-7">
+                        <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
+                    </a>
                     <div class="flex items-center gap-3">
                         <a href="{{ route('student.notifications') }}" class="relative text-gray-500 dark:text-gray-300">
                             <x-icons.bell class="h-5 w-5" />

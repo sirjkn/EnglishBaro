@@ -6,8 +6,9 @@
 
 <header class="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90">
     <nav class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-3 sm:gap-0 sm:px-6 sm:py-4 lg:px-8" aria-label="Main navigation">
-        <a href="{{ route('home') }}" class="flex shrink-0 items-center">
-            <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-9 w-auto sm:h-10">
+        <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2">
+            <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-8 w-8 sm:h-9 sm:w-9">
+            <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-7 w-auto sm:h-8">
         </a>
 
         <div class="hidden items-center gap-2 md:flex">
