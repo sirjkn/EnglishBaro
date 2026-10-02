@@ -46,14 +46,9 @@
                     @php
                         $studentNavGroups = [
                             [
-                                'label' => null,
-                                'items' => [
-                                    ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
-                                ],
-                            ],
-                            [
                                 'label' => 'Learning',
                                 'items' => [
+                                    ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                                     ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open'],
                                     ['route' => 'tracks.index', 'label' => 'All Course Tracks', 'icon' => 'map'],
                                 ],
