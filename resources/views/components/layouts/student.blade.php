@@ -56,7 +56,6 @@
                                 'items' => [
                                     ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open'],
                                     ['route' => 'tracks.index', 'label' => 'All Course Tracks', 'icon' => 'map'],
-                                    ['route' => 'student.progress', 'label' => 'My Progress', 'icon' => 'medal'],
                                 ],
                             ],
                             [
@@ -200,7 +199,6 @@
                     $mobilePrimaryNav = [
                         ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'active' => request()->routeIs('student.dashboard')],
                         ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open', 'active' => request()->routeIs('student.tracks.*')],
-                        ['route' => 'student.progress', 'label' => 'Progress', 'icon' => 'medal', 'active' => request()->routeIs('student.progress')],
                         ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card', 'active' => request()->routeIs('student.payments')],
                     ];
                     $mobileMoreNav = [
