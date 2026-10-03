@@ -83,7 +83,7 @@
     {{-- Featured tracks --}}
     <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Featured Tracks</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Featured Courses</h2>
             <a href="{{ route('tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">View all &rarr;</a>
         </div>
 
