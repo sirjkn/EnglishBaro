@@ -7,30 +7,29 @@
 
 @php
     $colorClasses = [
-        'indigo' => 'bg-indigo-500',
-        'emerald' => 'bg-emerald-500',
-        'purple' => 'bg-purple-500',
-        'amber' => 'bg-amber-500',
-        'teal' => 'bg-teal-500',
-        'rose' => 'bg-rose-500',
-        'cyan' => 'bg-cyan-500',
+        'indigo' => ['icon' => 'bg-indigo-500 text-white', 'blob' => 'bg-indigo-500/10'],
+        'emerald' => ['icon' => 'bg-emerald-500 text-white', 'blob' => 'bg-emerald-500/10'],
+        'purple' => ['icon' => 'bg-purple-500 text-white', 'blob' => 'bg-purple-500/10'],
+        'amber' => ['icon' => 'bg-amber-500 text-white', 'blob' => 'bg-amber-500/10'],
+        'teal' => ['icon' => 'bg-teal-500 text-white', 'blob' => 'bg-teal-500/10'],
+        'rose' => ['icon' => 'bg-rose-500 text-white', 'blob' => 'bg-rose-500/10'],
+        'cyan' => ['icon' => 'bg-cyan-500 text-white', 'blob' => 'bg-cyan-500/10'],
     ];
 
-    $bg = $colorClasses[$color] ?? $colorClasses['indigo'];
+    $palette = $colorClasses[$color] ?? $colorClasses['indigo'];
 @endphp
 
-@if ($icon)
-    <div {{ $attributes->merge(['class' => "rounded-2xl {$bg} p-5 shadow-sm"]) }}>
-        <div class="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-white/70 text-white">
-            <x-dynamic-component :component="'icons.' . $icon" class="h-5 w-5" />
-        </div>
+<div {{ $attributes->merge(['class' => 'relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800']) }}>
+    <div class="pointer-events-none absolute -bottom-6 -right-6 h-20 w-20 rounded-full {{ $palette['blob'] }}"></div>
 
-        <p class="mt-4 text-xs font-bold uppercase tracking-wide text-white/90">{{ $label }}</p>
-        <p class="mt-1 text-2xl font-bold text-white">{{ $value }}</p>
+    <div class="relative">
+        @if ($icon)
+            <div class="flex h-9 w-9 items-center justify-center rounded-xl {{ $palette['icon'] }}">
+                <x-dynamic-component :component="'icons.' . $icon" class="h-4 w-4" />
+            </div>
+        @endif
+
+        <p class="mt-3 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ $label }}</p>
+        <p class="mt-0.5 text-xl font-bold text-gray-900 dark:text-white">{{ $value }}</p>
     </div>
-@else
-    <div {{ $attributes->merge(['class' => 'rounded-xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800']) }}>
-        <p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ $label }}</p>
-        <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ $value }}</p>
-    </div>
-@endif
+</div>

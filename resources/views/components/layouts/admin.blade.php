@@ -125,9 +125,94 @@
                     </div>
                 @endif
 
-                <main class="p-4 sm:p-6 lg:p-8">
+                <main class="p-4 pb-24 sm:p-6 lg:p-8 md:pb-8">
                     {{ $slot }}
                 </main>
+
+                {{-- Mobile bottom tab bar: the full sidebar is desktop-only, so
+                     a handful of primary sections sit in the tab bar and the
+                     rest live in the grouped "Others" sheet below. --}}
+                @php
+                    $adminPrimaryRoutes = ['admin.dashboard', 'admin.students.index', 'admin.tracks.index', 'admin.payments.index'];
+
+                    $adminPrimaryNav = collect($adminNavGroups)
+                        ->flatMap(fn ($group) => $group['items'])
+                        ->filter(fn ($item) => in_array($item['route'], $adminPrimaryRoutes, true))
+                        ->sortBy(fn ($item) => array_search($item['route'], $adminPrimaryRoutes, true))
+                        ->values();
+
+                    $adminMoreGroups = collect($adminNavGroups)
+                        ->map(fn ($group) => [
+                            'label' => $group['label'],
+                            'items' => collect($group['items'])->reject(fn ($item) => in_array($item['route'], $adminPrimaryRoutes, true))->values(),
+                        ])
+                        ->filter(fn ($group) => $group['items']->isNotEmpty())
+                        ->values();
+
+                    $adminMoreActive = $adminMoreGroups
+                        ->flatMap(fn ($group) => $group['items'])
+                        ->contains(fn ($item) => request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*'));
+                @endphp
+
+                <div x-data="{ moreOpen: false }" class="md:hidden">
+                    <template x-if="moreOpen">
+                        <div class="fixed inset-0 z-40 bg-black/30" @click="moreOpen = false"></div>
+                    </template>
+
+                    <div x-show="moreOpen" x-cloak x-transition
+                         class="fixed inset-x-0 bottom-16 z-50 mx-3 max-h-[70vh] overflow-y-auto rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+                        @foreach ($adminMoreGroups as $group)
+                            <div>
+                                @if ($group['label'])
+                                    <p class="px-3 pb-1 pt-2 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ $group['label'] }}</p>
+                                @endif
+                                <div class="space-y-1">
+                                    @foreach ($group['items'] as $item)
+                                        <a href="{{ route($item['route']) }}"
+                                           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200' }}">
+                                            <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
+                                            {{ $item['label'] }}
+                                            @if ($item['route'] === 'admin.answer-reviews.index' && ($pendingAnswerReviewCount ?? 0) > 0)
+                                                <span class="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">{{ $pendingAnswerReviewCount }}</span>
+                                            @endif
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <div class="border-t border-gray-100 pt-2 dark:border-gray-700">
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                <x-icons.home class="h-4 w-4" />
+                                Back to Site
+                            </a>
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <x-icons.logout class="h-4 w-4" />
+                                    Log Out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <nav class="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800" style="padding-bottom: env(safe-area-inset-bottom)">
+                        @foreach ($adminPrimaryNav as $item)
+                            <a href="{{ route($item['route']) }}"
+                               class="flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400' }}">
+                                <x-dynamic-component :component="'icons.'.$item['icon']" class="h-5 w-5" />
+                                {{ $item['label'] }}
+                            </a>
+                        @endforeach
+
+                        <button type="button" @click="moreOpen = !moreOpen"
+                                class="flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium {{ $adminMoreActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400' }}">
+                            <x-icons.dots-horizontal class="h-5 w-5" />
+                            Others
+                        </button>
+                    </nav>
+                </div>
             </div>
         </div>
 
