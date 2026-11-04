@@ -142,21 +142,23 @@
                                             $hasWrittenAnswer = $sectionLessons->contains(fn ($l) => $l->activity?->questions->contains(fn ($q) => in_array($q->type, ['short_answer', 'fill_blank'], true)) ?? false);
                                         @endphp
                                         <div class="{{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : '' }} {{ $isLocked ? 'opacity-60' : '' }}">
-                                            <button
-                                                type="button"
+                                            <div
+                                                role="button"
+                                                tabindex="0"
                                                 @click="openSection = (openSection === {{ $section->id }} ? null : {{ $section->id }})"
-                                                class="flex w-full items-center gap-3 px-2 py-2.5 text-left"
+                                                @keydown.enter="openSection = (openSection === {{ $section->id }} ? null : {{ $section->id }})"
+                                                class="flex w-full cursor-pointer items-center gap-3 px-2 py-2.5 text-left"
                                             >
                                                 <span class="w-4 flex-none text-right text-xs text-gray-400">{{ $sectionNumber }}</span>
 
                                                 @if ($isDone)
-                                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
+                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
                                                 @elseif ($isLocked)
-                                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-                                                        <x-icons.lock class="h-3 w-3" />
+                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+                                                        <x-icons.lock class="h-2 w-2" />
                                                     </span>
                                                 @else
-                                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
+                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
                                                 @endif
 
                                                 <span class="min-w-0 flex-1">
@@ -176,6 +178,7 @@
                                                 <div class="flex flex-none items-center gap-2">
                                                     @if ($isDone)
                                                         <span class="rounded-full bg-green-100 px-3 py-1 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Done</span>
+                                                        <a href="{{ route('student.tracks.learn', [$track, $levelItem, $sectionLessons->first()]) }}" @click.stop class="rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
                                                     @elseif ($isLocked)
                                                         <span class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
                                                     @elseif ($nextLesson)
@@ -185,7 +188,7 @@
                                                 </div>
 
                                                 <x-icons.chevron-left class="h-3.5 w-3.5 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openSection === {{ $section->id }} ? '-rotate-90' : 'rotate-90'" />
-                                            </button>
+                                            </div>
 
                                             @unless ($isLocked)
                                                 <div x-show="openSection === {{ $section->id }}" x-cloak x-transition class="space-y-1 bg-gray-50 px-2 pb-2.5 pl-10 dark:bg-gray-900/40">
