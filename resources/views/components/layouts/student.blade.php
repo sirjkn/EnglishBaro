@@ -47,7 +47,7 @@
             @endphp
 
             {{-- Desktop top bar: search, notifications, account --}}
-            <header x-show="!distractionFree" class="hidden items-center gap-4 border-b border-gray-200 bg-white px-6 py-3 dark:border-gray-800 dark:bg-gray-800 md:flex">
+            <header x-show="!distractionFree" class="hidden items-center gap-4 bg-white px-6 py-3 dark:bg-gray-800 md:flex">
                 <div class="ml-auto flex flex-none items-center gap-4">
                     <a href="{{ route('student.notifications') }}" class="relative text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
                         <x-icons.bell class="h-5 w-5" />
