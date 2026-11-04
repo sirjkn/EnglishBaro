@@ -186,6 +186,10 @@
                     </div>
                 </header>
 
+                {{-- Secondary bar --}}
+                <div x-show="!distractionFree" class="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 sm:px-6">
+                </div>
+
                 {{-- Mobile top bar --}}
                 <header x-show="!distractionFree" class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
                     <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2">
