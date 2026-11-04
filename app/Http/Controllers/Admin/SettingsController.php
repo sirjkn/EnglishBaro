@@ -30,6 +30,7 @@ class SettingsController extends Controller
         $system = SystemSetting::query()->pluck('value', 'key');
         $paymentSettings = PaymentSetting::query()->get()->keyBy('gateway');
         $introVideoId = CompanySetting::get('intro_video_media_id');
+        $helpVideoId = CompanySetting::get('help_video_media_id');
 
         return view('admin.settings.edit', [
             'company' => $company,
@@ -37,6 +38,7 @@ class SettingsController extends Controller
             'paymentSettings' => $paymentSettings,
             'gateways' => self::GATEWAYS,
             'introVideo' => $introVideoId ? \App\Models\Media::find($introVideoId) : null,
+            'helpVideo' => $helpVideoId ? \App\Models\Media::find($helpVideoId) : null,
         ]);
     }
 
@@ -73,6 +75,19 @@ class SettingsController extends Controller
         AuditLogger::log('admin.settings.intro_video_updated', null, [], ['media_id' => $validated['media_id'] ?? null]);
 
         return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', $validated['media_id'] ? 'Intro video updated.' : 'Intro video removed.');
+    }
+
+    public function updateHelpVideo(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
+        ]);
+
+        CompanySetting::set('help_video_media_id', $validated['media_id'] ?? null);
+
+        AuditLogger::log('admin.settings.help_video_updated', null, [], ['media_id' => $validated['media_id'] ?? null]);
+
+        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', $validated['media_id'] ? 'Help video updated.' : 'Help video removed.');
     }
 
     public function updatePayment(Request $request): RedirectResponse

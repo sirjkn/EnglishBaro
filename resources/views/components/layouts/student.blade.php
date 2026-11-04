@@ -123,9 +123,6 @@
             </div>
 
             @php
-                $helpPhone = preg_replace('/\D+/', '', \App\Models\CompanySetting::get('phone', ''));
-                $helpHref = $helpPhone ? "https://wa.me/{$helpPhone}" : route('contact');
-
                 $studentNavGroups = [
                     [
                         'label' => null,
@@ -133,7 +130,7 @@
                             ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                             ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open'],
                             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
-                            ['href' => $helpHref, 'external' => true, 'label' => 'Help', 'icon' => 'desk-phone'],
+                            ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
                             ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                         ],
                     ],
@@ -148,7 +145,7 @@
                     ['route' => 'student.intro-video', 'label' => 'Intro Video', 'icon' => 'dashboard'],
                     ['route' => 'student.tracks.index', 'label' => 'My Course', 'icon' => 'book-open'],
                     ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
-                    ['href' => $helpHref, 'external' => true, 'label' => 'Help', 'icon' => 'desk-phone'],
+                    ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
                     ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                 ];
             @endphp

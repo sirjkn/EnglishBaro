@@ -10,17 +10,8 @@
             Only the first placement test decides that. If you want a different level, change it yourself from My Course.
         </div>
 
-        @php
-            $categories = [
-                ['icon' => 'pencil', 'title' => 'Grammar Practice', 'description' => 'Extra exercises on the grammar you have already studied.'],
-                ['icon' => 'music-note', 'title' => 'Listening Practice', 'description' => 'Short recordings with questions. Play them as often as you like.'],
-                ['icon' => 'book-open', 'title' => 'Reading Practice', 'description' => 'Notices, letters and messages with comprehension questions.'],
-                ['icon' => 'microphone', 'title' => 'Speaking Practice', 'description' => 'Situations to respond to, with practice questions.'],
-            ];
-        @endphp
-
         <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            @foreach ($categories as $category)
+            @foreach ($categories as $key => $category)
                 <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
                     <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                         <x-dynamic-component :component="'icons.'.$category['icon']" class="h-5 w-5" />
@@ -36,9 +27,9 @@
                             <span></span>
                         @endif
 
-                        <button type="button" disabled title="Coming soon" class="cursor-not-allowed rounded-full bg-teal-700/60 px-4 py-1.5 text-xs font-semibold text-white">
+                        <a href="{{ route('student.more-practice.show', $key) }}" class="rounded-full bg-teal-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-teal-600">
                             Start practice
-                        </button>
+                        </a>
                     </div>
                 </div>
             @endforeach
