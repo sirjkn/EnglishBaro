@@ -113,7 +113,7 @@
                                     @endif
                                 </span>
                                 <span class="block truncate text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $levelItem->sections->pluck('title')->implode(' &middot; ') }}
+                                    {!! $levelItem->sections->pluck('title')->implode(' &middot; ') !!}
                                 </span>
                             </span>
 
@@ -136,22 +136,28 @@
                                 </p>
                             @else
                                 <div class="divide-y divide-gray-100 dark:divide-gray-700">
-                                    @php $lessonNumber = 0; @endphp
+                                    @php $lessonNumber = 0; $priorDone = true; @endphp
                                     @foreach ($levelItem->sections as $section)
                                         @foreach ($section->lessons as $lesson)
                                             @php
                                                 $lessonNumber++;
                                                 $isResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
                                                 $isDone = $completedLessonIds->contains($lesson->id);
+                                                $isLocked = ! $priorDone;
+                                                $priorDone = $priorDone && $isDone;
                                                 $assessment = $lesson->activity;
                                                 $questionCount = $assessment?->questions->count() ?? 0;
                                                 $hasWrittenAnswer = $assessment?->questions->contains(fn ($q) => in_array($q->type, ['short_answer', 'fill_blank'], true)) ?? false;
                                             @endphp
-                                            <div class="flex items-center gap-3 px-2 py-2.5 {{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : '' }}">
+                                            <div class="flex items-center gap-3 px-2 py-2.5 {{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : '' }} {{ $isLocked ? 'opacity-60' : '' }}">
                                                 <span class="w-4 flex-none text-right text-xs text-gray-400">{{ $lessonNumber }}</span>
 
                                                 @if ($isDone)
                                                     <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
+                                                @elseif ($isLocked)
+                                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+                                                        <x-icons.lock class="h-3 w-3" />
+                                                    </span>
                                                 @else
                                                     <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
                                                 @endif
@@ -159,10 +165,14 @@
                                                 <span class="min-w-0 flex-1">
                                                     <span class="block truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $section->title }}</span>
                                                     <span class="block truncate text-[11px] text-gray-500 dark:text-gray-400">
-                                                        {{ $section->title }} video {{ $lessonNumber }}
-                                                        @if ($questionCount) &middot; {{ $questionCount }} question{{ $questionCount === 1 ? '' : 's' }} @endif
-                                                        @if ($hasWrittenAnswer) + written answer @endif
-                                                        @if ($isDone) &middot; video already watched @endif
+                                                        @if ($isLocked)
+                                                            Locked &middot; finish lesson {{ $lessonNumber - 1 }} first
+                                                        @else
+                                                            {{ $section->title }} video {{ $lessonNumber }}
+                                                            @if ($questionCount) &middot; {{ $questionCount }} question{{ $questionCount === 1 ? '' : 's' }} @endif
+                                                            @if ($hasWrittenAnswer) + written answer @endif
+                                                            @if ($isDone) &middot; video already watched @endif
+                                                        @endif
                                                     </span>
                                                 </span>
 
@@ -170,6 +180,8 @@
                                                     @if ($isDone)
                                                         <span class="rounded-full bg-green-100 px-3 py-1 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Done</span>
                                                         <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
+                                                    @elseif ($isLocked)
+                                                        <span class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
                                                     @else
                                                         <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-indigo-500">{{ $isResume ? 'Continue' : 'Start' }}</a>
                                                     @endif
