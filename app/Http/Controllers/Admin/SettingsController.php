@@ -29,12 +29,14 @@ class SettingsController extends Controller
         $company = CompanySetting::query()->pluck('value', 'key');
         $system = SystemSetting::query()->pluck('value', 'key');
         $paymentSettings = PaymentSetting::query()->get()->keyBy('gateway');
+        $introVideoId = CompanySetting::get('intro_video_media_id');
 
         return view('admin.settings.edit', [
             'company' => $company,
             'system' => $system,
             'paymentSettings' => $paymentSettings,
             'gateways' => self::GATEWAYS,
+            'introVideo' => $introVideoId ? \App\Models\Media::find($introVideoId) : null,
         ]);
     }
 
@@ -58,6 +60,19 @@ class SettingsController extends Controller
         AuditLogger::log('admin.settings.company_updated', null, [], $validated);
 
         return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', 'Company settings updated.');
+    }
+
+    public function updateIntroVideo(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
+        ]);
+
+        CompanySetting::set('intro_video_media_id', $validated['media_id'] ?? null);
+
+        AuditLogger::log('admin.settings.intro_video_updated', null, [], ['media_id' => $validated['media_id'] ?? null]);
+
+        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', $validated['media_id'] ? 'Intro video updated.' : 'Intro video removed.');
     }
 
     public function updatePayment(Request $request): RedirectResponse

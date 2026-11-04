@@ -137,7 +137,8 @@
             </aside>
 
             <div class="min-w-0 flex-1">
-                <header class="sticky top-0 z-30 hidden items-center justify-end border-b border-gray-200 bg-white px-4 py-2.5 dark:border-gray-800 dark:bg-gray-800 md:flex">
+                <header class="sticky top-0 z-30 hidden items-center justify-end gap-2 border-b border-gray-200 bg-white px-4 py-2.5 dark:border-gray-800 dark:bg-gray-800 md:flex">
+                    <x-help-button class="flex items-center gap-1.5 rounded-md bg-green-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-600" />
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
@@ -152,10 +153,13 @@
                         <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-7 w-7">
                         <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
                     </a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="text-sm font-medium text-gray-600 dark:text-gray-300">Logout</button>
-                    </form>
+                    <div class="flex items-center gap-3">
+                        <x-help-button class="flex items-center gap-1 rounded-md bg-green-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-600" />
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-sm font-medium text-gray-600 dark:text-gray-300">Logout</button>
+                        </form>
+                    </div>
                 </header>
 
                 @if (session('status'))

@@ -174,6 +174,8 @@
                             </div>
                         </div>
 
+                        <x-help-button class="flex items-center gap-1.5 rounded-md bg-green-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-600" />
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
@@ -191,6 +193,7 @@
                         <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
                     </a>
                     <div class="flex items-center gap-3">
+                        <x-help-button class="flex items-center gap-1 rounded-md bg-green-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-600" />
                         <a href="{{ route('student.notifications') }}" class="relative text-gray-500 dark:text-gray-300">
                             <x-icons.bell class="h-5 w-5" />
                             @if ($unreadNotifications > 0)

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\Lesson;
 use App\Models\Level;
+use App\Models\Media;
 use App\Models\Testimonial;
 use App\Models\Track;
 use App\Services\RegionPricingService;
@@ -48,12 +50,15 @@ class HomeController extends Controller
             'access_days' => Track::query()->where('status', 'published')->min('subscription_days') ?? 0,
         ];
 
+        $introVideoId = CompanySetting::get('intro_video_media_id');
+
         return view('guest.home', [
             'featuredTracks' => $featuredTracks,
             'popularTracks' => $popularTracks,
             'testimonials' => $testimonials,
             'stats' => $stats,
             'pricingRegion' => $regionPricingService->resolveRegion($request),
+            'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
         ]);
     }
 }

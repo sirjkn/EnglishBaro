@@ -147,6 +147,7 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::middleware('module:settings')->group(function () {
             Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
             Route::put('settings/company', [SettingsController::class, 'updateCompany'])->name('settings.company');
+            Route::put('settings/intro-video', [SettingsController::class, 'updateIntroVideo'])->name('settings.intro-video');
             Route::put('settings/payment', [SettingsController::class, 'updatePayment'])->name('settings.payment');
             Route::put('settings/system', [SettingsController::class, 'updateSystem'])->name('settings.system');
             Route::get('settings/backup', [BackupController::class, 'download'])->name('settings.backup.download');

@@ -60,6 +60,50 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Company Settings</button>
             </div>
         </form>
+
+        <div class="mt-6 border-t border-gray-200 pt-6 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Homepage Intro Video</h3>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Shown as the single hero slide on the homepage. Upload a new video, or remove the current one to fall back to the plain text hero.</p>
+
+            @if ($introVideo)
+                <div class="mt-3 max-w-md">
+                    <x-video-player :media="$introVideo" />
+                </div>
+                <form method="POST" action="{{ route('admin.settings.intro-video') }}" class="mt-3">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="rounded-md border border-red-300 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/30">Remove Intro Video</button>
+                </form>
+            @else
+                <div class="mt-3" x-data="{ ...lessonMediaUploader(), saving: false }">
+                    <label class="flex w-fit cursor-pointer items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                        Upload Intro Video
+                        <input type="file" accept="video/mp4,video/webm" class="hidden" @change="handleFiles($event, 'video')">
+                    </label>
+
+                    <template x-if="uploads.length">
+                        <div class="mt-3 max-w-sm space-y-2">
+                            <template x-for="upload in uploads" :key="upload.key">
+                                <div class="rounded-md bg-gray-50 p-2 text-xs dark:bg-gray-900">
+                                    <span x-text="upload.name"></span>
+                                    <span x-show="upload.status === 'uploading'" x-text="' — ' + upload.progress + '%'"></span>
+                                    <span x-show="upload.status === 'error'" class="text-red-600" x-text="' — ' + (upload.error || 'Failed')"></span>
+
+                                    <template x-if="upload.status === 'done'">
+                                        <form method="POST" action="{{ route('admin.settings.intro-video') }}" class="mt-2" @submit="saving = true">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="media_id" :value="upload.mediaId">
+                                            <button type="submit" :disabled="saving" class="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500 disabled:opacity-50" x-text="saving ? 'Saving…' : 'Use This Video'"></button>
+                                        </form>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            @endif
+        </div>
     </div>
 
     <div x-show="tab === 'payment'" x-cloak class="mt-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
