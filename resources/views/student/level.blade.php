@@ -203,11 +203,11 @@
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You decide this yourself. Nothing you do in the course or in practice tests changes it automatically.</p>
 
                 <p class="mt-5 text-xs font-bold uppercase tracking-wide text-gray-400">Track</p>
-                <div class="mt-2 flex flex-wrap gap-2">
+                <div class="mt-2 flex flex-wrap items-center gap-1">
                     @foreach ($pickerTracks as $pickerTrack)
                         <button type="button" @click="selTrack = '{{ $pickerTrack->track_code }}'"
-                                class="rounded-full border px-4 py-1.5 text-sm font-semibold"
-                                :class="selTrack === '{{ $pickerTrack->track_code }}' ? 'border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-gray-900' : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
+                                class="rounded-full border px-3.5 py-1.5 text-sm"
+                                :class="selTrack === '{{ $pickerTrack->track_code }}' ? 'border-gray-300 bg-white font-bold text-gray-900 dark:border-gray-500 dark:bg-gray-700 dark:text-white' : 'border-transparent font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'">
                             {{ $pickerTrack->track_code }}
                         </button>
                     @endforeach
@@ -218,8 +218,8 @@
                     @foreach (range(1, 10) as $n)
                         @php $checkpoint = $n === 1 ? 1 : $n * 10; @endphp
                         <button type="button" @click="selLevel = {{ $checkpoint }}"
-                                class="rounded-lg border px-2 py-2 text-sm font-semibold"
-                                :class="selLevel === {{ $checkpoint }} ? 'border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-gray-900' : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
+                                class="rounded-lg border px-2 py-2.5 text-sm font-semibold"
+                                :class="selLevel === {{ $checkpoint }} ? 'border-gray-400 bg-gray-50 text-gray-900 dark:border-gray-400 dark:bg-gray-700 dark:text-white' : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
                             {{ $checkpoint }}
                         </button>
                     @endforeach
