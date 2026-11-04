@@ -15,7 +15,7 @@
             @auth
                 <a href="{{ $helpHref }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 rounded-md bg-green-500 px-4 py-2 text-sm font-semibold text-white hover:bg-green-600 sm:px-5 sm:py-2.5 sm:text-base">
                     {!! $helpIcon !!}
-                    <span class="hidden sm:inline">Help</span>
+                    <span class="hidden sm:inline">WhatsApp</span>
                 </a>
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 sm:px-5 sm:py-2.5 sm:text-base">
                     <x-icons.dashboard class="h-4 w-4 sm:h-5 sm:w-5" />
@@ -31,7 +31,7 @@
             @else
                 <a href="{{ $helpHref }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 rounded-md bg-green-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-green-600">
                     {!! $helpIcon !!}
-                    Help
+                    WhatsApp
                 </a>
                 <a href="{{ route('login') }}" class="flex items-center gap-1.5 rounded-md border border-indigo-600 px-3 py-1.5 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">
                     <x-icons.login class="h-4 w-4" />
