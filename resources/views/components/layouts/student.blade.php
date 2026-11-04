@@ -26,7 +26,12 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
-        <div class="flex min-h-screen" x-data="{ distractionFree: false }">
+        <div x-data="{ distractionFree: false }">
+            {{-- Secondary bar: full browser width, edge to edge --}}
+            <div x-show="!distractionFree" class="border-b border-gray-200 bg-black px-4 py-3 dark:border-gray-800 sm:px-6">
+            </div>
+
+            <div class="flex min-h-screen">
             {{-- Sidebar --}}
             <aside
                 x-data="{ collapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
@@ -186,10 +191,6 @@
                     </div>
                 </header>
 
-                {{-- Secondary bar --}}
-                <div x-show="!distractionFree" class="border-b border-gray-200 bg-black px-4 py-3 dark:border-gray-800 sm:px-6">
-                </div>
-
                 {{-- Mobile top bar --}}
                 <header x-show="!distractionFree" class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
                     <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2">
@@ -287,6 +288,7 @@
                     </nav>
                 </div>
             </div>
+        </div>
         </div>
 
         @stack('scripts')
