@@ -9,13 +9,25 @@
     @else
         <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($enrollments as $enrollment)
-                <div class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                @php
+                    $trackOrder = $enrollment->track->order;
+                    $isLocked = $currentTrackOrder !== null && $trackOrder > $currentTrackOrder;
+                    $isCompleted = ($enrollment->progress->percent_complete ?? 0) >= 100
+                        || ($currentTrackOrder !== null && $trackOrder < $currentTrackOrder);
+                @endphp
+                <div class="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 {{ $isLocked ? 'opacity-60' : '' }}">
                     <div class="aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-indigo-100 to-indigo-300 dark:from-indigo-900 dark:to-indigo-700">
                         @if ($enrollment->track->thumbnail?->resolved_url)
-                            <img src="{{ $enrollment->track->thumbnail->resolved_url }}" alt="{{ $enrollment->track->name }}" class="h-full w-full object-cover">
+                            <img src="{{ $enrollment->track->thumbnail->resolved_url }}" alt="{{ $enrollment->track->name }}" class="h-full w-full object-cover {{ $isLocked ? 'grayscale' : '' }}">
                         @else
                             <div class="flex h-full w-full items-center justify-center">
                                 <span class="text-5xl font-black text-indigo-700 dark:text-indigo-200">{{ $enrollment->track->track_code }}</span>
+                            </div>
+                        @endif
+
+                        @if ($isLocked)
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                                <x-icons.lock class="h-8 w-8 text-white" />
                             </div>
                         @endif
                     </div>
@@ -26,16 +38,28 @@
                         <h3 class="mt-1 text-base font-bold text-gray-900 dark:text-white">{{ $enrollment->track->name }}</h3>
 
                         <div class="mt-3 h-2 w-full rounded-full bg-gray-100 dark:bg-gray-700">
-                            <div class="h-2 rounded-full bg-indigo-600" style="width: {{ $enrollment->progress->percent_complete ?? 0 }}%"></div>
+                            <div class="h-2 rounded-full {{ $isCompleted ? 'bg-green-500' : 'bg-indigo-600' }}" style="width: {{ $isCompleted ? 100 : ($enrollment->progress->percent_complete ?? 0) }}%"></div>
                         </div>
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             {{ $enrollment->progress->levels_completed ?? 0 }} / {{ $enrollment->progress->total_levels ?? 0 }} levels
                             &middot; {{ $enrollment->progress->lessons_completed ?? 0 }} / {{ $enrollment->progress->total_lessons ?? 0 }} lessons
                         </p>
 
-                        <a href="{{ route('student.tracks.show', $enrollment->track) }}" class="mt-4 block w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-indigo-500">
-                            {{ $enrollment->last_viewed_lesson_id ? 'Continue Learning' : 'Start Learning' }}
-                        </a>
+                        @if ($isCompleted)
+                            <span class="mt-4 flex w-full items-center justify-center gap-1.5 rounded-lg bg-green-100 px-4 py-2.5 text-center text-sm font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                <x-icons.clipboard-check class="h-4 w-4" />
+                                Completed
+                            </span>
+                        @elseif ($isLocked)
+                            <span class="mt-4 flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-lg bg-gray-200 px-4 py-2.5 text-center text-sm font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+                                <x-icons.lock class="h-4 w-4" />
+                                Locked
+                            </span>
+                        @else
+                            <a href="{{ route('student.tracks.show', $enrollment->track) }}" class="mt-4 block w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-indigo-500">
+                                {{ $enrollment->last_viewed_lesson_id ? 'Continue Learning' : 'Start Learning' }}
+                            </a>
+                        @endif
                     </div>
                 </div>
             @endforeach

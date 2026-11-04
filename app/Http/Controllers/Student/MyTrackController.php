@@ -16,13 +16,24 @@ class MyTrackController extends Controller
 {
     public function index(): View
     {
-        $enrollments = Auth::user()->enrollments()
+        $user = Auth::user();
+
+        $enrollments = $user->enrollments()
             ->with(['track.thumbnail', 'progress', 'subscription'])
-            ->latest('enrolled_at')
-            ->get();
+            ->whereHas('track')
+            ->get()
+            ->sortBy(fn ($enrollment) => $enrollment->track->order)
+            ->values();
+
+        // The student's current track (from placement, or wherever they've
+        // been auto-promoted to on completing the one before it) is the only
+        // one that's actively "in progress" — everything before it in the
+        // sequence is done, everything after it is still locked.
+        $currentTrackOrder = $user->studentProfile?->track?->order;
 
         return view('student.tracks.index', [
             'enrollments' => $enrollments,
+            'currentTrackOrder' => $currentTrackOrder,
         ]);
     }
 
