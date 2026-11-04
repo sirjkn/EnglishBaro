@@ -143,18 +143,18 @@
                                                 $isDone = $completedLessonIds->contains($lesson->id);
                                             @endphp
                                             <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}"
-                                               class="flex items-center gap-3 rounded-lg px-2 py-2 {{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'hover:bg-white dark:hover:bg-gray-700' }}">
-                                                <span class="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
-                                                    <x-icons.play-circle class="h-4 w-4" />
+                                               class="flex items-center gap-2 rounded-lg px-2 py-1.5 {{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'hover:bg-white dark:hover:bg-gray-700' }}">
+                                                <span class="flex h-6 w-6 flex-none items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
+                                                    <x-icons.play-circle class="h-3.5 w-3.5" />
                                                 </span>
                                                 <span class="min-w-0 flex-1">
-                                                    <span class="block truncate text-sm font-medium text-gray-900 dark:text-white">{{ $lesson->title }}</span>
-                                                    <span class="block text-xs text-gray-500 dark:text-gray-400">{{ $section->title }}</span>
+                                                    <span class="block truncate text-xs font-medium text-gray-900 dark:text-white">{{ $lesson->title }}</span>
+                                                    <span class="block text-[11px] text-gray-500 dark:text-gray-400">{{ $section->title }}</span>
                                                 </span>
                                                 @if ($isDone)
-                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-500 text-[10px] text-white">&#10003;</span>
+                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-green-500 text-[9px] text-white">&#10003;</span>
                                                 @else
-                                                    <x-icons.chevron-right class="h-4 w-4 flex-none text-gray-300 dark:text-gray-600" />
+                                                    <x-icons.chevron-right class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" />
                                                 @endif
                                             </a>
                                         @endforeach
