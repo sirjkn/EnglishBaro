@@ -3,6 +3,7 @@
 use App\Http\Controllers\Student\AccountController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\LearningController;
+use App\Http\Controllers\Student\MorePracticeController;
 use App\Http\Controllers\Student\MyTrackController;
 use App\Http\Controllers\Student\NotificationController;
 use App\Http\Controllers\Student\PaymentController;
@@ -25,7 +26,7 @@ Route::middleware(['auth', 'verified'])
 
         Route::get('intro-video', [PlacementTestController::class, 'introVideo'])->name('intro-video');
 
-        Route::get('more-practice', fn () => view('student.more-practice'))->name('more-practice');
+        Route::get('more-practice', MorePracticeController::class)->name('more-practice');
 
         Route::get('tracks', [MyTrackController::class, 'index'])->name('tracks.index');
         Route::get('tracks/{track}', [MyTrackController::class, 'show'])->name('tracks.show');
