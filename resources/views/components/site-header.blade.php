@@ -13,18 +13,18 @@
 
         <div class="flex shrink-0 items-center gap-2 sm:gap-3">
             @auth
-                <a href="{{ $helpHref }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 rounded-md bg-green-500 px-4 py-2 text-sm font-semibold text-white hover:bg-green-600 sm:px-5 sm:py-2.5 sm:text-base">
+                <a href="{{ $helpHref }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 rounded-md bg-green-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-600">
                     {!! $helpIcon !!}
                     <span class="hidden sm:inline">WhatsApp</span>
                 </a>
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 sm:px-5 sm:py-2.5 sm:text-base">
-                    <x-icons.dashboard class="h-4 w-4 sm:h-5 sm:w-5" />
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500">
+                    <x-icons.dashboard class="h-4 w-4" />
                     <span class="hidden sm:inline">Dashboard</span>
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="flex items-center gap-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 sm:px-5 sm:py-2.5 sm:text-base dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">
-                        <x-icons.logout class="h-4 w-4 sm:h-5 sm:w-5" />
+                    <button type="submit" class="flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <x-icons.logout class="h-4 w-4" />
                         <span class="hidden sm:inline">Logout</span>
                     </button>
                 </form>
