@@ -154,15 +154,15 @@
             @endphp
 
             {{-- Secondary bar: full browser width, edge to edge, below the top bar --}}
-            <div x-show="!distractionFree" class="hidden overflow-x-auto border-b border-gray-200 bg-blue-600 px-4 py-2 dark:border-gray-800 sm:px-6 md:block">
-                <div class="flex items-center gap-1">
+            <div x-show="!distractionFree" class="hidden border-b border-gray-200 bg-blue-500 px-2 py-1.5 dark:border-gray-800 md:block">
+                <div class="flex w-full items-center justify-between gap-0.5">
                     @foreach ($studentJourneyNav as $item)
                         @if (! $loop->first)
-                            <span class="shrink-0 text-blue-300">&gt;</span>
+                            <span class="shrink-0 text-[10px] text-blue-200">&gt;</span>
                         @endif
                         <a href="{{ $item['external'] ?? false ? $item['href'] : route($item['route']) }}"
                            @if ($item['external'] ?? false) target="_blank" rel="noopener noreferrer" @endif
-                           class="flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium {{ ! ($item['external'] ?? false) && (request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*')) ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-500' }}">
+                           class="flex shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-medium {{ ! ($item['external'] ?? false) && (request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*')) ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-400' }}">
                             {{ $item['label'] }}
                         </a>
                     @endforeach

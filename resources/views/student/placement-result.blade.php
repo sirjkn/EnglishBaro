@@ -6,7 +6,7 @@
 
         <h1 class="mt-4 text-2xl font-bold text-gray-900 dark:text-white">You've been placed into {{ $attempt->track->track_code }}</h1>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {{ $attempt->track->title }} — one payment unlocks this and every track on EnglishBaro, so you can
+            {{ $attempt->track->name }} — one payment unlocks this and every track on EnglishBaro, so you can
             progress all the way up at your own pace.
         </p>
 
