@@ -55,21 +55,13 @@
         <div id="level-list" class="mt-6 scroll-mt-20">
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative min-w-0 flex-1">
-                    <x-icons.search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <input
                         type="search"
                         x-model="search"
                         placeholder="Search levels"
-                        class="w-full rounded-full border-gray-300 py-2 pl-9 pr-4 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                        class="w-full rounded-full border-gray-300 py-2 px-4 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                     >
                 </div>
-                <button
-                    type="button"
-                    @click="openLevel = {{ $level->number }}; document.getElementById('level-{{ $level->number }}')?.scrollIntoView({ block: 'start', behavior: 'smooth' })"
-                    class="flex-none rounded-full border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-                >
-                    Jump to Level {{ $level->number }}
-                </button>
             </div>
 
             <div class="mt-4 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
