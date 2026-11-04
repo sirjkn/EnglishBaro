@@ -52,13 +52,28 @@ class LearningController extends Controller
             ? ! $completedLessonIds->contains($node->lesson->id)
             : ! $checkedAssessmentIds->contains($node->assessment->id));
 
+        // All tracks are unlocked by the same single payment, so there's one
+        // subscription clock for the whole course rather than one per track
+        // — show whichever active subscription expires soonest.
+        $subscription = Auth::user()->enrollments()
+            ->with('subscription')
+            ->get()
+            ->pluck('subscription')
+            ->filter(fn ($sub) => $sub && $sub->status === 'active')
+            ->sortBy('expires_at')
+            ->first();
+
+        $levelStatuses = $levelAccess->statusesFor($enrollment, $track);
+        $completedLevelsCount = collect($levelStatuses)->filter(fn ($status) => $status['completed'])->count();
+
         return view('student.level', [
             'track' => $track,
             'level' => $level,
             'allLevels' => $allLevels,
             'completedLessonIds' => $completedLessonIds,
             'checkedAssessmentIds' => $checkedAssessmentIds,
-            'levelStatuses' => $levelAccess->statusesFor($enrollment, $track),
+            'levelStatuses' => $levelStatuses,
+            'completedLevelsCount' => $completedLevelsCount,
             'resumeNode' => $resumeNode,
             // Only a student who has actually opened a lesson before is
             // "resuming" — otherwise the highlighted next step is their
@@ -67,6 +82,7 @@ class LearningController extends Controller
             'resumeStep' => $this->stepLink($track, $level, $resumeNode, 'Resume'),
             'stats' => $this->trackStats($allLevels, $completedLessonIds, $checkedAssessmentIds),
             'nextTrack' => $this->nextTrackAfter($track),
+            'subscription' => $subscription,
         ]);
     }
 
