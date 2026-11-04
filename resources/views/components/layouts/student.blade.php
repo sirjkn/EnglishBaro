@@ -48,18 +48,6 @@
 
             {{-- Desktop top bar: search, notifications, account --}}
             <header x-show="!distractionFree" class="hidden items-center gap-4 border-b border-gray-200 bg-white px-6 py-3 dark:border-gray-800 dark:bg-gray-800 md:flex">
-                <form action="{{ route('tracks.index') }}" method="GET" class="min-w-0 flex-1 max-w-xl">
-                    <div class="relative">
-                        <x-icons.search class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                        <input
-                            type="search"
-                            name="search"
-                            placeholder="Search courses, lessons..."
-                            class="w-full rounded-full border-0 bg-gray-100 py-2.5 pl-10 pr-4 text-sm text-gray-700 placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-500 dark:focus:bg-gray-900"
-                        >
-                    </div>
-                </form>
-
                 <div class="ml-auto flex flex-none items-center gap-4">
                     <a href="{{ route('student.notifications') }}" class="relative text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white">
                         <x-icons.bell class="h-5 w-5" />
@@ -142,6 +130,7 @@
                     [
                         'label' => null,
                         'items' => [
+                            ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                             ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open'],
                             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
                             ['href' => $helpHref, 'external' => true, 'label' => 'Help', 'icon' => 'desk-phone'],
@@ -206,20 +195,12 @@
                     @endforeach
 
                     <div class="border-t border-gray-200 pt-3 dark:border-gray-700">
-                        <a href="{{ route('home') }}"
-                           :title="collapsed ? 'Back to Site' : ''"
-                           :class="collapsed ? 'justify-center px-0' : 'justify-start'"
-                           class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
-                            <x-icons.home class="h-4 w-4 shrink-0" />
-                            <span x-show="!collapsed" x-cloak>Back to Site</span>
-                        </a>
-
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
                                     :title="collapsed ? 'Log Out' : ''"
                                     :class="collapsed ? 'justify-center px-0' : 'justify-start'"
-                                    class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                                    class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
                                 <x-icons.logout class="h-4 w-4 shrink-0" />
                                 <span x-show="!collapsed" x-cloak>Log Out</span>
                             </button>
@@ -251,7 +232,6 @@
                         ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                         ['route' => 'student.notifications', 'label' => 'Notifications', 'icon' => 'bell'],
                         ['route' => 'student.support.index', 'label' => 'Support', 'icon' => 'desk-phone'],
-                        ['route' => 'home', 'label' => 'Back to Site', 'icon' => 'home'],
                     ];
                     $moreActive = collect($mobileMoreNav)->contains(fn ($item) => request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*'));
                 @endphp

@@ -142,17 +142,29 @@ class LearningController extends Controller
             return $this->redirectToCheckpoint($track, $level, $levelAccess);
         }
 
-        $lesson->load(['video', 'ebook.file', 'resources.media', 'section']);
+        $lesson->load(['video', 'ebook.file', 'resources.media', 'section', 'activity.questions.options']);
 
         $nodes = $sequence->nodes($level);
-        [$previousNode, $nextNode] = $sequence->neighboursOfLesson($nodes, $lesson);
+        [$previousNode] = $sequence->neighboursOfLesson($nodes, $lesson);
 
         // Sequential gating: a student cannot skip past a lesson's Activity
         // Questions by jumping straight to the URL of the next lesson.
+        // Activity Questions are now shown inline on their own lesson's
+        // page rather than a separate one, so the redirect target is that
+        // lesson's page instead of a dedicated activity URL.
         if ($previousNode && $previousNode->type === 'activity' && ! $this->grading()->hasSubmittedAttempt($previousNode->assessment, $user)) {
             return redirect()
-                ->route('student.tracks.lesson-activity', [$track, $level, $previousNode->lesson])
+                ->route('student.tracks.learn', [$track, $level, $previousNode->lesson])
                 ->with('status', 'Complete the Activity Questions before moving on.');
+        }
+
+        // The "Next" link skips over this lesson's own activity node in the
+        // sequence (it's rendered inline below, not a separate page) and
+        // points straight to whatever comes after it.
+        $lessonIndex = $nodes->search(fn ($node) => $node->type === 'lesson' && $node->lesson->id === $lesson->id);
+        $nextNode = $nodes->get($lessonIndex + 1);
+        if ($nextNode && $nextNode->type === 'activity' && $nextNode->lesson->id === $lesson->id) {
+            $nextNode = $nodes->get($lessonIndex + 2);
         }
 
         $completedLessonIds = LessonProgress::query()
@@ -168,17 +180,30 @@ class LearningController extends Controller
         $progress->update(['last_viewed_at' => now()]);
         $enrollment->update(['last_viewed_lesson_id' => $lesson->id, 'last_viewed_at' => now()]);
 
+        $isCompleted = $progress->status === 'completed';
+
+        $assessment = $lesson->activity;
+        $attempt = null;
+        $attemptsUsed = 0;
+        if ($assessment && $isCompleted) {
+            $attempt = $this->grading()->latestSubmittedAttempt($assessment, $user);
+            $attemptsUsed = $this->grading()->attemptsUsed($assessment, $user);
+        }
+
         return view('student.learn', [
             'track' => $track,
             'level' => $level,
             'lesson' => $lesson,
-            'sections' => $level->sections()->with(['lessons' => fn ($query) => $query->orderBy('order')->with('activity')])->get(),
             'completedLessonIds' => $completedLessonIds,
-            'levelStatuses' => $levelAccess->statusesFor($enrollment, $track),
             'previousStep' => $this->stepLink($track, $level, $previousNode, 'Previous'),
-            'nextStep' => $this->stepLink($track, $level, $nextNode, $nextNode?->type === 'activity' ? 'Activity Questions' : 'Next'),
-            'isCompleted' => $progress->status === 'completed',
+            'nextStep' => $this->stepLink($track, $level, $nextNode, 'Next'),
+            'isCompleted' => $isCompleted,
             'resumeSeconds' => $progress->video_progress_seconds ?? 0,
+            'assessment' => $assessment,
+            'attempt' => $attempt,
+            'checked' => (bool) $attempt,
+            'attemptsUsed' => $attemptsUsed,
+            'maxAttempts' => AssessmentGradingService::MAX_ATTEMPTS,
         ]);
     }
 
@@ -378,11 +403,10 @@ class LearningController extends Controller
             return null;
         }
 
-        $url = $node->type === 'lesson'
-            ? route('student.tracks.learn', [$track, $level, $node->lesson])
-            : route('student.tracks.lesson-activity', [$track, $level, $node->lesson]);
-
-        return ['url' => $url, 'label' => $label];
+        // Activity Questions are shown inline on their owning lesson's page
+        // now, so every step (lesson or activity node) links to that same
+        // lesson URL.
+        return ['url' => route('student.tracks.learn', [$track, $level, $node->lesson]), 'label' => $label];
     }
 
     /**
