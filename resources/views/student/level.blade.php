@@ -236,7 +236,7 @@
         </div>
 
         <div x-show="changeLevelOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,0,.4)" @click.self="changeLevelOpen = false">
-            <div x-show="changeLevelOpen" x-transition class="w-full max-w-[15.6rem] rounded-xl bg-white p-3 shadow-xl dark:bg-gray-800">
+            <div x-show="changeLevelOpen" x-transition class="w-full max-w-[19.5rem] rounded-xl bg-white p-3 shadow-xl dark:bg-gray-800">
                 <h2 class="text-xs font-bold text-gray-900 dark:text-white">Change your level</h2>
                 <p class="mt-0.5 text-[10px] leading-tight text-gray-500 dark:text-gray-400">You decide this yourself. Nothing you do in the course or in practice tests changes it automatically.</p>
 
