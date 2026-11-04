@@ -15,11 +15,19 @@ class MediaService
 
     private const VIDEO_MIMES = ['mp4', 'webm'];
 
+    private const AUDIO_MIMES = ['mp3', 'wav', 'm4a'];
+
     private const DOCUMENT_MIMES = ['pdf', 'epub'];
+
+    public function __construct(private readonly MuxService $muxService) {}
 
     public function storeUploadedFile(UploadedFile $file, string $type, ?string $title = null): Media
     {
         $this->validateUploadedFile($file, $type);
+
+        if (in_array($type, ['video', 'audio'], true)) {
+            return $this->storeOnMux($file, $type, $title);
+        }
 
         $disk = 'public';
         $directory = "media/{$type}";
@@ -30,6 +38,25 @@ class MediaService
             'source_type' => 'upload',
             'provider' => 'local',
             'storage_path' => $path,
+            'original_filename' => $file->getClientOriginalName(),
+            'mime_type' => $file->getClientMimeType(),
+            'file_size' => $file->getSize(),
+            'title' => $title,
+            'created_by' => Auth::id(),
+        ]);
+    }
+
+    private function storeOnMux(UploadedFile $file, string $type, ?string $title = null): Media
+    {
+        $result = $this->muxService->uploadFile($file);
+
+        return Media::create([
+            'type' => $type,
+            'source_type' => 'upload',
+            'provider' => 'mux',
+            'mux_asset_id' => $result['asset_id'],
+            'mux_playback_id' => $result['playback_id'],
+            'mux_ready' => $result['ready'],
             'original_filename' => $file->getClientOriginalName(),
             'mime_type' => $file->getClientMimeType(),
             'file_size' => $file->getSize(),
@@ -127,6 +154,7 @@ class MediaService
         $allowed = match ($type) {
             'image' => self::IMAGE_MIMES,
             'video' => self::VIDEO_MIMES,
+            'audio' => self::AUDIO_MIMES,
             'document', 'ebook' => self::DOCUMENT_MIMES,
             default => [],
         };
@@ -140,6 +168,7 @@ class MediaService
         $maxKilobytes = match ($type) {
             'image' => 5 * 1024,
             'video' => 200 * 1024,
+            'audio' => 100 * 1024,
             'document', 'ebook' => 50 * 1024,
             default => 5 * 1024,
         };
@@ -153,7 +182,9 @@ class MediaService
 
     public function delete(Media $media): void
     {
-        if ($media->source_type === 'upload' && $media->storage_path) {
+        if ($media->isMux() && $media->mux_asset_id) {
+            $this->muxService->deleteAsset($media->mux_asset_id);
+        } elseif ($media->source_type === 'upload' && $media->storage_path) {
             Storage::disk('public')->delete($media->storage_path);
         }
 

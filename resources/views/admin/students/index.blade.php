@@ -30,7 +30,7 @@
     </form>
 
     <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-        <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+        <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
             <thead>
                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                     <th class="px-4 py-2">Student</th>
@@ -45,7 +45,7 @@
             <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
                 @forelse ($students as $student)
                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
-                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $student->name }}</td>
+                        <td class="px-4 py-3 font-medium"><a href="{{ route('admin.students.show', $student) }}" class="text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400">{{ $student->name }}</a></td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->studentProfile?->student_id }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->email }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->studentProfile?->track?->track_code ?? '—' }}</td>
@@ -55,7 +55,7 @@
                         </td>
                         <td class="px-4 py-3 text-right">
                             <a href="{{ route('admin.students.show', $student) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View</a>
-                            <a href="{{ route('admin.students.edit', $student) }}" class="ml-3 text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300">Edit</a>
+                            <a href="{{ route('admin.students.edit', ['student' => $student, 'redirect' => request()->getRequestUri()]) }}" class="ml-3 text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300">Edit</a>
                             <form method="POST" action="{{ route('admin.students.destroy', $student) }}" class="inline" onsubmit="return confirm('Remove this student? This cannot be undone.');">
                                 @csrf
                                 @method('DELETE')

@@ -23,8 +23,15 @@ class EnrollmentController extends Controller
             ->orderBy('order')
             ->get();
 
+        $overview = [
+            'total' => Enrollment::query()->count(),
+            'active' => Enrollment::query()->where('status', 'active')->count(),
+            'cancelled' => Enrollment::query()->where('status', 'cancelled')->count(),
+        ];
+
         return view('admin.enrollments.index', [
             'tracks' => $tracks,
+            'overview' => $overview,
         ]);
     }
 

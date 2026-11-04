@@ -16,7 +16,20 @@
                 message="This logs out every other admin currently signed in, site-wide. Your current session is kept. This cannot be undone."
                 class="rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/30"
             />
+            <x-confirm-delete-form
+                :action="route('admin.sessions.destroy-orphaned')"
+                label="Remove Deleted-User Sessions"
+                title="Remove sessions for deleted accounts?"
+                message="This permanently removes every session record whose account no longer exists. This cannot be undone."
+                class="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+            />
         </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <x-stat-card label="Active Sessions" :value="$overview['active']" icon="bolt" color="emerald" />
+        <x-stat-card label="Students Online" :value="$overview['students_online']" icon="user-check" color="indigo" />
+        <x-stat-card label="Total Sessions Logged" :value="$overview['total']" icon="login" color="purple" />
     </div>
 
     <form method="GET" class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -50,12 +63,16 @@
 
     <div class="mt-4 space-y-2">
         @forelse ($groupedUsers as $group)
-            <details class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+            <details class="overflow-hidden rounded-lg border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
                 <summary class="grid cursor-pointer list-none grid-cols-[1fr_5rem_5rem_9rem] items-center gap-3 bg-indigo-50 px-3 py-1.5 leading-tight text-indigo-900 hover:bg-indigo-100 dark:bg-gray-900 dark:text-indigo-200 dark:hover:bg-gray-700/60">
                     <div class="flex min-w-0 items-center gap-2">
                         <svg class="h-3.5 w-3.5 shrink-0 text-indigo-400 transition-transform [details[open]_&]:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
                         <div class="min-w-0">
-                            <p class="truncate text-sm font-medium">{{ $group->user?->name ?? 'Deleted user' }}</p>
+                            @if ($group->user)
+                                <a href="{{ route('admin.students.show', $group->user) }}" class="truncate text-sm font-medium text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400" onclick="event.stopPropagation()">{{ $group->user->name }}</a>
+                            @else
+                                <p class="truncate text-sm font-medium">Deleted user</p>
+                            @endif
                             @if ($group->user?->studentProfile?->student_id)
                                 <p class="text-[11px] text-indigo-500 dark:text-indigo-400">{{ $group->user->studentProfile->student_id }}</p>
                             @endif
@@ -81,7 +98,7 @@
                 @endif
 
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+                    <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                         <thead>
                             <tr class="bg-indigo-50 text-left text-xs uppercase text-indigo-700 dark:bg-gray-900 dark:text-indigo-300 divide-x divide-white dark:divide-gray-700">
                                 <th class="px-4 py-1.5">Device</th>

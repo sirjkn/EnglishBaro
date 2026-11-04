@@ -1,10 +1,11 @@
 <x-layouts.site :title="'Contact'">
     <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Contact Us</h1>
-        <p class="mt-2 text-gray-600 dark:text-gray-300">We would love to hear from you.</p>
-
-        <div class="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-2">
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
             <div class="space-y-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Contact Us</h1>
+                    <p class="mt-2 text-gray-600 dark:text-gray-300">We would love to hear from you.</p>
+                </div>
                 <div>
                     <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Address</h3>
                     <p class="mt-1 text-gray-900 dark:text-white">{{ \App\Models\CompanySetting::get('address', 'Nairobi, Kenya') }}</p>

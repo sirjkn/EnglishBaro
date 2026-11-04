@@ -2,9 +2,9 @@
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Payment {{ $payment->transaction_id }}</h1>
 
     <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
             <dl class="space-y-2 text-sm">
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Student</dt><dd class="text-gray-900 dark:text-white">{{ $payment->user->name }}</dd></div>
+                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Student</dt><dd class="text-gray-900 dark:text-white"><a href="{{ route('admin.students.show', $payment->user) }}" class="text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400">{{ $payment->user->name }}</a></dd></div>
                 <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Track</dt><dd class="text-gray-900 dark:text-white">{{ $payment->track->track_code }} — {{ $payment->track->name }}</dd></div>
                 <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Amount</dt><dd class="text-gray-900 dark:text-white">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</dd></div>
                 <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Method</dt><dd class="text-gray-900 dark:text-white">{{ ucfirst($payment->payment_method) }}</dd></div>
@@ -15,7 +15,7 @@
             </dl>
         </div>
 
-        <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
             <h2 class="font-semibold text-gray-900 dark:text-white">Transaction Timeline</h2>
             @if ($payment->transactions->isEmpty())
                 <x-empty-state class="mt-4" message="No transaction events recorded." />

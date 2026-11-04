@@ -2,6 +2,14 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
+        <script>
+            // Dark mode is opt-in only (toggled in Settings), never the OS/browser preference.
+            try {
+                if (localStorage.getItem('theme') === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        </script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -13,8 +21,14 @@
         <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=poppins:400,500,600,700&display=swap" rel="stylesheet" />
 
+        <script>
+            window.adminMediaUploadUrl = @json(route('admin.media-uploads.store', [], false));
+            window.adminMuxAssetsUrl = @json(route('admin.media-uploads.mux-assets', [], false));
+            window.adminMuxFromAssetUrl = @json(route('admin.media-uploads.from-mux', [], false));
+            window.adminMediaLibraryUrl = @json(route('admin.media-uploads.library', [], false));
+        </script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
@@ -26,63 +40,78 @@
                         <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-7 w-auto">
                     </a>
                 </div>
-                <nav class="space-y-4 overflow-y-auto p-4" style="max-height: calc(100vh - 4rem)">
+                <nav class="space-y-7 p-4">
                     @php
                         $adminNavGroups = [
                             [
                                 'label' => null,
                                 'items' => [
-                                    ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
+                                    ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'module' => 'dashboard'],
                                 ],
                             ],
                             [
                                 'label' => 'Student Management',
                                 'items' => [
-                                    ['route' => 'admin.students.index', 'label' => 'Students', 'icon' => 'user-circle'],
-                                    ['route' => 'admin.sessions.index', 'label' => 'Sessions', 'icon' => 'login'],
-                                    ['route' => 'admin.testimonials.index', 'label' => 'Testimonials', 'icon' => 'medal'],
+                                    ['route' => 'admin.students.index', 'label' => 'Students', 'icon' => 'user-circle', 'module' => 'students'],
+                                    ['route' => 'admin.sessions.index', 'label' => 'Sessions', 'icon' => 'login', 'module' => 'sessions'],
+                                    ['route' => 'admin.testimonials.index', 'label' => 'Testimonials', 'icon' => 'medal', 'module' => 'testimonials'],
                                 ],
                             ],
                             [
                                 'label' => 'Course Management',
                                 'items' => [
-                                    ['route' => 'admin.tracks.index', 'label' => 'Course Tracks', 'icon' => 'book-open'],
-                                    ['route' => 'admin.levels.index', 'label' => 'Levels', 'icon' => 'book-open'],
-                                    ['route' => 'admin.enrollments.index', 'label' => 'Enrollments', 'icon' => 'user-plus'],
-                                    ['route' => 'admin.placement-test.index', 'label' => 'Placement Test', 'icon' => 'medal'],
-                                    ['route' => 'admin.answer-reviews.index', 'label' => 'Answer Reviews', 'icon' => 'desk-phone'],
+                                    ['route' => 'admin.tracks.index', 'label' => 'Course Tracks', 'icon' => 'book-open', 'module' => 'tracks'],
+                                    ['route' => 'admin.levels.index', 'label' => 'Levels', 'icon' => 'book-open', 'module' => 'levels'],
+                                    ['route' => 'admin.enrollments.index', 'label' => 'Enrollments', 'icon' => 'user-plus', 'module' => 'enrollments'],
+                                    ['route' => 'admin.placement-test.index', 'label' => 'Placement Test', 'icon' => 'medal', 'module' => 'placement-test'],
+                                    ['route' => 'admin.answer-reviews.index', 'label' => 'Answer Reviews', 'icon' => 'desk-phone', 'module' => 'answer-reviews'],
                                 ],
                             ],
                             [
                                 'label' => 'Financial',
                                 'items' => [
-                                    ['route' => 'admin.payments.index', 'label' => 'Payments', 'icon' => 'credit-card'],
+                                    ['route' => 'admin.payments.index', 'label' => 'Payments', 'icon' => 'credit-card', 'module' => 'payments'],
                                 ],
                             ],
                             [
                                 'label' => 'System',
                                 'items' => [
-                                    ['route' => 'admin.settings.edit', 'label' => 'Settings', 'icon' => 'user-plus'],
-                                    ['route' => 'admin.audit-logs.index', 'label' => 'Audit Logs', 'icon' => 'map'],
-                                    ['route' => 'admin.contact-messages.index', 'label' => 'Contact Messages', 'icon' => 'desk-phone'],
+                                    ['route' => 'admin.users.index', 'label' => 'Users', 'icon' => 'user-plus', 'module' => 'users'],
+                                    ['route' => 'admin.settings.edit', 'label' => 'Settings', 'icon' => 'user-plus', 'module' => 'settings'],
+                                    ['route' => 'admin.audit-logs.index', 'label' => 'Audit Logs', 'icon' => 'map', 'module' => 'audit-logs'],
+                                    ['route' => 'admin.support.index', 'label' => 'Support', 'icon' => 'desk-phone', 'module' => 'support'],
                                 ],
                             ],
                         ];
+
+                        // Staff only see the modules they've been granted;
+                        // admins (hasModule() always true for them) see everything.
+                        $adminNavGroups = collect($adminNavGroups)
+                            ->map(fn ($group) => [
+                                'label' => $group['label'],
+                                'items' => collect($group['items'])->filter(fn ($item) => auth()->user()->hasModule($item['module']))->values()->all(),
+                            ])
+                            ->filter(fn ($group) => ! empty($group['items']))
+                            ->values()
+                            ->all();
                     @endphp
 
                     @foreach ($adminNavGroups as $group)
                         <div>
                             @if ($group['label'])
-                                <p class="px-3 pb-1 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">{{ $group['label'] }}</p>
+                                <p class="px-3 pb-1 text-xs font-bold uppercase tracking-wide text-black dark:text-gray-200">{{ $group['label'] }}</p>
                             @endif
                             <div class="space-y-1">
                                 @foreach ($group['items'] as $item)
                                     <a href="{{ route($item['route']) }}"
-                                       class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                                       class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-black hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700' }}">
                                         <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
                                         {{ $item['label'] }}
                                         @if ($item['route'] === 'admin.answer-reviews.index' && ($pendingAnswerReviewCount ?? 0) > 0)
                                             <span class="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">{{ $pendingAnswerReviewCount }}</span>
+                                        @endif
+                                        @if ($item['route'] === 'admin.support.index' && ($waitingSupportCount ?? 0) > 0)
+                                            <span class="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">{{ $waitingSupportCount }}</span>
                                         @endif
                                     </a>
                                 @endforeach
@@ -91,14 +120,14 @@
                     @endforeach
 
                     <div class="border-t border-gray-200 pt-3 dark:border-gray-700">
-                        <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                        <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal text-black hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700">
                             <x-icons.home class="h-4 w-4" />
                             Back to Site
                         </a>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
+                            <button type="submit" class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal text-black hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700">
                                 <x-icons.logout class="h-4 w-4" />
                                 Log Out
                             </button>
@@ -108,6 +137,16 @@
             </aside>
 
             <div class="min-w-0 flex-1">
+                <header class="sticky top-0 z-30 hidden items-center justify-end border-b border-gray-200 bg-white px-4 py-2.5 dark:border-gray-800 dark:bg-gray-800 md:flex">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                            <x-icons.logout class="h-4 w-4" />
+                            Logout
+                        </button>
+                    </form>
+                </header>
+
                 <header class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
                         <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-7 w-7">
@@ -160,7 +199,7 @@
                     </template>
 
                     <div x-show="moreOpen" x-cloak x-transition
-                         class="fixed inset-x-0 bottom-16 z-50 mx-3 max-h-[70vh] overflow-y-auto rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+                         class="fixed inset-x-0 bottom-16 z-50 mx-3 max-h-[70vh] overflow-y-auto rounded-xl border border-black/10 bg-white p-2 shadow-xl dark:border-white/10 dark:bg-gray-800">
                         @foreach ($adminMoreGroups as $group)
                             <div>
                                 @if ($group['label'])
@@ -169,11 +208,14 @@
                                 <div class="space-y-1">
                                     @foreach ($group['items'] as $item)
                                         <a href="{{ route($item['route']) }}"
-                                           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200' }}">
+                                           class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-normal {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200' }}">
                                             <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
                                             {{ $item['label'] }}
                                             @if ($item['route'] === 'admin.answer-reviews.index' && ($pendingAnswerReviewCount ?? 0) > 0)
                                                 <span class="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">{{ $pendingAnswerReviewCount }}</span>
+                                            @endif
+                                            @if ($item['route'] === 'admin.support.index' && ($waitingSupportCount ?? 0) > 0)
+                                                <span class="ml-auto rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white">{{ $waitingSupportCount }}</span>
                                             @endif
                                         </a>
                                     @endforeach
@@ -182,14 +224,14 @@
                         @endforeach
 
                         <div class="border-t border-gray-100 pt-2 dark:border-gray-700">
-                            <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200">
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-normal text-gray-700 dark:text-gray-200">
                                 <x-icons.home class="h-4 w-4" />
                                 Back to Site
                             </a>
 
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-700 dark:text-gray-200">
+                                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-normal text-gray-700 dark:text-gray-200">
                                     <x-icons.logout class="h-4 w-4" />
                                     Log Out
                                 </button>
@@ -199,15 +241,22 @@
 
                     <nav class="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800" style="padding-bottom: env(safe-area-inset-bottom)">
                         @foreach ($adminPrimaryNav as $item)
+                            @php $isActive = request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*'); @endphp
                             <a href="{{ route($item['route']) }}"
-                               class="flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium {{ request()->routeIs($item['route']) || request()->routeIs(explode('.index', $item['route'])[0].'.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400' }}">
+                               class="relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                                @if ($isActive)
+                                    <span class="absolute bottom-0 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-indigo-600 dark:bg-indigo-400"></span>
+                                @endif
                                 <x-dynamic-component :component="'icons.'.$item['icon']" class="h-5 w-5" />
                                 {{ $item['label'] }}
                             </a>
                         @endforeach
 
                         <button type="button" @click="moreOpen = !moreOpen"
-                                class="flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium {{ $adminMoreActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400' }}">
+                                class="relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                            @if ($adminMoreActive)
+                                <span class="absolute bottom-0 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-indigo-600 dark:bg-indigo-400"></span>
+                            @endif
                             <x-icons.dots-horizontal class="h-5 w-5" />
                             Others
                         </button>

@@ -2,8 +2,14 @@
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Enrollments</h1>
     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Currently enrolled courses (tracks). Click a track to see its enrolled students.</p>
 
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <x-stat-card label="Total Enrollments" :value="$overview['total']" icon="user-plus" color="indigo" />
+        <x-stat-card label="Active Enrollments" :value="$overview['active']" icon="user-check" color="emerald" />
+        <x-stat-card label="Cancelled" :value="$overview['cancelled']" icon="clock" color="rose" />
+    </div>
+
     <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700" x-data="{ open: null }">
-        <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+        <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
             <thead>
                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                     <th class="px-4 py-2">Track</th>
@@ -52,7 +58,7 @@
                                 </dl>
 
                                 <div class="mt-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-                                    <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+                                    <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                         <thead>
                                             <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                                                 <th class="px-3 py-2">Student</th>
@@ -70,7 +76,9 @@
                                                 @endphp
                                                 <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                                                     <td class="px-3 py-2">
-                                                        <p class="font-medium text-gray-900 dark:text-white">{{ $enrollment->user?->name }}</p>
+                                                        @if ($enrollment->user)
+                                                            <a href="{{ route('admin.students.show', $enrollment->user) }}" class="font-medium text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400">{{ $enrollment->user->name }}</a>
+                                                        @endif
                                                         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $enrollment->user?->email }}</p>
                                                     </td>
                                                     <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ $enrollment->enrolled_at?->format('M d, Y') }}</td>

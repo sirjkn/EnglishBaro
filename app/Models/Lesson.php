@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Lesson extends Model
 {
@@ -16,6 +17,7 @@ class Lesson extends Model
         'title',
         'description',
         'video_media_id',
+        'image_media_id',
         'ebook_id',
         'order',
         'duration_seconds',
@@ -39,6 +41,11 @@ class Lesson extends Model
         return $this->belongsTo(Media::class, 'video_media_id');
     }
 
+    public function image(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'image_media_id');
+    }
+
     public function ebook(): BelongsTo
     {
         return $this->belongsTo(Ebook::class);
@@ -52,5 +59,10 @@ class Lesson extends Model
     public function progress(): HasMany
     {
         return $this->hasMany(LessonProgress::class);
+    }
+
+    public function activity(): HasOne
+    {
+        return $this->hasOne(Assessment::class)->where('is_active', true);
     }
 }

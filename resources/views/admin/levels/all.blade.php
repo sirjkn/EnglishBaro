@@ -14,7 +14,7 @@
 
     @if ($selectedTrack)
         <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-            <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+            <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                 <thead>
                     <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                         <th class="px-4 py-2">#</th>

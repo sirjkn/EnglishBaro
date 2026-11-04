@@ -24,8 +24,15 @@ class AnswerReviewController extends Controller
             ->latest('created_at')
             ->paginate(20);
 
+        $overview = [
+            'pending' => AssessmentAnswer::query()->where('review_status', AssessmentAnswer::REVIEW_PENDING)->count(),
+            'approved' => AssessmentAnswer::query()->where('review_status', AssessmentAnswer::REVIEW_APPROVED)->count(),
+            'rejected' => AssessmentAnswer::query()->where('review_status', AssessmentAnswer::REVIEW_REJECTED)->count(),
+        ];
+
         return view('admin.answer-reviews.index', [
             'answers' => $answers,
+            'overview' => $overview,
         ]);
     }
 

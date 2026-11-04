@@ -1,11 +1,11 @@
 <x-layouts.student :title="$track->track_code.' '.$level->title">
     <div
         x-data="{ openLevel: {{ $level->number }} }"
-        class="grid grid-cols-1 gap-6 lg:grid-cols-[18rem_minmax(0,1fr)_16rem]"
+        class="grid grid-cols-1 gap-6 lg:grid-cols-[16rem_minmax(0,1fr)] xl:grid-cols-[18rem_minmax(0,1fr)_16rem]"
     >
         {{-- Sidebar: jump to any level; locked ones preview-only --}}
         <div class="order-2 lg:order-1" x-data="{ listOpen: true }">
-            <div class="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 lg:sticky lg:top-6">
+            <div class="rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800 lg:sticky lg:top-6">
                 <div class="border-b border-gray-200 p-4 dark:border-gray-700">
                     <p class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">Track {{ $track->track_code }}</p>
                     <a href="{{ route('student.tracks.show', $track) }}" class="text-sm font-semibold text-gray-900 hover:text-indigo-600 dark:text-white">
@@ -26,10 +26,18 @@
                         @foreach ($allLevels as $levelItem)
                             @php $status = $levelStatuses[$levelItem->number]; @endphp
                             <a
-                                href="#level-{{ $levelItem->number }}"
-                                @click="openLevel = {{ $levelItem->number }}"
+                                @if ($levelItem->id === $level->id)
+                                    href="#level-{{ $levelItem->number }}"
+                                    @click="openLevel = {{ $levelItem->number }}"
+                                @elseif ($status['unlocked'])
+                                    {{-- Every level the student has already reached stays visitable
+                                         afterwards — read-only, since it's already been completed. --}}
+                                    href="{{ route('student.tracks.level', [$track, $levelItem]) }}" wire:navigate
+                                @else
+                                    href="#" aria-disabled="true" onclick="return false;"
+                                @endif
                                 class="flex items-center gap-2 rounded-lg px-2 py-2.5 text-sm font-medium"
-                                :class="openLevel === {{ $levelItem->number }} ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300' : '{{ $status['unlocked'] ? 'text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-700' : 'text-gray-400 dark:text-gray-500' }}'"
+                                :class="openLevel === {{ $levelItem->number }} ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300' : '{{ $status['unlocked'] ? 'text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-700' : 'text-gray-400 dark:text-gray-500 cursor-not-allowed' }}'"
                             >
                                 @if ($status['completed'])
                                     <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-green-500 text-[10px] text-white">&#10003;</span>
@@ -60,53 +68,53 @@
 
             {{-- Course outline / highlight card --}}
             <div class="relative mt-3 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 to-blue-100 p-6 dark:from-indigo-950 dark:to-gray-800">
-                <div class="flex items-start gap-4">
-                    <div class="flex h-12 w-12 flex-none items-center justify-center rounded-xl bg-white shadow-sm dark:bg-gray-900">
-                        <x-icons.book-open class="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                <div class="flex items-start gap-3">
+                    <div class="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-white shadow-sm dark:bg-gray-900">
+                        <x-icons.book-open class="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                     </div>
 
                     <div class="min-w-0">
-                        <h1 class="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+                        <h1 class="text-base font-bold text-gray-900 dark:text-white sm:text-lg">
                             {{ $track->track_code }}, {{ collect(\App\Models\Section::TYPES)->map(fn ($type) => \App\Models\Section::titleFor($type))->implode(', ') }}
                         </h1>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">{{ $track->name }} &middot; {{ $allLevels->count() }} levels</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-300">{{ $track->name }} &middot; {{ $allLevels->count() }} levels</p>
                     </div>
                 </div>
 
-                <div class="mt-5 flex flex-wrap gap-6">
+                <div class="mt-4 flex flex-wrap gap-5">
                     <div class="flex items-center gap-2">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
-                            <x-icons.play-circle class="h-4 w-4" />
+                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                            <x-icons.play-circle class="h-3.5 w-3.5" />
                         </span>
                         <div>
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $stats['videoCount'] }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Number of videos</p>
+                            <p class="text-xs font-semibold text-gray-900 dark:text-white">{{ $stats['videoCount'] }}</p>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400">Number of videos</p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
-                            <x-icons.clock class="h-4 w-4" />
+                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                            <x-icons.clock class="h-3.5 w-3.5" />
                         </span>
                         <div>
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $stats['timeLeft'] }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Time left for the course</p>
+                            <p class="text-xs font-semibold text-gray-900 dark:text-white">{{ $stats['timeLeft'] }}</p>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400">Time left for the course</p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
-                            <x-icons.clipboard-check class="h-4 w-4" />
+                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                            <x-icons.clipboard-check class="h-3.5 w-3.5" />
                         </span>
                         <div>
-                            <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $stats['examsDone'] }}/{{ $stats['examsTotal'] }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Exams done</p>
+                            <p class="text-xs font-semibold text-gray-900 dark:text-white">{{ $stats['examsDone'] }}/{{ $stats['examsTotal'] }}</p>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400">Exams done</p>
                         </div>
                     </div>
                 </div>
 
                 @if ($track->description)
-                    <p class="mt-5 max-w-3xl text-sm text-gray-700 dark:text-gray-300">
+                    <p class="mt-4 max-w-3xl text-xs text-gray-700 dark:text-gray-300">
                         {{ $track->description }}
                     </p>
                 @endif
@@ -115,6 +123,7 @@
             {{-- Levels 1-100, stacked downward; scroll to progress --}}
             <div class="mt-6 space-y-3">
                 @foreach ($allLevels as $levelItem)
+                    @continue ($levelItem->id !== $level->id)
                     @php
                         $status = $levelStatuses[$levelItem->number];
                         $isUnlocked = $status['unlocked'];
@@ -165,11 +174,19 @@
                                 </p>
                             @endunless
 
+                            <div x-data="{ openSection: {{ optional($resumeNode?->section ?? $levelItem->sections->first())->id }} }">
                             @foreach ($levelItem->sections as $section)
                                 <div class="border-b border-gray-100 px-5 py-3 last:border-0 dark:border-gray-700">
-                                    <p class="pb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">{{ $section->title }}</p>
+                                    <button
+                                        type="button"
+                                        @click="openSection = (openSection === {{ $section->id }} ? null : {{ $section->id }})"
+                                        class="flex w-full items-center justify-between pb-2 text-left"
+                                    >
+                                        <span class="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">{{ $section->title }}</span>
+                                        <x-icons.chevron-left class="h-3.5 w-3.5 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openSection === {{ $section->id }} ? '-rotate-90' : 'rotate-90'" />
+                                    </button>
 
-                                    <div class="space-y-1">
+                                    <div x-show="openSection === {{ $section->id }}" x-cloak x-transition class="space-y-1">
                                         @foreach ($section->lessons as $lesson)
                                             @php
                                                 $isResume = $isUnlocked && $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
@@ -198,7 +215,7 @@
                                                 @elseif ($isResume)
                                                     <span class="flex flex-none items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">
                                                         <x-icons.play-circle class="h-3.5 w-3.5" />
-                                                        Resume
+                                                        {{ $hasStartedTrack ? 'Resume' : 'Start' }}
                                                     </span>
                                                 @elseif ($isDone)
                                                     <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-500 text-[10px] text-white">&#10003;</span>
@@ -206,49 +223,50 @@
                                                     <x-icons.chevron-right class="h-4 w-4 flex-none text-gray-300 dark:text-gray-600" />
                                                 @endif
                                             </a>
+
+                                            @if ($lesson->activity)
+                                                @php
+                                                    $assessment = $lesson->activity;
+                                                    $activityIsResume = $isUnlocked && $resumeNode?->type === 'activity' && $resumeNode->assessment->id === $assessment->id;
+                                                    $activityIsDone = $checkedAssessmentIds->contains($assessment->id);
+                                                    $lessonDone = $isUnlocked && $isDone;
+                                                @endphp
+                                                <a
+                                                    @if ($lessonDone)
+                                                        href="{{ route('student.tracks.lesson-activity', [$track, $levelItem, $lesson]) }}"
+                                                    @else
+                                                        href="#" aria-disabled="true" onclick="return false;"
+                                                    @endif
+                                                    class="ml-4 flex items-center gap-3 rounded-lg px-2 py-2.5 {{ $activityIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : ($lessonDone ? 'hover:bg-gray-50 dark:hover:bg-gray-700' : 'cursor-not-allowed opacity-60') }}"
+                                                >
+                                                    <span class="flex h-9 w-9 flex-none items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300">
+                                                        <x-icons.clipboard-check class="h-4 w-4" />
+                                                    </span>
+
+                                                    <span class="min-w-0 flex-1">
+                                                        <span class="block truncate text-sm font-medium text-gray-900 dark:text-white">{{ $assessment->title }}</span>
+                                                        <span class="block text-xs text-gray-500 dark:text-gray-400">Exercise @if ($assessment->time_limit_minutes) &middot; {{ $assessment->time_limit_minutes }} min @endif</span>
+                                                    </span>
+
+                                                    @if (! $lessonDone)
+                                                        <x-icons.lock class="h-4 w-4 flex-none text-gray-300 dark:text-gray-600" />
+                                                    @elseif ($activityIsResume)
+                                                        <span class="flex flex-none items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">
+                                                            <x-icons.play-circle class="h-3.5 w-3.5" />
+                                                            {{ $hasStartedTrack ? 'Resume' : 'Start' }}
+                                                        </span>
+                                                    @elseif ($activityIsDone)
+                                                        <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-500 text-[10px] text-white">&#10003;</span>
+                                                    @else
+                                                        <x-icons.chevron-right class="h-4 w-4 flex-none text-gray-300 dark:text-gray-600" />
+                                                    @endif
+                                                </a>
+                                            @endif
                                         @endforeach
-
-                                        @if ($section->activity)
-                                            @php
-                                                $assessment = $section->activity;
-                                                $isResume = $isUnlocked && $resumeNode?->type === 'activity' && $resumeNode->assessment->id === $assessment->id;
-                                                $isDone = $checkedAssessmentIds->contains($assessment->id);
-                                                $lessonsDone = $isUnlocked && $section->lessons->pluck('id')->diff($completedLessonIds)->isEmpty() && $section->lessons->isNotEmpty();
-                                            @endphp
-                                            <a
-                                                @if ($lessonsDone)
-                                                    href="{{ route('student.tracks.section-activity', [$track, $levelItem, $section]) }}"
-                                                @else
-                                                    href="#" aria-disabled="true" onclick="return false;"
-                                                @endif
-                                                class="flex items-center gap-3 rounded-lg px-2 py-2.5 {{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : ($lessonsDone ? 'hover:bg-gray-50 dark:hover:bg-gray-700' : 'cursor-not-allowed opacity-60') }}"
-                                            >
-                                                <span class="flex h-9 w-9 flex-none items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300">
-                                                    <x-icons.clipboard-check class="h-4 w-4" />
-                                                </span>
-
-                                                <span class="min-w-0 flex-1">
-                                                    <span class="block truncate text-sm font-medium text-gray-900 dark:text-white">{{ strtolower($section->title) }} Activity question</span>
-                                                    <span class="block text-xs text-gray-500 dark:text-gray-400">Exercise @if ($assessment->time_limit_minutes) &middot; {{ $assessment->time_limit_minutes }} min @endif</span>
-                                                </span>
-
-                                                @if (! $lessonsDone)
-                                                    <x-icons.lock class="h-4 w-4 flex-none text-gray-300 dark:text-gray-600" />
-                                                @elseif ($isResume)
-                                                    <span class="flex flex-none items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">
-                                                        <x-icons.play-circle class="h-3.5 w-3.5" />
-                                                        Resume
-                                                    </span>
-                                                @elseif ($isDone)
-                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-500 text-[10px] text-white">&#10003;</span>
-                                                @else
-                                                    <x-icons.chevron-right class="h-4 w-4 flex-none text-gray-300 dark:text-gray-600" />
-                                                @endif
-                                            </a>
-                                        @endif
                                     </div>
                                 </div>
                             @endforeach
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -256,9 +274,9 @@
         </div>
 
         {{-- Next course: the track after this one --}}
-        <div class="order-3">
+        <div class="order-3 lg:col-span-2 xl:col-span-1">
             @if ($nextTrack)
-                <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 lg:sticky lg:top-24">
+                <div class="rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800 xl:sticky xl:top-24">
                     <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
                         Next Course
                     </p>

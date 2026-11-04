@@ -35,7 +35,7 @@ new #[Layout('layouts.auth-split')] class extends Component
             'name' => ['required', 'string', 'max:255'],
             'phone_country_code' => ['required', 'string', 'max:5'],
             'phone' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users')->whereNull('deleted_at')],
             'country' => ['required', 'string', 'max:100'],
             'referral_email' => ['nullable', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],

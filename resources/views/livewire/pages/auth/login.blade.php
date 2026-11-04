@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Forms\LoginForm;
+use App\Models\SystemSetting;
 use App\Services\SessionQuotaService;
 use App\Support\SafeRedirect;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,11 @@ new #[Layout('layouts.auth-split')] class extends Component
 
     public ?string $sessionLimitMessage = null;
 
+    public ?string $maintenanceMessage = null;
+
+    /** @see \App\Http\Middleware\UnderConstruction::DEMO_EMAILS */
+    private const DEMO_EMAILS = ['student@englishbaro.test'];
+
     #[Url(except: '')]
     public string $redirect = '';
 
@@ -24,12 +30,25 @@ new #[Layout('layouts.auth-split')] class extends Component
     public function login(SessionQuotaService $sessionQuota): void
     {
         $this->sessionLimitMessage = null;
+        $this->maintenanceMessage = null;
 
         $this->validate();
 
         $this->form->authenticate();
 
         $user = Auth::user();
+
+        if (SystemSetting::get('site_maintenance_mode') === '1'
+            && ! $user->isAdmin()
+            && ! in_array($user->email, self::DEMO_EMAILS, true)) {
+            $this->maintenanceMessage = 'EnglishBaro is currently undergoing maintenance. Please check back shortly.';
+
+            Auth::guard('web')->logout();
+            Session::invalidate();
+            Session::regenerateToken();
+
+            return;
+        }
 
         if ($user->isStudent() && $sessionQuota->exceedsMonthlyLimit($user)) {
             $this->sessionLimitMessage = $sessionQuota->blockedMessage($user);
@@ -68,6 +87,50 @@ new #[Layout('layouts.auth-split')] class extends Component
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
             <p class="text-sm font-medium text-red-800 dark:text-red-200">{{ $sessionLimitMessage }}</p>
+        </div>
+    @endif
+
+    @if ($maintenanceMessage)
+        <div x-data x-init="$nextTick(() => {})" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" wire:key="maintenance-modal">
+            <div class="w-full max-w-sm rounded-xl border border-amber-200 bg-white p-6 text-center shadow-xl dark:border-amber-900 dark:bg-gray-800">
+                <span class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                </span>
+                <h2 class="mt-3 text-base font-semibold text-gray-900 dark:text-white">Under Maintenance</h2>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ $maintenanceMessage }}</p>
+                <button type="button" wire:click="$set('maintenanceMessage', null)" class="mt-5 w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                    OK
+                </button>
+            </div>
+        </div>
+    @endif
+
+    @if (app()->environment('local'))
+        <div class="mt-4 rounded-md border border-dashed border-gray-300 p-3 dark:border-gray-600">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Dev Quick Login</p>
+            <div class="mt-2 flex gap-2">
+                <button type="button" onclick="window.fillDevLogin('student@englishbaro.test')" class="rounded-md bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/40 dark:text-indigo-300 dark:hover:bg-indigo-900/60">
+                    Fill Test Student
+                </button>
+                <button type="button" onclick="window.fillDevLogin('admin@englishbaro.test')" class="rounded-md bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/40 dark:text-amber-300 dark:hover:bg-amber-900/60">
+                    Fill Test Admin
+                </button>
+            </div>
+            <script>
+                window.fillDevLogin = function (email) {
+                    const setVal = (id, val) => {
+                        const el = document.getElementById(id);
+                        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                        setter.call(el, val);
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                    };
+                    setVal('email', email);
+                    setVal('password', 'password');
+                };
+            </script>
         </div>
     @endif
 

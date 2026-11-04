@@ -5,9 +5,15 @@
         Review each student's answer below and approve or reject it, with optional remarks.
     </p>
 
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <x-stat-card label="Pending Review" :value="$overview['pending']" icon="clock" color="amber" />
+        <x-stat-card label="Approved" :value="$overview['approved']" icon="user-check" color="emerald" />
+        <x-stat-card label="Rejected" :value="$overview['rejected']" icon="clipboard-check" color="rose" />
+    </div>
+
     <div class="mt-6 space-y-4">
         @forelse ($answers as $answer)
-            <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <p class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">
@@ -18,7 +24,7 @@
                         <p class="mt-1 font-medium text-gray-900 dark:text-white">{{ $answer->question->question }}</p>
                     </div>
                     <span class="text-xs text-gray-500 dark:text-gray-400">
-                        {{ $answer->attempt->user->name }} &middot; {{ $answer->created_at->diffForHumans() }}
+                        <a href="{{ route('admin.students.show', $answer->attempt->user) }}" class="font-medium text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400">{{ $answer->attempt->user->name }}</a> &middot; {{ $answer->created_at->diffForHumans() }}
                     </span>
                 </div>
 

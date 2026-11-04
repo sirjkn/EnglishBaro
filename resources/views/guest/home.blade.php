@@ -32,11 +32,7 @@
                             x-transition:leave-end="opacity-0"
                             class="absolute inset-0"
                         >
-                            @if ($track->thumbnail?->resolved_url)
-                                <img src="{{ $track->thumbnail->resolved_url }}" alt="{{ $track->name }}" class="h-full w-full object-cover">
-                            @else
-                                <div class="h-full w-full bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900"></div>
-                            @endif
+                            <div class="h-full w-full bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900"></div>
 
                             <div class="absolute inset-0 bg-gradient-to-t from-indigo-950/90 via-indigo-950/30 to-transparent"></div>
 
@@ -90,7 +86,7 @@
         @if ($featuredTracks->isEmpty())
             <x-empty-state class="mt-8" message="No featured tracks yet. Check back soon." />
         @else
-            <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-8 grid grid-cols-4 gap-2 sm:gap-6">
                 @foreach ($featuredTracks as $track)
                     <x-featured-track-card :track="$track" :pricing-region="$pricingRegion" />
                 @endforeach
@@ -143,7 +139,7 @@
                         'image' => asset('images/how-it-works/earn-certificate.png'),
                     ],
                 ] as $index => $step)
-                    <div class="flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg shadow-gray-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-gray-700 dark:bg-gray-800 dark:shadow-black/30">
+                    <div class="flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg shadow-gray-200/60 transition hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-gray-800 dark:shadow-black/30">
                         <div class="p-5">
                             <div class="flex items-center gap-2">
                                 <span class="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
@@ -242,7 +238,7 @@
                 ] as $index => $faq)
                     <div
                         x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }"
-                        class="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+                        class="rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800"
                     >
                         <button
                             type="button"

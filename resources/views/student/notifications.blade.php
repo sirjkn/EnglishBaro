@@ -10,11 +10,15 @@
     @if ($notifications->isEmpty())
         <x-empty-state class="mt-6" message="No notifications yet." />
     @else
-        <div class="mt-6 divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
+        <div class="mt-6 divide-y divide-gray-100 rounded-xl border border-black/10 bg-white dark:divide-gray-700 dark:border-white/10 dark:bg-gray-800">
             @foreach ($notifications as $notification)
                 <div class="flex items-center justify-between p-4">
                     <div>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->title }}</p>
+                        @if ($notification->data['url'] ?? null)
+                            <a href="{{ $notification->data['url'] }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">{{ $notification->title }}</a>
+                        @else
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->title }}</p>
+                        @endif
                         @if ($notification->body)
                             <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">{{ $notification->body }}</p>
                         @endif

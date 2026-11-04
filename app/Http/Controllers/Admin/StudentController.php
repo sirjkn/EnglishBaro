@@ -7,10 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Track;
 use App\Models\User;
 use App\Services\AuditLogger;
+use App\Services\MediaService;
 use App\Support\Countries;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class StudentController extends Controller
@@ -62,19 +65,27 @@ class StudentController extends Controller
         return view('admin.students.create', ['countries' => Countries::all()]);
     }
 
-    public function store(Request $request, RegisterUserAction $registerUserAction): RedirectResponse
+    public function store(Request $request, RegisterUserAction $registerUserAction, MediaService $mediaService): RedirectResponse
     {
         $this->authorize('viewAny', User::class);
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users')->whereNull('deleted_at')],
             'phone' => ['required', 'string', 'max:30'],
             'country' => ['required', 'string', 'max:100'],
+            'gender' => ['nullable', 'in:male,female'],
             'password' => ['required', 'string', 'min:8'],
+            'avatar' => ['nullable', 'image', 'max:4096'],
         ]);
 
         $user = $registerUserAction->execute($validated);
+
+        if ($request->hasFile('avatar')) {
+            $user->studentProfile()->update([
+                'profile_image_id' => $mediaService->storeUploadedFile($request->file('avatar'), 'image')->id,
+            ]);
+        }
 
         AuditLogger::log('admin.student.created', $user, [], ['email' => $user->email]);
 
@@ -109,7 +120,45 @@ class StudentController extends Controller
         return back()->with('status', "Session quota reset. {$cleared} inactive session(s) cleared for this month.");
     }
 
-    public function edit(User $student): View
+    /**
+     * Generates a new random password for the student and shows it once to
+     * the admin (flash session only — never logged or stored in plain text)
+     * so it can be shared with the student out of band.
+     */
+    public function resetPassword(User $student): RedirectResponse
+    {
+        abort_unless($student->user_type === 'student', 404);
+        $this->authorize('update', $student);
+
+        $newPassword = Str::password(12);
+
+        $student->update(['password' => Hash::make($newPassword)]);
+
+        AuditLogger::log('admin.student.password_reset', $student, [], []);
+
+        return back()->with('status', 'Password reset.')->with('newPassword', $newPassword);
+    }
+
+    /**
+     * Manually marks the student's email as verified — for when the
+     * verification email never arrives or its link doesn't work, so they
+     * aren't blocked from logging in by the 'verified' middleware.
+     */
+    public function verifyEmail(User $student): RedirectResponse
+    {
+        abort_unless($student->user_type === 'student', 404);
+        $this->authorize('update', $student);
+
+        if (! $student->hasVerifiedEmail()) {
+            $student->markEmailAsVerified();
+
+            AuditLogger::log('admin.student.email_verified', $student, [], ['email_verified_at' => $student->email_verified_at]);
+        }
+
+        return back()->with('status', 'Email marked as verified.');
+    }
+
+    public function edit(Request $request, User $student): View
     {
         abort_unless($student->user_type === 'student', 404);
         $this->authorize('update', $student);
@@ -120,36 +169,58 @@ class StudentController extends Controller
             'student' => $student,
             'tracks' => Track::query()->orderBy('order')->get(),
             'countries' => Countries::all(),
+            'redirectTo' => $request->query('redirect'),
         ]);
     }
 
-    public function update(Request $request, User $student): RedirectResponse
+    public function update(Request $request, User $student, MediaService $mediaService): RedirectResponse
     {
         abort_unless($student->user_type === 'student', 404);
         $this->authorize('update', $student);
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users')->ignore($student->id)->whereNull('deleted_at')],
             'phone' => ['nullable', 'string', 'max:30'],
             'country' => ['nullable', 'string', 'max:100'],
+            'gender' => ['nullable', 'in:male,female'],
+            'referral_email' => ['nullable', 'string', 'email', 'max:255'],
             'track_id' => ['nullable', 'exists:tracks,id'],
             'is_active' => ['boolean'],
+            'avatar' => ['nullable', 'image', 'max:4096'],
         ]);
+
+        $emailChanged = $validated['email'] !== $student->email;
 
         $student->update([
             'name' => $validated['name'],
+            'email' => $validated['email'],
             'is_active' => $request->boolean('is_active'),
+            'email_verified_at' => $emailChanged ? null : $student->email_verified_at,
         ]);
 
-        $student->studentProfile()->update([
+        $profileUpdates = [
             'phone' => $validated['phone'] ?? null,
             'country' => $validated['country'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'referral_email' => $validated['referral_email'] ?? null,
             'track_id' => $validated['track_id'] ?? null,
-        ]);
+        ];
+
+        if ($request->hasFile('avatar')) {
+            $profileUpdates['profile_image_id'] = $mediaService->storeUploadedFile($request->file('avatar'), 'image')->id;
+        }
+
+        $student->studentProfile()->update($profileUpdates);
 
         AuditLogger::log('admin.student.updated', $student, [], $validated);
 
-        return redirect()->route('admin.students.show', $student)->with('status', 'Student updated.');
+        $redirectTo = \App\Support\SafeRedirect::resolve(
+            $request->input('redirect'),
+            route('admin.students.show', $student)
+        );
+
+        return redirect($redirectTo)->with('status', 'Student updated.');
     }
 
     public function destroy(User $student): RedirectResponse

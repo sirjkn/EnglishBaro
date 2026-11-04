@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\AssessmentAnswer;
+use App\Models\SupportTicket;
 use App\Models\User;
 use App\Models\UserSession;
 use App\Policies\SessionPolicy;
@@ -45,6 +46,11 @@ class AppServiceProvider extends ServiceProvider
         View::composer('components.layouts.admin', function ($view) {
             $view->with('pendingAnswerReviewCount', AssessmentAnswer::query()
                 ->where('review_status', AssessmentAnswer::REVIEW_PENDING)
+                ->count()
+            );
+
+            $view->with('waitingSupportCount', SupportTicket::query()
+                ->where('status', SupportTicket::WAITING_FOR_ANSWER)
                 ->count()
             );
         });

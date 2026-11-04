@@ -16,7 +16,7 @@
         <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
             <div class="fixed inset-0 bg-black/50" @click="open = false"></div>
 
-            <div class="relative w-full max-w-sm rounded-xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+            <div class="relative w-full max-w-sm rounded-xl border border-black/10 bg-white p-6 shadow-xl dark:border-white/10 dark:bg-gray-800">
                 <h2 class="text-base font-semibold text-gray-900 dark:text-white">Choose a payment method</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     {{ $track->track_code }} &middot; {{ $track->currency }} {{ number_format($track->defaultPrice(), 2) }}

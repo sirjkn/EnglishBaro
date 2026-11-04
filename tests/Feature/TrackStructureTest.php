@@ -80,7 +80,7 @@ class TrackStructureTest extends TestCase
         $this->levelWithLessons($track);
 
         $this->get(route('tracks.index'))->assertOk()->assertSee($track->name);
-        $this->get(route('tracks.show', $track))->assertOk()->assertSee('Level 1');
+        $this->get(route('tracks.show', $track))->assertOk()->assertSee('Level Overview');
         $this->get(route('tracks.level', [$track, $track->levels()->first()]))->assertOk()->assertSee('Grammar');
     }
 

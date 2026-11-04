@@ -2,9 +2,9 @@
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Payments</h1>
 
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <x-stat-card label="Total Revenue" :value="'$'.number_format($overview['total_revenue'], 2)" />
-        <x-stat-card label="Successful Payments" :value="$overview['successful']" />
-        <x-stat-card label="Pending Payments" :value="$overview['pending']" />
+        <x-stat-card label="Total Revenue" :value="'$'.number_format($overview['total_revenue'], 2)" icon="currency-dollar" color="emerald" />
+        <x-stat-card label="Successful Payments" :value="$overview['successful']" icon="user-check" color="indigo" />
+        <x-stat-card label="Pending Payments" :value="$overview['pending']" icon="clock" color="amber" />
     </div>
 
     <form method="GET" class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-5">
@@ -26,7 +26,7 @@
     </form>
 
     <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-        <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+        <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
             <thead>
                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                     <th class="px-4 py-2">Transaction ID</th>
@@ -43,7 +43,7 @@
                 @forelse ($payments as $payment)
                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->transaction_id }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->user->name }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300"><a href="{{ route('admin.students.show', $payment->user) }}" class="text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400">{{ $payment->user->name }}</a></td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->track->track_code }} — {{ $payment->track->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ ucfirst($payment->payment_method) }}</td>

@@ -70,9 +70,16 @@ class SessionController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
+        $overview = [
+            'active' => UserSession::query()->where('status', 'active')->count(),
+            'students_online' => UserSession::query()->where('status', 'active')->distinct('user_id')->count('user_id'),
+            'total' => UserSession::query()->count(),
+        ];
+
         return view('admin.sessions.index', [
             'groupedUsers' => $groupedUsers,
             'devices' => UserSession::query()->whereNotNull('device')->distinct()->orderBy('device')->pluck('device'),
+            'overview' => $overview,
         ]);
     }
 
@@ -137,6 +144,27 @@ class SessionController extends Controller
         UserSession::query()->whereIn('id', $sessions->pluck('id'))->delete();
 
         return back()->with('status', "Terminated {$sessions->count()} student session(s).");
+    }
+
+    /**
+     * Purges session records whose user account no longer exists (deleted
+     * since the session was logged) — they clutter the list as unclickable
+     * "Deleted user" rows and can't be terminated through the normal
+     * per-user action since there's no user to route to.
+     */
+    public function destroyOrphaned(): RedirectResponse
+    {
+        $this->authorize('viewAny', User::class);
+
+        $sessions = UserSession::query()->whereDoesntHave('user')->get();
+
+        DB::table('sessions')->whereIn('id', $sessions->pluck('session_id'))->delete();
+
+        AuditLogger::log('admin.session.purged_orphaned', null, [], ['count' => $sessions->count()]);
+
+        UserSession::query()->whereIn('id', $sessions->pluck('id'))->delete();
+
+        return back()->with('status', "Removed {$sessions->count()} session(s) belonging to deleted accounts.");
     }
 
     /**

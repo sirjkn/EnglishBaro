@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppNotification;
 use App\Models\Enrollment;
 use App\Models\Payment;
 use App\Models\Subscription;
@@ -64,6 +65,14 @@ class TrackPaymentController extends Controller
                 'duration_days' => $track->subscription_days,
                 'status' => 'active',
                 'region' => $region,
+            ]);
+
+            AppNotification::create([
+                'user_id' => $user->id,
+                'type' => 'payment_successful',
+                'title' => 'Payment successful: '.$track->track_code,
+                'body' => "You now have access to {$track->track_code} — {$track->name}.",
+                'data' => ['url' => route('student.payments')],
             ]);
         });
 

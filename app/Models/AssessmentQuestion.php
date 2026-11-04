@@ -12,10 +12,18 @@ class AssessmentQuestion extends Model
         'assessment_id',
         'question',
         'type',
+        'allow_multiple',
         'correct_short_answer',
         'points',
         'order',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'allow_multiple' => 'boolean',
+        ];
+    }
 
     public function assessment(): BelongsTo
     {

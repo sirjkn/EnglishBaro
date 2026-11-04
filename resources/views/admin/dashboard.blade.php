@@ -11,7 +11,7 @@
     </div>
 
     <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div class="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+        <div class="flex h-full flex-col rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Revenue ({{ $selectedRevenueMonthLabel }})</h2>
                 <div class="flex items-center gap-2">
@@ -34,7 +34,7 @@
                 <canvas id="revenueChart"></canvas>
             </div>
         </div>
-        <div class="flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+        <div class="flex h-full flex-col rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">New Students ({{ $selectedMonthLabel }})</h2>
                 <div class="flex items-center gap-2">
@@ -57,11 +57,11 @@
                 <canvas id="studentsChart"></canvas>
             </div>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+        <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Track Popularity</h2>
             <canvas id="trackChart" height="180"></canvas>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+        <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Payment Status</h2>
             <canvas id="paymentChart" height="180"></canvas>
         </div>

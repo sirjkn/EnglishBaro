@@ -12,6 +12,7 @@ class StudentProfile extends Model
         'student_id',
         'phone',
         'country',
+        'gender',
         'referral_email',
         'track_id',
         'profile_image_id',

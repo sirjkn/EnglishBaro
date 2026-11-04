@@ -11,7 +11,7 @@
             @csrf
 
             @foreach ($questions as $question)
-                <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
                     <p class="font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}. {{ $question->question }}</p>
 
                     <div class="mt-3 space-y-2">

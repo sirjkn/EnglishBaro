@@ -1,20 +1,56 @@
 <x-layouts.student :title="'Account'">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Account</h1>
 
+    <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="mt-6 flex items-center justify-between rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+        <div>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">Dark Mode</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Off by default. This only affects your own browser.</p>
+        </div>
+        <button
+            type="button"
+            @click="dark = !dark; document.documentElement.classList.toggle('dark', dark); try { localStorage.setItem('theme', dark ? 'dark' : 'light') } catch (e) {}"
+            :class="dark ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'"
+            class="relative inline-flex h-6 w-11 flex-none items-center rounded-full transition-colors"
+            role="switch"
+            :aria-checked="dark.toString()"
+        >
+            <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform" :class="dark ? 'translate-x-6' : 'translate-x-1'"></span>
+        </button>
+    </div>
+
     <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
         {{-- Profile --}}
-        <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
             <h2 class="font-semibold text-gray-900 dark:text-white">Profile</h2>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Student ID: {{ $studentProfile?->student_id }}</p>
 
-            <form method="POST" action="{{ route('student.account.update') }}" class="mt-4 space-y-4">
+            <form method="POST" action="{{ route('student.account.update') }}" class="mt-4 space-y-4" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
+                    <div class="mt-1 flex items-center gap-4">
+                        <x-student-avatar :profile="$studentProfile" size="h-16 w-16" />
+                        <input type="file" name="avatar" accept="image/*" class="text-sm text-gray-700 dark:text-gray-300">
+                    </div>
+                    @error('avatar') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Names</label>
                     <input type="text" name="name" value="{{ old('name', $user->name) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                     @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Gender</label>
+                    <select name="gender" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        <option value="">Not set</option>
+                        <option value="male" @selected(old('gender', $studentProfile?->gender) === 'male')>Male</option>
+                        <option value="female" @selected(old('gender', $studentProfile?->gender) === 'female')>Female</option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-400">Used only to pick a default avatar when you haven't uploaded a photo.</p>
                 </div>
 
                 <div>
@@ -52,7 +88,7 @@
         </div>
 
         {{-- Password --}}
-        <div class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
             <h2 class="font-semibold text-gray-900 dark:text-white">Change Password</h2>
 
             <form method="POST" action="{{ route('student.account.password') }}" class="mt-4 space-y-4">
@@ -82,7 +118,7 @@
     </div>
 
     {{-- Sessions --}}
-    <div class="mt-8 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    <div class="mt-8 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-gray-900 dark:text-white">Sessions</h2>
             <form method="POST" action="{{ route('student.sessions.destroy-others') }}">
@@ -93,7 +129,7 @@
         </div>
 
         <div class="mt-4 overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+            <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                 <thead>
                     <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                         <th class="py-2 pr-4">Device</th>
@@ -131,14 +167,14 @@
     </div>
 
     {{-- Recent Payments --}}
-    <div class="mt-8 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+    <div class="mt-8 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
         <h2 class="font-semibold text-gray-900 dark:text-white">Recent Payments</h2>
 
         @if ($payments->isEmpty())
             <x-empty-state class="mt-4" message="No payment history yet." />
         @else
             <div class="mt-4 overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+                <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                     <thead>
                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                             <th class="py-2 pr-4">Transaction</th>

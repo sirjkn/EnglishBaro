@@ -87,8 +87,9 @@ class SettingsController extends Controller
     {
         $validated = $request->validate([
             'default_subscription_days' => ['nullable', 'integer', 'min:1'],
-            'site_maintenance_mode' => ['nullable', 'string'],
         ]);
+
+        $validated['site_maintenance_mode'] = $request->boolean('site_maintenance_mode') ? '1' : '0';
 
         foreach ($validated as $key => $value) {
             SystemSetting::set($key, (string) $value);

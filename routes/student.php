@@ -9,6 +9,7 @@ use App\Http\Controllers\Student\PaymentController;
 use App\Http\Controllers\Student\PlacementTestController;
 use App\Http\Controllers\Student\ProgressController;
 use App\Http\Controllers\Student\SessionController;
+use App\Http\Controllers\Student\SupportTicketController;
 use App\Http\Controllers\Student\TrackPaymentController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +33,8 @@ Route::middleware(['auth', 'verified'])
             Route::post('tracks/{track}/levels/{level}/lessons/{lesson}/complete', [LearningController::class, 'complete'])->name('tracks.complete-lesson');
             Route::post('tracks/{track}/levels/{level}/lessons/{lesson}/progress', [LearningController::class, 'updateVideoProgress'])->name('tracks.video-progress');
 
-            Route::get('tracks/{track}/levels/{level}/sections/{section}/activity', [LearningController::class, 'sectionActivity'])->name('tracks.section-activity');
-            Route::post('tracks/{track}/levels/{level}/sections/{section}/activity/check-answers', [LearningController::class, 'checkSectionAnswers'])->name('tracks.section-activity.check-answers');
+            Route::get('tracks/{track}/levels/{level}/lessons/{lesson}/activity', [LearningController::class, 'lessonActivity'])->name('tracks.lesson-activity');
+            Route::post('tracks/{track}/levels/{level}/lessons/{lesson}/activity/check-answers', [LearningController::class, 'checkLessonAnswers'])->name('tracks.lesson-activity.check-answers');
         });
 
         Route::get('progress', ProgressController::class)->name('progress');
@@ -51,4 +52,11 @@ Route::middleware(['auth', 'verified'])
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications');
         Route::post('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
         Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+
+        Route::get('support', [SupportTicketController::class, 'index'])->name('support.index');
+        Route::get('support/create', [SupportTicketController::class, 'create'])->name('support.create');
+        Route::post('support', [SupportTicketController::class, 'store'])->name('support.store');
+        Route::get('support/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
+        Route::post('support/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('support.reply');
+        Route::post('support/{ticket}/close', [SupportTicketController::class, 'close'])->name('support.close');
     });

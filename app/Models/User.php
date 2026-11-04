@@ -29,6 +29,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'user_type',
         'is_active',
         'last_login_at',
+        'email_verified_at',
     ];
 
     /**
@@ -61,9 +62,37 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->user_type === 'admin';
     }
 
+    public function isStaff(): bool
+    {
+        return $this->user_type === 'staff';
+    }
+
     public function isStudent(): bool
     {
         return $this->user_type === 'student';
+    }
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'permission_user');
+    }
+
+    /**
+     * Whether this account can access the given admin module/menu. Admins
+     * always have every module; staff only have what's been explicitly
+     * granted via permission_user; students never have admin access at all.
+     */
+    public function hasModule(string $slug): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $this->isStaff()) {
+            return false;
+        }
+
+        return $this->permissions->contains('slug', "module.{$slug}");
     }
 
     public function studentProfile(): HasOne
@@ -104,6 +133,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
     }
 
     public function placementAttempts(): HasMany

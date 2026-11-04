@@ -17,6 +17,7 @@ class AssessmentAnswer extends Model
         'assessment_attempt_id',
         'assessment_question_id',
         'assessment_option_id',
+        'selected_option_ids',
         'short_answer_text',
         'is_correct',
         'review_status',
@@ -30,6 +31,7 @@ class AssessmentAnswer extends Model
         return [
             'is_correct' => 'boolean',
             'reviewed_at' => 'datetime',
+            'selected_option_ids' => 'array',
         ];
     }
 

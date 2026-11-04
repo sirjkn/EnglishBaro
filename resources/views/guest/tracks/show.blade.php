@@ -33,7 +33,7 @@
             </div>
 
             <div>
-                <div class="relative z-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-900 lg:sticky lg:top-24">
+                <div class="relative z-10 rounded-2xl border border-black/10 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-900 lg:sticky lg:top-24">
                     <p class="text-3xl font-bold text-gray-900 dark:text-white">
                         {{ $track->currency }} {{ number_format($track->priceForRegion($pricingRegion), 2) }}
                     </p>
@@ -61,7 +61,7 @@
                                 </a>
                             @elseif ($isEnrolled)
                                 <a href="{{ route('student.tracks.show', $track) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
-                                    Continue Learning
+                                    {{ $hasStartedLearning ? 'Continue Learning' : 'Start Learning' }}
                                 </a>
                             @elseif (! auth()->user()->studentProfile?->track_id)
                                 <a href="{{ route('student.placement-test') }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
@@ -71,9 +71,7 @@
                                     New students take a quick placement test first so we can enroll you into the right track.
                                 </p>
                             @elseif (auth()->user()->can('enroll', $track))
-                                <a href="{{ route('dashboard') }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
-                                    Enroll / Pay
-                                </a>
+                                <x-payment-method-modal :track="$track" label="Enroll" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500" />
                             @else
                                 <button type="button" disabled class="block w-full cursor-not-allowed rounded-md bg-gray-200 px-4 py-2.5 text-center text-sm font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400">
                                     Track Locked
@@ -83,8 +81,8 @@
                                 </p>
                             @endif
                         @else
-                            <a href="{{ route('register.create', ['redirect' => route('tracks.show', $track, absolute: false)]) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
-                                Join to Enroll
+                            <a href="{{ route('login', ['redirect' => route('tracks.show', $track, absolute: false)]) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
+                                Login to Enroll
                             </a>
                         @endauth
                     </div>
@@ -110,7 +108,7 @@
     >
         <div class="mx-auto flex max-w-7xl justify-center gap-8 overflow-x-auto px-4 sm:px-6 lg:px-8">
             <a href="#about" :class="active === 'about' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">About</a>
-            <a href="#levels" :class="active === 'levels' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Levels</a>
+            <a href="#levels" :class="active === 'levels' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Overview</a>
             <a href="#testimonials" :class="active === 'testimonials' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Testimonials</a>
             <a href="#subscription" :class="active === 'subscription' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Subscription</a>
         </div>
@@ -132,10 +130,10 @@
                     </div>
                 </div>
 
-                <div class="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-gray-800">
                     {{-- Certificate mockup --}}
                     <div class="mx-auto w-full max-w-[180px]">
-                        <svg viewBox="0 0 400 280" class="w-full rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700" xmlns="http://www.w3.org/2000/svg">
+                        <svg viewBox="0 0 400 280" class="w-full rounded-lg border border-black/10 bg-white shadow-sm dark:border-gray-700" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0" y="0" width="400" height="280" rx="8" fill="currentColor" class="text-white dark:text-gray-900" />
                             <rect x="10" y="10" width="380" height="260" rx="4" fill="none" stroke="#6366f1" stroke-width="2" />
                             <rect x="16" y="16" width="368" height="248" rx="3" fill="none" stroke="#c7d2fe" stroke-width="1" />
@@ -171,46 +169,31 @@
             </div>
         </section>
 
-        {{-- Levels --}}
-        <section id="levels" class="scroll-mt-16 border-b border-gray-200 py-12 dark:border-gray-800" x-data="{ visible: 6, total: {{ $levels->count() }}, step: 10 }">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Levels</h2>
+        {{-- Levels overview --}}
+        <section id="levels" class="scroll-mt-16 border-b border-gray-200 py-12 dark:border-gray-800">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Level Overview</h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-                Each level contains Grammar, Listening, Speaking and Reading sections.
+                Every level covers Grammar, Listening, Speaking and Reading. Levels are completed in order.
             </p>
 
-            <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                @forelse ($levels as $index => $level)
-                    <a
-                        href="{{ route('tracks.level', [$track, $level]) }}"
-                        @if ($index >= 6) x-show="{{ $index }} < visible" x-cloak @endif
-                        class="rounded-lg border border-gray-200 p-4 transition hover:border-indigo-400 dark:border-gray-700"
-                    >
-                        <p class="font-medium text-gray-900 dark:text-white">{{ $level->title }}</p>
-                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            {{ $level->sections->map(fn ($section) => $section->title)->implode(' · ') }}
-                        </p>
-                    </a>
-                @empty
-                    <x-empty-state message="Track content is being prepared." />
-                @endforelse
+            <div class="mx-auto mt-4 grid w-3/4 grid-cols-2 gap-2">
+                <x-stat-card label="Total Levels" :value="$levels->count()" icon="book-open" color="indigo" labelSize="text-[10px]" compact class="p-2.5" />
+                <x-stat-card label="Levels to Finish" :value="'All '.$levels->count()" icon="medal" color="emerald" labelSize="text-[10px]" compact class="p-2.5" />
+                <x-stat-card label="Access Period" :value="$track->subscription_days.' days'" icon="clock" color="amber" labelSize="text-[10px]" compact class="p-2.5" />
+                <x-stat-card label="Pace" value="Self-paced" icon="bolt" color="purple" labelSize="text-[10px]" compact class="p-2.5" />
             </div>
 
-            @if ($levels->count() > 6)
-                <div class="mt-5 flex items-center gap-4">
-                    <button
-                        type="button"
-                        x-show="visible < total"
-                        @click="visible = Math.min(visible + step, total)"
-                        class="inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
-                    >
-                        Show more levels
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                    </button>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                        Showing <span x-text="Math.min(visible, total)"></span> of {{ $levels->count() }} levels
-                    </p>
+            <div class="mt-6">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Rules &amp; Policies</h3>
+                <div class="prose prose-sm dark:prose-invert mt-2 max-w-none">
+                    <ul>
+                        <li>Levels must be completed in order — finishing a level unlocks the next one.</li>
+                        <li>Every lesson in a level, plus its Activity Questions, must be completed before moving on.</li>
+                        <li>One payment unlocks every level of this track for {{ $track->subscription_days }} days from the date of purchase.</li>
+                        <li>Your certificate is issued once every level in the track has been completed.</li>
+                    </ul>
                 </div>
-            @endif
+            </div>
         </section>
 
         {{-- Testimonials --}}
@@ -233,7 +216,7 @@
             @else
                 <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($testimonials as $testimonial)
-                        <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+                        <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
                             @if ($testimonial->rating)
                                 <div class="flex gap-0.5 text-amber-400">
                                     @for ($i = 1; $i <= 5; $i++)

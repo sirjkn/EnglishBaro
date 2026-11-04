@@ -9,6 +9,22 @@ use App\Models\User;
 
 class AssessmentGradingService
 {
+    public const MAX_ATTEMPTS = 3;
+
+    public function attemptsUsed(Assessment $assessment, User $user): int
+    {
+        return AssessmentAttempt::query()
+            ->where('assessment_id', $assessment->id)
+            ->where('user_id', $user->id)
+            ->where('status', 'submitted')
+            ->count();
+    }
+
+    public function attemptsRemaining(Assessment $assessment, User $user): int
+    {
+        return max(0, self::MAX_ATTEMPTS - $this->attemptsUsed($assessment, $user));
+    }
+
     /**
      * @param  array<int, mixed>  $submittedAnswers  [question_id => option_id|text]
      * @return array{attempt: AssessmentAttempt, score: float, passed: bool, feedback: array}
@@ -39,8 +55,12 @@ class AssessmentGradingService
             $totalPoints += $question->points;
             $given = $submittedAnswers[$question->id] ?? null;
 
-            [$isCorrect, $correctOptionId, $correctText] = $this->gradeQuestion($question, $given);
-            $isShortAnswer = $question->type === 'short_answer';
+            [$isCorrect, $correctOptionId, $correctText, $correctOptionIds] = $this->gradeQuestion($question, $given);
+            $isTextAnswer = in_array($question->type, ['short_answer', 'fill_blank'], true);
+            $isMultiSelect = $question->type === 'multiple_choice' && $question->allow_multiple;
+            // Short Answer and Fill-the-Blank both grade against the admin's
+            // correct-answer text by exact match — no manual review queue.
+            $needsReview = false;
 
             if ($isCorrect) {
                 $earnedPoints += $question->points;
@@ -49,20 +69,20 @@ class AssessmentGradingService
             AssessmentAnswer::query()->create([
                 'assessment_attempt_id' => $attempt->id,
                 'assessment_question_id' => $question->id,
-                'assessment_option_id' => $isShortAnswer ? null : $given,
-                'short_answer_text' => $isShortAnswer ? $given : null,
+                'assessment_option_id' => (! $isTextAnswer && ! $isMultiSelect) ? $given : null,
+                'selected_option_ids' => $isMultiSelect ? array_map('intval', (array) $given) : null,
+                'short_answer_text' => $isTextAnswer ? $given : null,
                 'is_correct' => $isCorrect,
-                // Short answers can be phrased many valid ways, so the exact-match
-                // result above is only a provisional guess until an admin reviews it.
-                'review_status' => $isShortAnswer ? AssessmentAnswer::REVIEW_PENDING : null,
+                'review_status' => $needsReview ? AssessmentAnswer::REVIEW_PENDING : null,
             ]);
 
             $feedback[] = [
                 'question_id' => $question->id,
                 'correct' => $isCorrect,
                 'correct_option_id' => $correctOptionId,
+                'correct_option_ids' => $correctOptionIds,
                 'correct_text' => $correctText,
-                'pending_review' => $isShortAnswer,
+                'pending_review' => $needsReview,
             ];
         }
 
@@ -71,7 +91,26 @@ class AssessmentGradingService
 
         $attempt->update(['score' => $score, 'passed' => $passed]);
 
-        return ['attempt' => $attempt, 'score' => $score, 'passed' => $passed, 'feedback' => $feedback];
+        // Correct answers stay hidden on failed attempts so retrying is
+        // meaningful — only a pass, or running out of attempts, reveals them.
+        $revealAnswers = $passed || $attemptNumber >= self::MAX_ATTEMPTS;
+
+        if (! $revealAnswers) {
+            $feedback = array_map(fn ($item) => [
+                ...$item,
+                'correct_option_id' => null,
+                'correct_option_ids' => null,
+                'correct_text' => null,
+            ], $feedback);
+        }
+
+        return [
+            'attempt' => $attempt,
+            'score' => $score,
+            'passed' => $passed,
+            'feedback' => $feedback,
+            'reveal_answers' => $revealAnswers,
+        ];
     }
 
     /**
@@ -134,22 +173,49 @@ class AssessmentGradingService
     }
 
     /**
-     * @return array{0: bool, 1: ?int, 2: ?string} [isCorrect, correctOptionId, correctText]
+     * @return array{0: bool, 1: ?int, 2: ?string, 3: ?array} [isCorrect, correctOptionId, correctText, correctOptionIds]
      */
     private function gradeQuestion($question, $given): array
     {
+        if ($question->type === 'fill_blank') {
+            $correctText = $question->correct_short_answer;
+            // Admins can list several acceptable answers separated by commas
+            // (e.g. "blue, azure, sky blue") since a blank can have more than
+            // one valid word.
+            $accepted = collect(explode(',', (string) $correctText))
+                ->map(fn ($candidate) => trim(mb_strtolower($candidate)))
+                ->filter();
+
+            $isCorrect = $given !== null && $accepted->contains(trim(mb_strtolower($given)));
+
+            return [$isCorrect, null, $correctText, null];
+        }
+
         if ($question->type === 'short_answer') {
             $correctText = $question->correct_short_answer;
-            $isCorrect = $given !== null
-                && $correctText !== null
-                && trim(mb_strtolower($given)) === trim(mb_strtolower($correctText));
+            // Same as fill-the-blank: admins can list several acceptable
+            // phrasings separated by commas for free-text auto-grading.
+            $accepted = collect(explode(',', (string) $correctText))
+                ->map(fn ($candidate) => trim(mb_strtolower($candidate)))
+                ->filter();
 
-            return [$isCorrect, null, $correctText];
+            $isCorrect = $given !== null && $accepted->contains(trim(mb_strtolower($given)));
+
+            return [$isCorrect, null, $correctText, null];
+        }
+
+        if ($question->allow_multiple) {
+            $correctOptionIds = $question->options->where('is_correct', true)->pluck('id')->sort()->values()->all();
+            $givenIds = collect((array) $given)->map(fn ($id) => (int) $id)->sort()->values()->all();
+
+            $isCorrect = $givenIds === $correctOptionIds;
+
+            return [$isCorrect, null, null, $correctOptionIds];
         }
 
         $correctOption = $question->options->firstWhere('is_correct', true);
         $isCorrect = $given !== null && $correctOption && (int) $given === $correctOption->id;
 
-        return [$isCorrect, $correctOption?->id, null];
+        return [$isCorrect, $correctOption?->id, null, null];
     }
 }

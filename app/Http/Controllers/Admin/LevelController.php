@@ -67,7 +67,7 @@ class LevelController extends Controller
     {
         $this->authorize('update', $track);
 
-        $level->load(['sections.lessons.video', 'sections.activity.questions.options']);
+        $level->load(['sections.lessons.video', 'sections.lessons.image', 'sections.lessons.resources.media', 'sections.lessons.activity.questions.options']);
 
         return view('admin.levels.edit', [
             'track' => $track,

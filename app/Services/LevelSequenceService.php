@@ -5,14 +5,13 @@ namespace App\Services;
 use App\Models\Assessment;
 use App\Models\Lesson;
 use App\Models\Level;
-use App\Models\Section;
 use Illuminate\Support\Collection;
 
 /**
  * Builds the ordered list of steps a student walks through inside a level:
- * each section's lessons, followed by that section's Activity Questions (if
- * it has one), then the next section's lessons, and so on. Both the lesson
- * page and the activity page use this to find their previous/next step.
+ * each lesson, followed immediately by that lesson's Activity Questions (if
+ * it has one), then the next lesson, and so on. Both the lesson page and the
+ * activity page use this to find their previous/next step.
  */
 class LevelSequenceService
 {
@@ -20,8 +19,7 @@ class LevelSequenceService
     {
         $sections = $level->sections()
             ->with([
-                'lessons' => fn ($query) => $query->orderBy('order'),
-                'activity',
+                'lessons' => fn ($query) => $query->orderBy('order')->with('activity'),
             ])
             ->get();
 
@@ -30,10 +28,10 @@ class LevelSequenceService
         foreach ($sections as $section) {
             foreach ($section->lessons as $lesson) {
                 $nodes->push((object) ['type' => 'lesson', 'lesson' => $lesson, 'section' => $section]);
-            }
 
-            if ($section->activity) {
-                $nodes->push((object) ['type' => 'activity', 'section' => $section, 'assessment' => $section->activity]);
+                if ($lesson->activity) {
+                    $nodes->push((object) ['type' => 'activity', 'lesson' => $lesson, 'section' => $section, 'assessment' => $lesson->activity]);
+                }
             }
         }
 
@@ -47,9 +45,9 @@ class LevelSequenceService
         return $this->neighboursAt($nodes, $index);
     }
 
-    public function neighboursOfActivity(Collection $nodes, Section $section): array
+    public function neighboursOfActivity(Collection $nodes, Lesson $lesson): array
     {
-        $index = $nodes->search(fn ($node) => $node->type === 'activity' && $node->section->id === $section->id);
+        $index = $nodes->search(fn ($node) => $node->type === 'activity' && $node->lesson->id === $lesson->id);
 
         return $this->neighboursAt($nodes, $index);
     }
@@ -69,10 +67,10 @@ class LevelSequenceService
         ];
     }
 
-    public function activityFor(Section $section): ?Assessment
+    public function activityFor(Lesson $lesson): ?Assessment
     {
         return Assessment::query()
-            ->where('section_id', $section->id)
+            ->where('lesson_id', $lesson->id)
             ->where('is_active', true)
             ->first();
     }

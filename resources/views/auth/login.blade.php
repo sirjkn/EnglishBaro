@@ -2,6 +2,20 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    @if (app()->environment('local'))
+        <div class="mb-4 rounded-md border border-dashed border-gray-300 p-3 dark:border-gray-600">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Dev Quick Login</p>
+            <div class="mt-2 flex gap-2">
+                <button type="button" onclick="document.getElementById('email').value='student@englishbaro.test';document.getElementById('password').value='password';" class="rounded-md bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-900/40 dark:text-indigo-300 dark:hover:bg-indigo-900/60">
+                    Fill Test Student
+                </button>
+                <button type="button" onclick="document.getElementById('email').value='admin@englishbaro.test';document.getElementById('password').value='password';" class="rounded-md bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100 dark:bg-amber-900/40 dark:text-amber-300 dark:hover:bg-amber-900/60">
+                    Fill Test Admin
+                </button>
+            </div>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 

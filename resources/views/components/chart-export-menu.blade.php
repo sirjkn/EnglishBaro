@@ -15,7 +15,7 @@
         x-show="open"
         x-cloak
         x-transition
-        class="absolute right-0 z-20 mt-1 w-40 rounded-md border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+        class="absolute right-0 z-20 mt-1 w-40 rounded-md border border-black/10 bg-white py-1 shadow-lg dark:border-white/10 dark:bg-gray-800"
     >
         <button
             type="button"

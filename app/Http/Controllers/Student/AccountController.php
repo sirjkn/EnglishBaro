@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Services\MediaService;
 use App\Support\Countries;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, MediaService $mediaService): RedirectResponse
     {
         $user = Auth::user();
 
@@ -36,16 +37,25 @@ class AccountController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
             'country' => ['nullable', 'string', 'max:100'],
+            'gender' => ['nullable', 'in:male,female'],
             'referral_email' => ['nullable', 'string', 'email', 'max:255'],
+            'avatar' => ['nullable', 'image', 'max:4096'],
         ]);
 
         $user->update(['name' => $validated['name']]);
 
-        $user->studentProfile()->update([
+        $profileUpdates = [
             'phone' => $validated['phone'] ?? null,
             'country' => $validated['country'] ?? null,
+            'gender' => $validated['gender'] ?? null,
             'referral_email' => $validated['referral_email'] ?? null,
-        ]);
+        ];
+
+        if ($request->hasFile('avatar')) {
+            $profileUpdates['profile_image_id'] = $mediaService->storeUploadedFile($request->file('avatar'), 'image')->id;
+        }
+
+        $user->studentProfile()->update($profileUpdates);
 
         return back()->with('status', 'Profile updated successfully.');
     }

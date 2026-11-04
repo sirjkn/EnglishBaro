@@ -17,7 +17,7 @@ class RegisterUserAction
     ) {}
 
     /**
-     * @param  array{name: string, email: string, phone: string, country: string, referral_email: ?string, password: string}  $data
+     * @param  array{name: string, email: string, phone: string, country: string, gender: ?string, referral_email: ?string, password: string}  $data
      */
     public function execute(array $data): User
     {
@@ -38,6 +38,7 @@ class RegisterUserAction
                 'student_id' => $studentId,
                 'phone' => $data['phone'],
                 'country' => $data['country'],
+                'gender' => $data['gender'] ?? null,
                 'referral_email' => $data['referral_email'] ?? null,
             ]);
 

@@ -16,7 +16,7 @@
 
     <div class="mt-6 space-y-4">
         @forelse ($questions as $question)
-            <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
                 <form method="POST" action="{{ route('admin.placement-test.update', $question) }}" class="space-y-3">
                     @csrf
                     @method('PUT')

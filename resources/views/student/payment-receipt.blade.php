@@ -21,7 +21,7 @@
                 </button>
             </div>
 
-            <div class="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+            <div class="rounded-xl border border-black/10 bg-white p-8 shadow-sm">
                 <div class="flex items-start justify-between border-b border-gray-200 pb-6">
                     <div>
                         <div class="flex items-center gap-2">

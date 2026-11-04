@@ -75,13 +75,15 @@ class TrackController extends Controller
         // of 10, with no page-number pagination or extra requests.
         $levels = $track->levels()->with('sections')->get();
 
-        $isEnrolled = auth()->check()
-            && $track->enrollments()->where('user_id', auth()->id())->where('status', 'active')->exists();
+        $enrollment = auth()->check()
+            ? $track->enrollments()->where('user_id', auth()->id())->where('status', 'active')->first()
+            : null;
 
         return view('guest.tracks.show', [
             'track' => $track,
             'levels' => $levels,
-            'isEnrolled' => $isEnrolled,
+            'isEnrolled' => $enrollment !== null,
+            'hasStartedLearning' => $enrollment?->last_viewed_lesson_id !== null,
             'totalLessons' => $track->lessonCount(),
             'pricingRegion' => $regionPricingService->resolveRegion($request),
         ]);

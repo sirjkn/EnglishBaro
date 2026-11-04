@@ -34,7 +34,7 @@
                         </p>
 
                         <a href="{{ route('student.tracks.show', $enrollment->track) }}" class="mt-4 block w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-indigo-500">
-                            Continue Learning
+                            {{ $enrollment->last_viewed_lesson_id ? 'Continue Learning' : 'Start Learning' }}
                         </a>
                     </div>
                 </div>

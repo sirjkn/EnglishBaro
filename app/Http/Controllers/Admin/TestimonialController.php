@@ -16,9 +16,16 @@ class TestimonialController extends Controller
     {
         $this->authorize('viewAny', \App\Models\User::class);
 
-        $testimonials = Testimonial::query()->orderBy('order')->paginate(20);
+        $testimonials = Testimonial::query()->with('user')->orderBy('order')->paginate(20);
 
-        return view('admin.testimonials.index', ['testimonials' => $testimonials]);
+        $overview = [
+            'total' => Testimonial::query()->count(),
+            'average_rating' => (float) Testimonial::query()->whereNotNull('rating')->avg('rating'),
+            'published' => Testimonial::query()->where('is_published', true)->count(),
+            'unpublished' => Testimonial::query()->where('is_published', false)->count(),
+        ];
+
+        return view('admin.testimonials.index', ['testimonials' => $testimonials, 'overview' => $overview]);
     }
 
     public function create(): View
