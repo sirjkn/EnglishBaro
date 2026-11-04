@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Student\AccountController;
+use App\Http\Controllers\Student\ChangeLevelController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\HelpController;
 use App\Http\Controllers\Student\LearningController;
@@ -31,6 +32,8 @@ Route::middleware(['auth', 'verified'])
         Route::get('more-practice/{category}', [MorePracticeController::class, 'show'])->name('more-practice.show');
 
         Route::get('help', HelpController::class)->name('help');
+
+        Route::post('change-level', [ChangeLevelController::class, 'store'])->name('change-level');
 
         Route::get('tracks', [MyTrackController::class, 'index'])->name('tracks.index');
         Route::get('tracks/{track}', [MyTrackController::class, 'show'])->name('tracks.show');

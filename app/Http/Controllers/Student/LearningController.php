@@ -66,10 +66,23 @@ class LearningController extends Controller
         $levelStatuses = $levelAccess->statusesFor($enrollment, $track);
         $completedLevelsCount = collect($levelStatuses)->filter(fn ($status) => $status['completed'])->count();
 
+        // All tracks are unlocked by the same single payment, so the level
+        // switcher offers every track the student has an active enrollment
+        // for (normally every published track).
+        $pickerTracks = Auth::user()->enrollments()
+            ->where('status', 'active')
+            ->with('track')
+            ->get()
+            ->pluck('track')
+            ->filter()
+            ->sortBy('order')
+            ->values();
+
         return view('student.level', [
             'track' => $track,
             'level' => $level,
             'allLevels' => $allLevels,
+            'pickerTracks' => $pickerTracks,
             'completedLessonIds' => $completedLessonIds,
             'checkedAssessmentIds' => $checkedAssessmentIds,
             'levelStatuses' => $levelStatuses,

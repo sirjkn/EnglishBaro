@@ -1,5 +1,5 @@
 <x-layouts.student :title="$track->track_code.' '.$level->title">
-    <div x-data="{ openLevel: {{ $level->number }}, search: '' }" class="max-w-4xl">
+    <div x-data="{ openLevel: {{ $level->number }}, search: '', changeLevelOpen: false, selTrack: '{{ $track->track_code }}', selLevel: {{ $level->number }} }" class="max-w-4xl">
         @if ($subscription)
             @php
                 $daysLeft = max(0, now()->startOfDay()->diffInDays($subscription->expires_at->copy()->startOfDay(), false));
@@ -16,9 +16,9 @@
         <p class="text-xs font-bold uppercase tracking-wide text-gray-400">My Course</p>
         <div class="mt-1 flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $track->track_code }} &mdash; Level {{ $level->number }}</h1>
-            <a href="#level-list" class="flex-none rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+            <button type="button" @click="changeLevelOpen = true" class="flex-none rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
                 Change level
-            </a>
+            </button>
         </div>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $completedLevelsCount }} of {{ $allLevels->count() }} levels complete on this track.</p>
 
@@ -182,6 +182,52 @@
                         </div>
                     </div>
                 @endforeach
+            </div>
+        </div>
+
+        <div x-show="changeLevelOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,0,.4)" @click.self="changeLevelOpen = false">
+            <div x-show="changeLevelOpen" x-transition class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Change your level</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You decide this yourself. Nothing you do in the course or in practice tests changes it automatically.</p>
+
+                <p class="mt-5 text-xs font-bold uppercase tracking-wide text-gray-400">Track</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                    @foreach ($pickerTracks as $pickerTrack)
+                        <button type="button" @click="selTrack = '{{ $pickerTrack->track_code }}'"
+                                class="rounded-full border px-4 py-1.5 text-sm font-semibold"
+                                :class="selTrack === '{{ $pickerTrack->track_code }}' ? 'border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-gray-900' : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
+                            {{ $pickerTrack->track_code }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <p class="mt-5 text-xs font-bold uppercase tracking-wide text-gray-400">Starting level</p>
+                <div class="mt-2 grid grid-cols-6 gap-2">
+                    @foreach (range(1, 10) as $n)
+                        @php $checkpoint = $n === 1 ? 1 : $n * 10; @endphp
+                        <button type="button" @click="selLevel = {{ $checkpoint }}"
+                                class="rounded-lg border px-2 py-2 text-sm font-semibold"
+                                :class="selLevel === {{ $checkpoint }} ? 'border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-gray-900' : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
+                            {{ $checkpoint }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <div class="mt-5 rounded-lg bg-amber-50 px-3 py-2.5 text-xs text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+                    Your finished work is kept. If you come back to a level later, your progress is still there.
+                </div>
+
+                <div class="mt-5 flex items-center justify-end gap-3">
+                    <button type="button" @click="changeLevelOpen = false" class="rounded-full px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                    <form method="POST" action="{{ route('student.change-level') }}">
+                        @csrf
+                        <input type="hidden" name="track_code" :value="selTrack">
+                        <input type="hidden" name="level_number" :value="selLevel">
+                        <button type="submit" class="rounded-full bg-teal-700 px-5 py-2 text-sm font-semibold text-white hover:bg-teal-600">
+                            Move to <span x-text="selTrack"></span> Level <span x-text="selLevel"></span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
