@@ -32,12 +32,12 @@ class LearningController extends Controller
             return $this->redirectToCheckpoint($track, $level, $levelAccess);
         }
 
-        $level->load(['sections.lessons.video', 'sections.lessons.resources.media', 'sections.lessons.activity']);
+        $level->load(['sections.lessons.video', 'sections.lessons.resources.media', 'sections.lessons.activity.questions']);
 
         // The page shows every level of the track in one scroll, so every
         // level's sections/lessons/activity are loaded up front rather than
         // one at a time, to avoid N+1 queries while rendering the list.
-        $allLevels = $track->levels()->with(['sections.lessons.video', 'sections.lessons.resources.media', 'sections.lessons.activity'])->get();
+        $allLevels = $track->levels()->with(['sections.lessons.video', 'sections.lessons.resources.media', 'sections.lessons.activity.questions'])->get();
 
         $completedLessonIds = LessonProgress::query()
             ->where('enrollment_id', $enrollment->id)
