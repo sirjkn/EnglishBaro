@@ -135,22 +135,17 @@
             </div>
 
             @php
+                $helpPhone = preg_replace('/\D+/', '', \App\Models\CompanySetting::get('phone', ''));
+                $helpHref = $helpPhone ? "https://wa.me/{$helpPhone}" : route('contact');
+
                 $studentNavGroups = [
                     [
-                        'label' => 'Learning',
+                        'label' => null,
                         'items' => [
-                            ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                             ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open'],
-                            ['route' => 'tracks.index', 'label' => 'All Course Tracks', 'icon' => 'map'],
-                        ],
-                    ],
-                    [
-                        'label' => 'Account',
-                        'items' => [
+                            ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
+                            ['href' => $helpHref, 'external' => true, 'label' => 'Help', 'icon' => 'desk-phone'],
                             ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
-                            ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card'],
-                            ['route' => 'student.notifications', 'label' => 'Notifications', 'icon' => 'bell'],
-                            ['route' => 'student.support.index', 'label' => 'Support', 'icon' => 'desk-phone'],
                         ],
                     ],
                 ];
@@ -161,8 +156,9 @@
                 <div class="flex items-center gap-1.5">
                     @foreach ($studentNavGroups as $group)
                         @foreach ($group['items'] as $item)
-                            <a href="{{ route($item['route']) }}"
-                               class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-500' }}">
+                            <a href="{{ $item['external'] ?? false ? $item['href'] : route($item['route']) }}"
+                               @if ($item['external'] ?? false) target="_blank" rel="noopener noreferrer" @endif
+                               class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium {{ ! ($item['external'] ?? false) && (request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*')) ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-500' }}">
                                 <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
                                 {{ $item['label'] }}
                             </a>
@@ -196,10 +192,11 @@
                             @endif
                             <div class="space-y-1">
                                 @foreach ($group['items'] as $item)
-                                    <a href="{{ route($item['route']) }}"
+                                    <a href="{{ $item['external'] ?? false ? $item['href'] : route($item['route']) }}"
+                                       @if ($item['external'] ?? false) target="_blank" rel="noopener noreferrer" @endif
                                        :title="collapsed ? '{{ $item['label'] }}' : ''"
                                        :class="collapsed ? 'justify-center px-0' : 'justify-start'"
-                                       class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                                       class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium {{ ! ($item['external'] ?? false) && (request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*')) ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700' }}">
                                         <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4 shrink-0" />
                                         <span x-show="!collapsed" x-cloak>{{ $item['label'] }}</span>
                                     </a>

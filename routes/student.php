@@ -22,6 +22,8 @@ Route::middleware(['auth', 'verified'])
         Route::get('placement-test', [PlacementTestController::class, 'show'])->name('placement-test');
         Route::post('placement-test', [PlacementTestController::class, 'store'])->name('placement-test.store');
 
+        Route::get('more-practice', fn () => view('student.more-practice'))->name('more-practice');
+
         Route::get('tracks', [MyTrackController::class, 'index'])->name('tracks.index');
         Route::get('tracks/{track}', [MyTrackController::class, 'show'])->name('tracks.show');
         Route::post('tracks/{track}/pay', [TrackPaymentController::class, 'pay'])->name('tracks.pay');
