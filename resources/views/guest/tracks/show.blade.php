@@ -47,7 +47,7 @@
                         <div class="flex justify-between"><dt>Subscription</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $track->subscription_days }} days</dd></div>
                     </dl>
                     <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                        One payment unlocks all {{ $levels->count() }} levels of this track. The next track is purchased separately.
+                        One payment unlocks every course on EnglishBaro, start to finish. You'll progress through {{ $track->track_code }} first, then automatically move up through every level after it as you complete each one.
                     </p>
 
                     <div class="mt-6 space-y-2">
@@ -251,10 +251,10 @@
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Subscription terms</h2>
             <div class="prose prose-sm dark:prose-invert mt-4 max-w-none">
                 <ul>
-                    <li>One payment unlocks every level of the {{ $track->track_code }} track for {{ $track->subscription_days }} days from the date of purchase.</li>
-                    <li>Access to this track is separate from other tracks — each track is purchased and subscribed to individually.</li>
+                    <li>One payment unlocks every course on EnglishBaro for {{ $track->subscription_days }} days from the date of purchase — not just {{ $track->track_code }}.</li>
+                    <li>You progress through courses in order, starting with {{ $track->track_code }}: finishing one automatically unlocks the next.</li>
                     <li>Pricing is shown in {{ $track->currency }} and may vary by region.</li>
-                    <li>Your subscription covers all video lessons, eBooks, assessments and the end-of-track certificate for this track.</li>
+                    <li>Your subscription covers all video lessons, eBooks, assessments, and an end-of-course certificate for every course you complete.</li>
                 </ul>
             </div>
         </section>

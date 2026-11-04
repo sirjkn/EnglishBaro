@@ -36,7 +36,13 @@ class TrackPaymentController extends Controller
         $region = $regionPricingService->resolveRegion($request);
         $amount = $track->priceForRegion($region);
 
-        DB::transaction(function () use ($user, $track, $validated, $region, $amount) {
+        // A single payment unlocks every published track, not just the one
+        // the student clicked "Pay" on — the catalogue is one progression
+        // (A1 through the highest track), and students simply climb through
+        // it level by level rather than buying each step separately.
+        $allTracks = Track::query()->where('status', 'published')->get();
+
+        DB::transaction(function () use ($user, $track, $allTracks, $validated, $region, $amount) {
             $payment = Payment::query()->create([
                 'transaction_id' => 'EB-'.Str::upper(Str::random(12)),
                 'user_id' => $user->id,
@@ -50,33 +56,37 @@ class TrackPaymentController extends Controller
                 'verified_at' => now(),
             ]);
 
-            $enrollment = Enrollment::query()->updateOrCreate(
-                ['user_id' => $user->id, 'track_id' => $track->id],
-                ['status' => 'active', 'enrolled_at' => now()]
-            );
+            $expiresAt = now()->addDays($track->subscription_days);
 
-            Subscription::query()->create([
-                'user_id' => $user->id,
-                'track_id' => $track->id,
-                'enrollment_id' => $enrollment->id,
-                'payment_id' => $payment->id,
-                'starts_at' => now(),
-                'expires_at' => now()->addDays($track->subscription_days),
-                'duration_days' => $track->subscription_days,
-                'status' => 'active',
-                'region' => $region,
-            ]);
+            foreach ($allTracks as $eachTrack) {
+                $enrollment = Enrollment::query()->updateOrCreate(
+                    ['user_id' => $user->id, 'track_id' => $eachTrack->id],
+                    ['status' => 'active', 'enrolled_at' => now()]
+                );
+
+                Subscription::query()->updateOrCreate(
+                    ['user_id' => $user->id, 'track_id' => $eachTrack->id, 'enrollment_id' => $enrollment->id],
+                    [
+                        'payment_id' => $payment->id,
+                        'starts_at' => now(),
+                        'expires_at' => $expiresAt,
+                        'duration_days' => $track->subscription_days,
+                        'status' => 'active',
+                        'region' => $region,
+                    ]
+                );
+            }
 
             AppNotification::create([
                 'user_id' => $user->id,
                 'type' => 'payment_successful',
-                'title' => 'Payment successful: '.$track->track_code,
-                'body' => "You now have access to {$track->track_code} — {$track->name}.",
+                'title' => 'Payment successful',
+                'body' => "You now have full access to every course, starting with {$track->track_code} — {$track->name}.",
                 'data' => ['url' => route('student.payments')],
             ]);
         });
 
         return redirect()->route('student.dashboard')
-            ->with('status', "Payment successful! You now have access to {$track->track_code}.");
+            ->with('status', "Payment successful! You now have access to every course, starting with {$track->track_code}.");
     }
 }
