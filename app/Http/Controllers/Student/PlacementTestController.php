@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanySetting;
+use App\Models\Media;
+use App\Models\PlacementAttempt;
 use App\Services\PlacementTestService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,7 +49,30 @@ class PlacementTestController extends Controller
 
         $attempt = $placementTest->submit($user, $validated['answers']);
 
-        return redirect()->route('student.dashboard')
-            ->with('status', "You've been placed into track {$attempt->track->track_code}. You can now enroll in {$attempt->track->track_code} and any track below it.");
+        return redirect()->route('student.placement-test.result');
+    }
+
+    public function result(): View
+    {
+        $attempt = PlacementAttempt::query()
+            ->where('user_id', Auth::id())
+            ->with('track')
+            ->latest('completed_at')
+            ->first();
+
+        abort_if(! $attempt, 404);
+
+        return view('student.placement-result', [
+            'attempt' => $attempt,
+        ]);
+    }
+
+    public function introVideo(): View
+    {
+        $introVideoId = CompanySetting::get('intro_video_media_id');
+
+        return view('student.intro-video', [
+            'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
+        ]);
     }
 }

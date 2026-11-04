@@ -138,20 +138,33 @@
                         ],
                     ],
                 ];
+
+                $studentJourneyNav = [
+                    ['route' => 'home', 'label' => 'Landing', 'icon' => 'home'],
+                    ['route' => 'register', 'label' => 'Sign Up', 'icon' => 'user-circle'],
+                    ['route' => 'tracks.index', 'label' => 'Payment', 'icon' => 'credit-card'],
+                    ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
+                    ['route' => 'student.placement-test.result', 'label' => 'Result', 'icon' => 'medal'],
+                    ['route' => 'student.intro-video', 'label' => 'Intro Video', 'icon' => 'dashboard'],
+                    ['route' => 'student.tracks.index', 'label' => 'My Course', 'icon' => 'book-open'],
+                    ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
+                    ['href' => $helpHref, 'external' => true, 'label' => 'Help', 'icon' => 'desk-phone'],
+                    ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
+                ];
             @endphp
 
             {{-- Secondary bar: full browser width, edge to edge, below the top bar --}}
             <div x-show="!distractionFree" class="hidden overflow-x-auto border-b border-gray-200 bg-blue-600 px-4 py-2 dark:border-gray-800 sm:px-6 md:block">
-                <div class="flex items-center gap-1.5">
-                    @foreach ($studentNavGroups as $group)
-                        @foreach ($group['items'] as $item)
-                            <a href="{{ $item['external'] ?? false ? $item['href'] : route($item['route']) }}"
-                               @if ($item['external'] ?? false) target="_blank" rel="noopener noreferrer" @endif
-                               class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium {{ ! ($item['external'] ?? false) && (request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*')) ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-500' }}">
-                                <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
-                                {{ $item['label'] }}
-                            </a>
-                        @endforeach
+                <div class="flex items-center gap-1">
+                    @foreach ($studentJourneyNav as $item)
+                        @if (! $loop->first)
+                            <span class="shrink-0 text-blue-300">&gt;</span>
+                        @endif
+                        <a href="{{ $item['external'] ?? false ? $item['href'] : route($item['route']) }}"
+                           @if ($item['external'] ?? false) target="_blank" rel="noopener noreferrer" @endif
+                           class="flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium {{ ! ($item['external'] ?? false) && (request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*')) ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-500' }}">
+                            {{ $item['label'] }}
+                        </a>
                     @endforeach
                 </div>
             </div>

@@ -21,6 +21,9 @@ Route::middleware(['auth', 'verified'])
 
         Route::get('placement-test', [PlacementTestController::class, 'show'])->name('placement-test');
         Route::post('placement-test', [PlacementTestController::class, 'store'])->name('placement-test.store');
+        Route::get('placement-test/result', [PlacementTestController::class, 'result'])->name('placement-test.result');
+
+        Route::get('intro-video', [PlacementTestController::class, 'introVideo'])->name('intro-video');
 
         Route::get('more-practice', fn () => view('student.more-practice'))->name('more-practice');
 
