@@ -58,16 +58,7 @@
             </div>
         @endif
 
-        <div class="mt-auto flex items-center justify-between pt-5">
-            <span class="text-sm font-bold text-gray-900 dark:text-white">
-                {{ $track->currency }} {{ number_format($displayPrice, 2) }}
-                @if ($pricingRegion)
-                    <span class="ml-1 text-[10px] font-normal uppercase text-gray-400" title="Price for {{ $pricingRegion }}">{{ $pricingRegion }}</span>
-                @endif
-            </span>
-        </div>
-
-        <span class="mt-4 block w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-indigo-500">
+        <span class="mt-auto block w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-indigo-500">
             View Track
         </span>
     </div>
