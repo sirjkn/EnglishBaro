@@ -15,7 +15,7 @@ class HelpController extends Controller
         $user = Auth::user();
         $track = $user->studentProfile?->track;
 
-        $enrollments = $user->enrollments()->with(['lastViewedLesson.level', 'subscription'])->get();
+        $enrollments = $user->enrollments()->with(['lastViewedLesson.section.level', 'subscription'])->get();
 
         $currentEnrollment = $track
             ? $enrollments->firstWhere('track_id', $track->id)
@@ -36,7 +36,7 @@ class HelpController extends Controller
             'helpVideo' => $helpVideoId ? Media::find($helpVideoId) : null,
             'whatsappHref' => $helpPhone ? "https://wa.me/{$helpPhone}" : route('contact'),
             'track' => $track,
-            'currentLevelNumber' => $currentEnrollment?->lastViewedLesson?->level?->number ?? 1,
+            'currentLevelNumber' => $currentEnrollment?->lastViewedLesson?->section?->level?->number ?? 1,
             'subscription' => $subscription,
         ]);
     }
