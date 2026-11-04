@@ -134,8 +134,41 @@
                 </div>
             </div>
 
+            @php
+                $studentNavGroups = [
+                    [
+                        'label' => 'Learning',
+                        'items' => [
+                            ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
+                            ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open'],
+                            ['route' => 'tracks.index', 'label' => 'All Course Tracks', 'icon' => 'map'],
+                        ],
+                    ],
+                    [
+                        'label' => 'Account',
+                        'items' => [
+                            ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
+                            ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card'],
+                            ['route' => 'student.notifications', 'label' => 'Notifications', 'icon' => 'bell'],
+                            ['route' => 'student.support.index', 'label' => 'Support', 'icon' => 'desk-phone'],
+                        ],
+                    ],
+                ];
+            @endphp
+
             {{-- Secondary bar: full browser width, edge to edge, below the top bar --}}
-            <div x-show="!distractionFree" class="border-b border-gray-200 bg-blue-600 px-4 py-3 dark:border-gray-800 sm:px-6">
+            <div x-show="!distractionFree" class="overflow-x-auto border-b border-gray-200 bg-blue-600 px-4 py-2 dark:border-gray-800 sm:px-6">
+                <div class="flex items-center gap-1.5">
+                    @foreach ($studentNavGroups as $group)
+                        @foreach ($group['items'] as $item)
+                            <a href="{{ route($item['route']) }}"
+                               class="flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-500' }}">
+                                <x-dynamic-component :component="'icons.'.$item['icon']" class="h-4 w-4" />
+                                {{ $item['label'] }}
+                            </a>
+                        @endforeach
+                    @endforeach
+                </div>
             </div>
 
             <div class="flex min-h-screen">
@@ -156,28 +189,6 @@
                 </button>
 
                 <nav class="space-y-4 overflow-y-auto overflow-x-hidden p-4" style="max-height: calc(100vh - 4rem)">
-                    @php
-                        $studentNavGroups = [
-                            [
-                                'label' => 'Learning',
-                                'items' => [
-                                    ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
-                                    ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open'],
-                                    ['route' => 'tracks.index', 'label' => 'All Course Tracks', 'icon' => 'map'],
-                                ],
-                            ],
-                            [
-                                'label' => 'Account',
-                                'items' => [
-                                    ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
-                                    ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card'],
-                                    ['route' => 'student.notifications', 'label' => 'Notifications', 'icon' => 'bell'],
-                                    ['route' => 'student.support.index', 'label' => 'Support', 'icon' => 'desk-phone'],
-                                ],
-                            ],
-                        ];
-                    @endphp
-
                     @foreach ($studentNavGroups as $group)
                         <div>
                             @if ($group['label'])
