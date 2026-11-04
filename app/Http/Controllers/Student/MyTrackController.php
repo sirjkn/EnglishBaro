@@ -31,9 +31,19 @@ class MyTrackController extends Controller
         // sequence is done, everything after it is still locked.
         $currentTrackOrder = $user->studentProfile?->track?->order;
 
+        // All tracks are unlocked by the same single payment, so there's one
+        // subscription clock for the whole course rather than one per track
+        // — show whichever active subscription expires soonest.
+        $subscription = $enrollments
+            ->pluck('subscription')
+            ->filter(fn ($sub) => $sub && $sub->status === 'active')
+            ->sortBy('expires_at')
+            ->first();
+
         return view('student.tracks.index', [
             'enrollments' => $enrollments,
             'currentTrackOrder' => $currentTrackOrder,
+            'subscription' => $subscription,
         ]);
     }
 

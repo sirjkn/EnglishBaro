@@ -1,5 +1,8 @@
 <x-layouts.student :title="'My Courses'">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Courses</h1>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Courses</h1>
+        <x-subscription-countdown :subscription="$subscription" />
+    </div>
 
     @if ($enrollments->isEmpty())
         <x-empty-state class="mt-6" message="You have not enrolled in any tracks yet."></x-empty-state>
@@ -31,7 +34,6 @@
                             </div>
                         @endif
                     </div>
-                    <x-subscription-countdown :subscription="$enrollment->subscription" class="absolute right-3 top-3" />
 
                     <div class="flex flex-1 flex-col p-5">
                         <span class="text-xs font-medium uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Track {{ $enrollment->track->track_code }}</span>
