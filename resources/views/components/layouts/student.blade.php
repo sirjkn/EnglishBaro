@@ -187,7 +187,7 @@
                 </header>
 
                 {{-- Secondary bar --}}
-                <div x-show="!distractionFree" class="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 sm:px-6">
+                <div x-show="!distractionFree" class="border-b border-gray-200 bg-black px-4 py-3 dark:border-gray-800 sm:px-6">
                 </div>
 
                 {{-- Mobile top bar --}}
