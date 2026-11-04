@@ -112,11 +112,20 @@
             <a href="{{ route('student.tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">View all &rarr;</a>
         </div>
 
-        @if ($enrollments->isEmpty())
-            <x-empty-state class="mt-4" message="You are not enrolled in any tracks yet." />
+        @php
+            $startedEnrollments = $enrollments->filter(fn ($enrollment) => $enrollment->last_viewed_lesson_id !== null
+                || ($enrollment->progress->percent_complete ?? 0) >= 100
+            );
+        @endphp
+
+        @if ($startedEnrollments->isEmpty())
+            <x-empty-state class="mt-4" message="You haven't started a course yet." />
         @else
             <div class="mt-4 space-y-3">
-                @foreach ($enrollments as $enrollment)
+                @foreach ($startedEnrollments as $enrollment)
+                    @php
+                        $isCompleted = ($enrollment->progress->percent_complete ?? 0) >= 100;
+                    @endphp
                     <div class="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-gray-800 sm:gap-5 sm:p-4">
                         <div class="aspect-square w-20 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-300 dark:from-indigo-900 dark:to-indigo-700 sm:w-28">
                             @if ($enrollment->track->thumbnail?->resolved_url)
@@ -141,9 +150,15 @@
                             </p>
                         </div>
 
-                        <a href="{{ route('student.tracks.show', $enrollment->track) }}" class="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-center text-xs font-semibold text-white transition group-hover:bg-indigo-500 sm:px-4 sm:text-sm">
-                            {{ $enrollment->last_viewed_lesson_id ? 'Continue Learning' : 'Start Learning' }}
-                        </a>
+                        @if ($isCompleted)
+                            <span class="shrink-0 rounded-lg bg-green-100 px-3 py-2 text-center text-xs font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300 sm:px-4 sm:text-sm">
+                                Completed
+                            </span>
+                        @else
+                            <a href="{{ route('student.tracks.show', $enrollment->track) }}" class="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-center text-xs font-semibold text-white transition group-hover:bg-indigo-500 sm:px-4 sm:text-sm">
+                                Continue Learning
+                            </a>
+                        @endif
                     </div>
                 @endforeach
             </div>
