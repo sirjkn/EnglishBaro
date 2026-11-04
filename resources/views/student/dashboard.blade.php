@@ -23,9 +23,14 @@
                     @endif
                 </div>
             </div>
-            <a href="{{ route('student.account') }}" class="absolute right-0 top-0 flex shrink-0 items-center gap-1.5 rounded-md border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700 sm:static">
-                <x-icons.pencil class="h-4 w-4" /> Edit Profile
-            </a>
+            <div class="absolute right-0 top-0 flex flex-col items-end gap-1.5 sm:static sm:flex-row sm:items-center">
+                @if ($activeSubscription)
+                    <x-subscription-countdown :subscription="$activeSubscription" />
+                @endif
+                <a href="{{ route('student.account') }}" class="flex shrink-0 items-center gap-1.5 rounded-md border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700">
+                    <x-icons.pencil class="h-4 w-4" /> Edit Profile
+                </a>
+            </div>
         </div>
 
         <div class="relative mt-5 flex flex-wrap items-center gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700">
@@ -122,7 +127,6 @@
                                 </div>
                             @endif
                         </div>
-                        <x-subscription-countdown :subscription="$enrollment->subscription" class="absolute right-3 top-3" />
 
                         <div class="flex flex-1 flex-col p-5">
                             <span class="text-xs font-medium uppercase tracking-wide text-indigo-600 dark:text-indigo-400">Track {{ $enrollment->track->track_code }}</span>
