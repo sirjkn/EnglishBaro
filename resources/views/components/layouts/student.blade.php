@@ -138,7 +138,6 @@
 
                 $studentJourneyNav = [
                     ['route' => 'home', 'label' => 'Landing', 'icon' => 'home'],
-                    ['route' => 'register', 'label' => 'Sign Up', 'icon' => 'user-circle'],
                     ['route' => 'tracks.index', 'label' => 'Payment', 'icon' => 'credit-card'],
                     ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
                     ['route' => 'student.placement-test.result', 'label' => 'Result', 'icon' => 'medal'],

@@ -19,8 +19,7 @@ class PlacementTestController extends Controller
         $user = Auth::user();
 
         if ($placementTest->hasCompletedPlacement($user)) {
-            return redirect()->route('student.dashboard')
-                ->with('status', 'You have already completed your placement test.');
+            return redirect()->route('student.placement-test.result');
         }
 
         return view('student.placement-test', [
@@ -56,7 +55,7 @@ class PlacementTestController extends Controller
     {
         $attempt = PlacementAttempt::query()
             ->where('user_id', Auth::id())
-            ->with('track')
+            ->with(['track', 'answers.question', 'answers.option'])
             ->latest('completed_at')
             ->first();
 
