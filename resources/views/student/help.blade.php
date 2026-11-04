@@ -2,7 +2,7 @@
     <div class="max-w-5xl">
         <p class="text-xs font-bold uppercase tracking-wide text-gray-400">Help</p>
         <h1 class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">How to use the website</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Watch the video again, or send us a message if you're still stuck.</p>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Watch the video again, or read the short answers below.</p>
 
         <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_16rem]">
             <div>
@@ -21,11 +21,11 @@
             <div class="space-y-4">
                 <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
                     <p class="text-xs font-bold uppercase tracking-wide text-gray-400">Still stuck?</p>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Send a message on WhatsApp and we'll get back to you.</p>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Send a message and we will get back to you.</p>
                     <a href="{{ $whatsappHref }}" target="_blank" rel="noopener noreferrer" class="mt-3 flex items-center justify-center rounded-full bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-600">
-                        Contact support on WhatsApp
+                        Contact support
                     </a>
-                    <p class="mt-2 text-xs text-gray-400">If you've lost your phone, tell us and we'll reset your device for you.</p>
+                    <p class="mt-2 text-xs text-gray-400">If you have lost your phone, tell us and we will reset your device for you.</p>
                 </div>
 
                 @if ($track)
