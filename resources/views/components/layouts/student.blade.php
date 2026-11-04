@@ -157,7 +157,7 @@
             @endphp
 
             {{-- Secondary bar: full browser width, edge to edge, below the top bar --}}
-            <div x-show="!distractionFree" class="overflow-x-auto border-b border-gray-200 bg-blue-600 px-4 py-2 dark:border-gray-800 sm:px-6">
+            <div x-show="!distractionFree" class="hidden overflow-x-auto border-b border-gray-200 bg-blue-600 px-4 py-2 dark:border-gray-800 sm:px-6 md:block">
                 <div class="flex items-center gap-1.5">
                     @foreach ($studentNavGroups as $group)
                         @foreach ($group['items'] as $item)
