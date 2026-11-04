@@ -23,14 +23,11 @@
                     @endif
                 </div>
             </div>
-            <div class="absolute right-0 top-0 flex flex-col items-end gap-1.5 sm:static sm:flex-row sm:items-center">
-                @if ($activeSubscription)
+            @if ($activeSubscription)
+                <div class="absolute right-0 top-0">
                     <x-subscription-countdown :subscription="$activeSubscription" />
-                @endif
-                <a href="{{ route('student.account') }}" class="flex shrink-0 items-center gap-1.5 rounded-md border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700">
-                    <x-icons.pencil class="h-4 w-4" /> Edit Profile
-                </a>
-            </div>
+                </div>
+            @endif
         </div>
 
         <div class="relative mt-5 flex flex-wrap items-center gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700">
@@ -41,6 +38,10 @@
             <span class="text-xs text-gray-500 dark:text-gray-400">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>
             <span class="text-xs text-gray-400">&middot;</span>
             <span class="text-xs text-gray-500 dark:text-gray-400">Member since {{ $user->created_at->format('M Y') }}</span>
+            <span class="text-xs text-gray-400">&middot;</span>
+            <a href="{{ route('student.account') }}" class="flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
+                <x-icons.pencil class="h-3 w-3" /> Edit Profile
+            </a>
         </div>
     </div>
 
