@@ -38,8 +38,7 @@
             <span class="text-xs text-gray-500 dark:text-gray-400">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>
             <span class="text-xs text-gray-400">&middot;</span>
             <span class="text-xs text-gray-500 dark:text-gray-400">Member since {{ $user->created_at->format('M Y') }}</span>
-            <span class="text-xs text-gray-400">&middot;</span>
-            <a href="{{ route('student.account') }}" class="flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
+            <a href="{{ route('student.account') }}" class="ml-auto flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
                 <x-icons.pencil class="h-3 w-3" /> Edit Profile
             </a>
         </div>
