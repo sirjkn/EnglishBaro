@@ -135,28 +135,46 @@
                                     Preview only &mdash; complete level {{ $levelItem->number - 1 }} to watch and read this material.
                                 </p>
                             @else
-                                <div class="space-y-1">
+                                <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                                    @php $lessonNumber = 0; @endphp
                                     @foreach ($levelItem->sections as $section)
                                         @foreach ($section->lessons as $lesson)
                                             @php
+                                                $lessonNumber++;
                                                 $isResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
                                                 $isDone = $completedLessonIds->contains($lesson->id);
+                                                $assessment = $lesson->activity;
+                                                $questionCount = $assessment?->questions->count() ?? 0;
+                                                $hasWrittenAnswer = $assessment?->questions->contains(fn ($q) => in_array($q->type, ['short_answer', 'fill_blank'], true)) ?? false;
                                             @endphp
-                                            <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}"
-                                               class="flex items-center gap-2 rounded-lg px-2 py-1.5 {{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'hover:bg-white dark:hover:bg-gray-700' }}">
-                                                <span class="flex h-6 w-6 flex-none items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">
-                                                    <x-icons.play-circle class="h-3.5 w-3.5" />
-                                                </span>
-                                                <span class="min-w-0 flex-1">
-                                                    <span class="block truncate text-xs font-medium text-gray-900 dark:text-white">{{ $lesson->title }}</span>
-                                                    <span class="block text-[11px] text-gray-500 dark:text-gray-400">{{ $section->title }}</span>
-                                                </span>
+                                            <div class="flex items-center gap-3 px-2 py-2.5 {{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : '' }}">
+                                                <span class="w-4 flex-none text-right text-xs text-gray-400">{{ $lessonNumber }}</span>
+
                                                 @if ($isDone)
-                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-green-500 text-[9px] text-white">&#10003;</span>
+                                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
                                                 @else
-                                                    <x-icons.chevron-right class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" />
+                                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
                                                 @endif
-                                            </a>
+
+                                                <span class="min-w-0 flex-1">
+                                                    <span class="block truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $section->title }}</span>
+                                                    <span class="block truncate text-[11px] text-gray-500 dark:text-gray-400">
+                                                        {{ $section->title }} video {{ $lessonNumber }}
+                                                        @if ($questionCount) &middot; {{ $questionCount }} question{{ $questionCount === 1 ? '' : 's' }} @endif
+                                                        @if ($hasWrittenAnswer) + written answer @endif
+                                                        @if ($isDone) &middot; video already watched @endif
+                                                    </span>
+                                                </span>
+
+                                                <div class="flex flex-none items-center gap-2">
+                                                    @if ($isDone)
+                                                        <span class="rounded-full bg-green-100 px-3 py-1 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Done</span>
+                                                        <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
+                                                    @else
+                                                        <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-semibold text-white hover:bg-indigo-500">{{ $isResume ? 'Continue' : 'Start' }}</a>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         @endforeach
                                     @endforeach
                                 </div>
