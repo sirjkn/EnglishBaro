@@ -91,10 +91,6 @@
                                 <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
                                     <x-icons.lock class="h-3.5 w-3.5" />
                                 </span>
-                            @else
-                                <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full border-2 {{ $isCurrent ? 'border-indigo-600 text-indigo-600' : 'border-gray-300 text-gray-400 dark:border-gray-600' }} text-[10px] font-semibold">
-                                    {{ $levelItem->number }}
-                                </span>
                             @endif
 
                             <span class="min-w-0 flex-1">
@@ -109,12 +105,15 @@
                                 </span>
                             </span>
 
+                            @php
+                                $levelHasStarted = $levelItem->sections->flatMap->lessons->contains(fn ($l) => $startedLessonIds->contains($l->id));
+                            @endphp
                             @if ($isCompleted)
                                 <span class="flex-none rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Complete</span>
                             @elseif (! $isUnlocked)
                                 <span class="flex-none rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400">Locked</span>
                             @else
-                                <span class="flex-none rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">Continue</span>
+                                <span class="flex-none rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">{{ $levelHasStarted ? 'Continue' : 'Start' }}</span>
                             @endif
 
                             <x-icons.chevron-left class="h-4 w-4 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openLevel === {{ $levelItem->number }} ? '-rotate-90' : 'rotate-90'" />
@@ -180,7 +179,8 @@
                                                     @elseif ($isLocked)
                                                         <span class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
                                                     @elseif ($nextLesson)
-                                                        <span class="rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-semibold text-white">{{ $isResume ? 'Continue' : 'Start' }}</span>
+                                                        @php $sectionHasStarted = $sectionLessons->contains(fn ($l) => $startedLessonIds->contains($l->id)); @endphp
+                                                        <span class="rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-semibold text-white">{{ $sectionHasStarted ? 'Continue' : 'Start' }}</span>
                                                     @endif
                                                 </div>
 
@@ -196,6 +196,7 @@
                                                             $lessonIsLocked = ! $subPriorDone;
                                                             $subPriorDone = $subPriorDone && $lessonIsDone;
                                                             $lessonIsResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
+                                                            $lessonHasStarted = $startedLessonIds->contains($lesson->id);
                                                             $lessonQuestionCount = $lesson->activity?->questions->count() ?? 0;
                                                         @endphp
                                                         <div class="flex items-center gap-2 rounded-lg px-2 py-2 {{ $lessonIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white dark:bg-gray-800' }} {{ $lessonIsLocked ? 'opacity-60' : '' }}">
@@ -219,7 +220,7 @@
                                                             @elseif ($lessonIsLocked)
                                                                 <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
                                                             @else
-                                                                <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white hover:bg-indigo-500">{{ $lessonIsResume ? 'Continue' : 'Start' }}</a>
+                                                                <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white hover:bg-indigo-500">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</a>
                                                             @endif
                                                         </div>
                                                     @endforeach

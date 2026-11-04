@@ -44,6 +44,12 @@ class LearningController extends Controller
             ->where('status', 'completed')
             ->pluck('lesson_id');
 
+        // Any lesson with a progress row (started or completed) has actually
+        // been opened before — used to show "Continue" instead of "Start".
+        $startedLessonIds = LessonProgress::query()
+            ->where('enrollment_id', $enrollment->id)
+            ->pluck('lesson_id');
+
         $checkedAssessmentIds = $this->checkedAssessmentIds(Auth::user());
 
         $nodes = $sequence->nodes($level);
@@ -84,6 +90,7 @@ class LearningController extends Controller
             'allLevels' => $allLevels,
             'pickerTracks' => $pickerTracks,
             'completedLessonIds' => $completedLessonIds,
+            'startedLessonIds' => $startedLessonIds,
             'checkedAssessmentIds' => $checkedAssessmentIds,
             'levelStatuses' => $levelStatuses,
             'completedLevelsCount' => $completedLevelsCount,
