@@ -64,6 +64,7 @@
                                     ['route' => 'admin.levels.index', 'label' => 'Levels', 'icon' => 'book-open', 'module' => 'levels'],
                                     ['route' => 'admin.enrollments.index', 'label' => 'Enrollments', 'icon' => 'user-plus', 'module' => 'enrollments'],
                                     ['route' => 'admin.placement-test.index', 'label' => 'Placement Test', 'icon' => 'medal', 'module' => 'placement-test'],
+                                    ['route' => 'admin.practice-questions.index', 'label' => 'More Practice', 'icon' => 'pencil', 'module' => 'more-practice'],
                                     ['route' => 'admin.answer-reviews.index', 'label' => 'Answer Reviews', 'icon' => 'desk-phone', 'module' => 'answer-reviews'],
                                 ],
                             ],

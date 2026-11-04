@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\PracticeQuestion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -31,10 +32,23 @@ class MorePracticeController extends Controller
 
         $track = Auth::user()->studentProfile?->track;
 
+        $questions = PracticeQuestion::query()
+            ->where('category', $category)
+            ->where(function ($query) use ($track) {
+                $query->whereNull('track_id');
+                if ($track) {
+                    $query->orWhere('track_id', $track->id);
+                }
+            })
+            ->with('options')
+            ->orderBy('order')
+            ->get();
+
         return view('student.more-practice-session', [
             'category' => $category,
             'meta' => self::CATEGORIES[$category],
             'levelLabel' => $track?->track_code,
+            'questions' => $questions,
         ]);
     }
 }

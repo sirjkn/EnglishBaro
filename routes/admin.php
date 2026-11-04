@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\LevelController;
 use App\Http\Controllers\Admin\MediaUploadController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PlacementQuestionController;
+use App\Http\Controllers\Admin\PracticeQuestionController;
 use App\Http\Controllers\Admin\SessionController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\StudentController;
@@ -84,6 +85,13 @@ Route::middleware(['auth', 'verified', 'admin'])
             Route::post('placement-test', [PlacementQuestionController::class, 'store'])->name('placement-test.store');
             Route::put('placement-test/{placementQuestion}', [PlacementQuestionController::class, 'update'])->name('placement-test.update');
             Route::delete('placement-test/{placementQuestion}', [PlacementQuestionController::class, 'destroy'])->name('placement-test.destroy');
+        });
+
+        Route::middleware('module:more-practice')->group(function () {
+            Route::get('practice-questions', [PracticeQuestionController::class, 'index'])->name('practice-questions.index');
+            Route::post('practice-questions', [PracticeQuestionController::class, 'store'])->name('practice-questions.store');
+            Route::put('practice-questions/{practiceQuestion}', [PracticeQuestionController::class, 'update'])->name('practice-questions.update');
+            Route::delete('practice-questions/{practiceQuestion}', [PracticeQuestionController::class, 'destroy'])->name('practice-questions.destroy');
         });
 
         Route::middleware('module:answer-reviews')->group(function () {
