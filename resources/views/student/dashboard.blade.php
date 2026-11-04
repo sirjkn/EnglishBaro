@@ -107,7 +107,7 @@
                 <span class="flex h-7 w-7 items-center justify-center rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
                     <x-icons.book-open class="h-4 w-4" />
                 </span>
-                My Courses
+                My Progress
             </h2>
             <a href="{{ route('student.tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">View all &rarr;</a>
         </div>
