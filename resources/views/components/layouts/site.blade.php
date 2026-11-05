@@ -28,6 +28,7 @@
     </head>
     <body class="font-sans text-gray-900 antialiased bg-white dark:bg-gray-900 dark:text-gray-100">
         <x-site-header />
+        <x-student-journey-nav />
 
         @if (session('status'))
             <div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
