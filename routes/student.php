@@ -26,8 +26,6 @@ Route::middleware(['auth', 'verified'])
         Route::post('placement-test', [PlacementTestController::class, 'store'])->name('placement-test.store');
         Route::get('placement-test/result', [PlacementTestController::class, 'result'])->name('placement-test.result');
 
-        Route::get('intro-video', [PlacementTestController::class, 'introVideo'])->name('intro-video');
-
         Route::get('more-practice', [MorePracticeController::class, 'index'])->name('more-practice');
         Route::get('more-practice/{category}', [MorePracticeController::class, 'show'])->name('more-practice.show');
 
