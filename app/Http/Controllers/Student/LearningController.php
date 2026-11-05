@@ -52,6 +52,32 @@ class LearningController extends Controller
 
         $checkedAssessmentIds = $this->checkedAssessmentIds(Auth::user());
 
+        $allLessons = $allLevels->flatMap->sections->flatMap->lessons;
+
+        // The level list shows a lesson's video and questions inline (rather
+        // than linking out to a separate page), so every lesson's watch
+        // progress and every assessment's latest attempt are fetched here in
+        // bulk, once, instead of one at a time as each gets opened.
+        $lessonProgressByLessonId = LessonProgress::query()
+            ->where('enrollment_id', $enrollment->id)
+            ->whereIn('lesson_id', $allLessons->pluck('id'))
+            ->get()
+            ->keyBy('lesson_id');
+
+        $assessmentIds = $allLessons->pluck('activity.id')->filter()->values();
+
+        $submittedAttempts = AssessmentAttempt::query()
+            ->where('user_id', Auth::id())
+            ->whereIn('assessment_id', $assessmentIds)
+            ->where('status', 'submitted')
+            ->with('answers')
+            ->orderByDesc('submitted_at')
+            ->get()
+            ->groupBy('assessment_id');
+
+        $latestAttemptByAssessmentId = $submittedAttempts->map(fn ($attempts) => $attempts->first());
+        $attemptsUsedByAssessmentId = $submittedAttempts->map(fn ($attempts) => $attempts->count());
+
         $nodes = $sequence->nodes($level);
 
         $resumeNode = $nodes->first(fn ($node) => $node->type === 'lesson'
@@ -103,6 +129,9 @@ class LearningController extends Controller
             'stats' => $this->trackStats($allLevels, $completedLessonIds, $checkedAssessmentIds),
             'nextTrack' => $this->nextTrackAfter($track),
             'subscription' => $subscription,
+            'lessonProgressByLessonId' => $lessonProgressByLessonId,
+            'latestAttemptByAssessmentId' => $latestAttemptByAssessmentId,
+            'attemptsUsedByAssessmentId' => $attemptsUsedByAssessmentId,
         ]);
     }
 
@@ -331,7 +360,7 @@ class LearningController extends Controller
         ]);
     }
 
-    public function complete(Track $track, Level $level, Lesson $lesson, TrackProgressService $trackProgressService, LevelSequenceService $sequence): RedirectResponse
+    public function complete(Request $request, Track $track, Level $level, Lesson $lesson, TrackProgressService $trackProgressService, LevelSequenceService $sequence): RedirectResponse|JsonResponse
     {
         $this->authorize('learn', [$track, $this->currentRegion()]);
         $this->authorize('view', $lesson);
@@ -344,6 +373,10 @@ class LearningController extends Controller
         [$previousNode, $nextNode] = $sequence->neighboursOfLesson($nodes, $lesson);
 
         if ($previousNode && $previousNode->type === 'activity' && ! $this->grading()->hasSubmittedAttempt($previousNode->assessment, $user)) {
+            if ($request->wantsJson()) {
+                abort(422, 'Complete the Activity Questions before moving on.');
+            }
+
             return redirect()
                 ->route('student.tracks.lesson-activity', [$track, $level, $previousNode->lesson])
                 ->with('status', 'Complete the Activity Questions before moving on.');
@@ -360,6 +393,14 @@ class LearningController extends Controller
         );
 
         $trackProgressService->recalculate($user, $track, $enrollment);
+
+        // The level list now shows a lesson's video and questions inline and
+        // marks it complete via AJAX, instead of navigating to a separate
+        // lesson page — the client already knows what to open next, so there
+        // is nothing further to compute here for that case.
+        if ($request->wantsJson()) {
+            return response()->json(['completed' => true]);
+        }
 
         if ($nextNode?->type === 'lesson') {
             return redirect()->route('student.tracks.learn', [$track, $level, $nextNode->lesson])

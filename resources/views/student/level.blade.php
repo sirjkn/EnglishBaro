@@ -1,5 +1,30 @@
 <x-layouts.student :title="$track->track_code.' '.$level->title">
-    <div x-data="{ openLevel: {{ $level->number }}, openSection: null, openLesson: null, search: '', changeLevelOpen: false, selTrack: '{{ $track->track_code }}', selLevel: {{ $level->number }} }" class="max-w-4xl">
+    <div
+        x-data="{
+            openLevel: {{ $level->number }},
+            openSection: new URLSearchParams(location.search).get('open_section') ? Number(new URLSearchParams(location.search).get('open_section')) : null,
+            openLesson: new URLSearchParams(location.search).get('open_lesson') ? Number(new URLSearchParams(location.search).get('open_lesson')) : null,
+            search: '', changeLevelOpen: false, selTrack: '{{ $track->track_code }}', selLevel: {{ $level->number }},
+            advanceTo(target) {
+                if (! target) { window.location.reload(); return; }
+
+                // The section a student is advancing into may not have been
+                // unlocked yet when this page was rendered, in which case its
+                // content was never sent to the browser at all — reload with
+                // the target in the URL so the server renders it unlocked and
+                // this same script reopens it straight away.
+                if (! document.querySelector('[data-section-id=\'' + target.sectionId + '\']')) {
+                    window.location.href = window.location.pathname + '?open_section=' + target.sectionId + '&open_lesson=' + target.lessonId;
+                    return;
+                }
+
+                this.openSection = target.sectionId;
+                this.openLesson = target.lessonId;
+            },
+        }"
+        @lesson-advance.window="advanceTo($event.detail)"
+        class="max-w-4xl"
+    >
         @if ($subscription)
             @php
                 $daysLeft = max(0, now()->startOfDay()->diffInDays($subscription->expires_at->copy()->startOfDay(), false));
@@ -125,7 +150,15 @@
                                 </p>
                             @else
                                 <div class="divide-y divide-gray-100 dark:divide-gray-700">
-                                    @php $sectionNumber = 0; $priorDone = true; @endphp
+                                    @php
+                                        $sectionNumber = 0;
+                                        $priorDone = true;
+                                        // The order a student walks through this level's lessons in,
+                                        // used to work out what to open next once one is finished.
+                                        $flatLessonSteps = $levelItem->sections->flatMap(
+                                            fn ($s) => $s->lessons->map(fn ($l) => ['sectionId' => $s->id, 'lessonId' => $l->id])
+                                        )->values();
+                                    @endphp
                                     @foreach ($levelItem->sections as $section)
                                         @php
                                             $sectionNumber++;
@@ -176,7 +209,6 @@
                                                 <div class="flex flex-none items-center gap-2">
                                                     @if ($isDone)
                                                         <span class="rounded-full bg-green-100 px-3 py-1 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Done</span>
-                                                        <a href="{{ route('student.tracks.learn', [$track, $levelItem, $sectionLessons->first()]) }}" @click.stop class="rounded-full border border-gray-300 px-3 py-1 text-[11px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
                                                     @elseif ($isLocked)
                                                         <span class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
                                                     @elseif ($nextLesson)
@@ -189,7 +221,7 @@
                                             </div>
 
                                             @unless ($isLocked)
-                                                <div x-show="openSection === {{ $section->id }}" x-cloak x-transition class="bg-gray-50 px-2 pb-2.5 pl-10 dark:bg-gray-900/40">
+                                                <div data-section-id="{{ $section->id }}" x-show="openSection === {{ $section->id }}" x-cloak x-transition class="bg-gray-50 px-2 pb-2.5 pl-10 dark:bg-gray-900/40">
                                                     @if ($sectionLessons->count() === 1)
                                                         {{-- A section with a single lesson has nothing to choose between,
                                                         so opening the section goes straight to its video and questions
@@ -197,6 +229,8 @@
                                                         @php
                                                             $onlyLesson = $sectionLessons->first();
                                                             $onlyLessonHasStarted = $startedLessonIds->contains($onlyLesson->id);
+                                                            $onlyLessonStepIndex = $flatLessonSteps->search(fn ($s) => $s['lessonId'] === $onlyLesson->id);
+                                                            $onlyLessonAdvanceTarget = $flatLessonSteps->get($onlyLessonStepIndex + 1);
                                                         @endphp
                                                         @include('student.partials.lesson-preview', [
                                                             'lesson' => $onlyLesson,
@@ -204,6 +238,13 @@
                                                             'level' => $levelItem,
                                                             'lessonIsDone' => $isDone,
                                                             'lessonHasStarted' => $onlyLessonHasStarted,
+                                                            'resumeSeconds' => $lessonProgressByLessonId->get($onlyLesson->id)?->video_progress_seconds ?? 0,
+                                                            'assessment' => $onlyLesson->activity,
+                                                            'attempt' => $onlyLesson->activity ? $latestAttemptByAssessmentId->get($onlyLesson->activity->id) : null,
+                                                            'checked' => $onlyLesson->activity ? $checkedAssessmentIds->contains($onlyLesson->activity->id) : false,
+                                                            'attemptsUsed' => $onlyLesson->activity ? ($attemptsUsedByAssessmentId->get($onlyLesson->activity->id) ?? 0) : 0,
+                                                            'maxAttempts' => \App\Services\AssessmentGradingService::MAX_ATTEMPTS,
+                                                            'advanceTarget' => $onlyLessonAdvanceTarget,
                                                         ])
                                                     @else
                                                         <div class="space-y-1">
@@ -243,11 +284,11 @@
                                                                         </span>
 
                                                                         @if ($lessonIsDone)
-                                                                            <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full border border-gray-300 px-2.5 py-0.5 text-[10px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
+                                                                            <span class="rounded-full border border-gray-300 px-2.5 py-0.5 text-[10px] font-semibold text-gray-700 dark:border-gray-600 dark:text-gray-200">Review</span>
                                                                         @elseif ($lessonIsLocked)
                                                                             <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
                                                                         @else
-                                                                            <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white hover:bg-indigo-500">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</a>
+                                                                            <span class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</span>
                                                                         @endif
 
                                                                         @unless ($lessonIsLocked)
@@ -256,6 +297,10 @@
                                                                     </div>
 
                                                                     @unless ($lessonIsLocked)
+                                                                        @php
+                                                                            $lessonStepIndex = $flatLessonSteps->search(fn ($s) => $s['lessonId'] === $lesson->id);
+                                                                            $lessonAdvanceTarget = $flatLessonSteps->get($lessonStepIndex + 1);
+                                                                        @endphp
                                                                         <div x-show="openLesson === {{ $lesson->id }}" x-cloak x-transition>
                                                                             @include('student.partials.lesson-preview', [
                                                                                 'lesson' => $lesson,
@@ -263,6 +308,13 @@
                                                                                 'level' => $levelItem,
                                                                                 'lessonIsDone' => $lessonIsDone,
                                                                                 'lessonHasStarted' => $lessonHasStarted,
+                                                                                'resumeSeconds' => $lessonProgressByLessonId->get($lesson->id)?->video_progress_seconds ?? 0,
+                                                                                'assessment' => $lesson->activity,
+                                                                                'attempt' => $lesson->activity ? $latestAttemptByAssessmentId->get($lesson->activity->id) : null,
+                                                                                'checked' => $lesson->activity ? $checkedAssessmentIds->contains($lesson->activity->id) : false,
+                                                                                'attemptsUsed' => $lesson->activity ? ($attemptsUsedByAssessmentId->get($lesson->activity->id) ?? 0) : 0,
+                                                                                'maxAttempts' => \App\Services\AssessmentGradingService::MAX_ATTEMPTS,
+                                                                                'advanceTarget' => $lessonAdvanceTarget,
                                                                             ])
                                                                         </div>
                                                                     @endunless

@@ -319,13 +319,59 @@ Alpine.data('lessonMediaUploader', (lessonId = null) => ({
     },
 }));
 
-Alpine.data('lessonVideoTracker', (resumeSeconds, progressUrl) => ({
+Alpine.data('lessonVideoTracker', (resumeSeconds, progressUrl, completion = null) => ({
     hasVideo: false,
     watchedPercent: 0,
     lastSent: 0,
 
+    // Optional: lets a lesson mark itself complete (and, once the course
+    // architecture inlines a lesson's video+questions into the level list
+    // instead of a separate page, auto-advance to the next one) without
+    // leaving this component's scope — `completion` is null on the
+    // standalone lesson page, which keeps its own classic Mark Completed
+    // form untouched.
+    completed: completion?.completed ?? false,
+    marking: false,
+    completeError: null,
+
     get videoSatisfied() {
         return ! this.hasVideo || this.watchedPercent >= 0.98;
+    },
+
+    markCompleted() {
+        if (! completion || this.completed || this.marking || ! this.videoSatisfied) return;
+
+        this.marking = true;
+        this.completeError = null;
+
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+
+        fetch(completion.completeUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfMeta.content,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({}),
+        })
+            .then((r) => {
+                if (! r.ok) throw new Error('Could not mark this lesson complete.');
+                return r.json();
+            })
+            .then(() => {
+                this.completed = true;
+                if (! completion.hasAssessment) {
+                    this.$dispatch('lesson-advance', completion.advance);
+                }
+            })
+            .catch((e) => {
+                this.completeError = e.message || 'Could not mark this lesson complete.';
+            })
+            .finally(() => {
+                this.marking = false;
+            });
     },
 
     initPlayer(el) {
@@ -383,6 +429,65 @@ Alpine.data('lessonVideoTracker', (resumeSeconds, progressUrl) => ({
             },
             body: JSON.stringify({ seconds }),
         }).catch(() => {});
+    },
+}));
+
+Alpine.data('lessonActivity', (config) => ({
+    answers: config.initialAnswers || {},
+    feedback: config.initialFeedback || {},
+    checked: config.alreadyChecked,
+    score: config.initialScore,
+    passed: config.initialPassed,
+    attemptsUsed: config.attemptsUsed || 0,
+    maxAttempts: config.maxAttempts || 3,
+    submitting: false,
+    error: null,
+
+    get inputsLocked() {
+        return this.passed || this.attemptsUsed >= this.maxAttempts;
+    },
+
+    submit() {
+        this.submitting = true;
+        this.error = null;
+        const wasChecked = this.checked;
+
+        fetch(config.checkUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({ answers: this.answers }),
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error('Could not check your answers. Please try again.');
+                return response.json();
+            })
+            .then((data) => {
+                this.score = data.score;
+                this.passed = data.passed;
+                this.feedback = Object.fromEntries(data.feedback.map((item) => [item.question_id, item]));
+                this.checked = true;
+                this.attemptsUsed = data.attempts_used ?? this.attemptsUsed + 1;
+                this.maxAttempts = data.max_attempts ?? this.maxAttempts;
+
+                // The course architecture now inlines a lesson's questions
+                // into the level list rather than a separate activity page —
+                // submitting an attempt for the first time is what "finishing"
+                // this step means there, so move on to the next one. Retrying
+                // (wasChecked already true) never re-triggers it.
+                if (! wasChecked && config.advance) {
+                    this.$dispatch('lesson-advance', config.advance);
+                }
+            })
+            .catch((err) => {
+                this.error = err.message;
+            })
+            .finally(() => {
+                this.submitting = false;
+            });
     },
 }));
 
