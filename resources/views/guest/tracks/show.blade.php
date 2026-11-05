@@ -7,12 +7,6 @@
                 <span class="sr-only">Home</span>
             </a>
             <svg class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
-            <a href="{{ route('tracks.index') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400">Categories</a>
-            <svg class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
-            <a href="{{ route('tracks.index') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400">Language</a>
-            <svg class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
-            <a href="{{ route('tracks.index') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400">English</a>
-            <svg class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
             <span class="font-medium text-gray-900 dark:text-white">{{ $track->track_code }}</span>
         </nav>
     </div>

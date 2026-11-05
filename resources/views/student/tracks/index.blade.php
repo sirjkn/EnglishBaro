@@ -7,7 +7,7 @@
     @if ($enrollments->isEmpty())
         <x-empty-state class="mt-6" message="You have not enrolled in any tracks yet."></x-empty-state>
         <div class="mt-4 text-center">
-            <a href="{{ route('tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">Explore Course Tracks &rarr;</a>
+            <a href="{{ route('home') }}#explore-course" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">Explore Course Tracks &rarr;</a>
         </div>
     @else
         <div class="mt-6 space-y-3">

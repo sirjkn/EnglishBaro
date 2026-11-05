@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::get('tracks', [TrackController::class, 'index'])->name('tracks.index');
 Route::get('tracks/{track}', [TrackController::class, 'show'])->name('tracks.show');
 Route::get('tracks/{track}/levels/{level}', [TrackController::class, 'level'])->scopeBindings()->name('tracks.level');
 

@@ -74,12 +74,11 @@ class TrackStructureTest extends TestCase
         $this->assertSame(4, $level->lessons()->count());
     }
 
-    public function test_guest_can_browse_the_track_catalog_and_a_track(): void
+    public function test_guest_can_browse_a_track(): void
     {
         $track = $this->track();
         $this->levelWithLessons($track);
 
-        $this->get(route('tracks.index'))->assertOk()->assertSee($track->name);
         $this->get(route('tracks.show', $track))->assertOk()->assertSee('Level Overview');
         $this->get(route('tracks.level', [$track, $track->levels()->first()]))->assertOk()->assertSee('Grammar');
     }

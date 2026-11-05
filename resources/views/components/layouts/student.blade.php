@@ -214,7 +214,6 @@
                         ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card', 'active' => request()->routeIs('student.payments')],
                     ];
                     $mobileMoreNav = [
-                        ['route' => 'tracks.index', 'label' => 'All Course Tracks', 'icon' => 'map'],
                         ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                         ['route' => 'student.notifications', 'label' => 'Notifications', 'icon' => 'bell'],
                         ['route' => 'student.support.index', 'label' => 'Support', 'icon' => 'desk-phone'],

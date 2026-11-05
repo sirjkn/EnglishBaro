@@ -55,7 +55,7 @@
                         <h3 class="text-sm font-semibold text-white">Links</h3>
                         <ul class="mt-3 space-y-2 text-sm text-indigo-200">
                             <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
-                            <li><a href="{{ route('tracks.index') }}" class="hover:text-white">Courses</a></li>
+                            <li><a href="{{ route('home') }}#explore-course" class="hover:text-white">Courses</a></li>
                             <li><a href="{{ route('contact') }}" class="hover:text-white">Contact</a></li>
                         </ul>
                     </div>
