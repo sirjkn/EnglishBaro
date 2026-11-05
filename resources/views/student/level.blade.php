@@ -1,5 +1,5 @@
 <x-layouts.student :title="$track->track_code.' '.$level->title">
-    <div x-data="{ openLevel: {{ $level->number }}, openSection: null, search: '', changeLevelOpen: false, selTrack: '{{ $track->track_code }}', selLevel: {{ $level->number }} }" class="max-w-4xl">
+    <div x-data="{ openLevel: {{ $level->number }}, openSection: null, openLesson: null, search: '', changeLevelOpen: false, selTrack: '{{ $track->track_code }}', selLevel: {{ $level->number }} }" class="max-w-4xl">
         @if ($subscription)
             @php
                 $daysLeft = max(0, now()->startOfDay()->diffInDays($subscription->expires_at->copy()->startOfDay(), false));
@@ -199,30 +199,83 @@
                                                             $lessonIsResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
                                                             $lessonHasStarted = $startedLessonIds->contains($lesson->id);
                                                             $lessonQuestionCount = $lesson->activity?->questions->count() ?? 0;
+                                                            $lessonVideoResources = $lesson->resources->filter(fn ($r) => $r->media?->type === 'video');
+                                                            $lessonAudioResources = $lesson->resources->filter(fn ($r) => $r->media?->type === 'audio');
+                                                            $lessonPrimaryVideo = $lessonVideoResources->first()?->media ?? $lesson->video;
+                                                            $lessonPrimaryAudio = $lessonPrimaryVideo ? null : $lessonAudioResources->first();
                                                         @endphp
-                                                        <div class="flex items-center gap-2 rounded-lg px-2 py-2 {{ $lessonIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white dark:bg-gray-800' }} {{ $lessonIsLocked ? 'opacity-60' : '' }}">
-                                                            @if ($lessonIsDone)
-                                                                <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
-                                                            @elseif ($lessonIsLocked)
-                                                                <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-                                                                    <x-icons.lock class="h-2.5 w-2.5" />
+                                                        <div class="rounded-lg {{ $lessonIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white dark:bg-gray-800' }} {{ $lessonIsLocked ? 'opacity-60' : '' }}">
+                                                            <div
+                                                                @if (! $lessonIsLocked)
+                                                                    role="button"
+                                                                    tabindex="0"
+                                                                    @click="openLesson = (openLesson === {{ $lesson->id }} ? null : {{ $lesson->id }})"
+                                                                    @keydown.enter="openLesson = (openLesson === {{ $lesson->id }} ? null : {{ $lesson->id }})"
+                                                                @endif
+                                                                class="flex items-center gap-2 px-2 py-2 {{ ! $lessonIsLocked ? 'cursor-pointer' : '' }}"
+                                                            >
+                                                                @if ($lessonIsDone)
+                                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
+                                                                @elseif ($lessonIsLocked)
+                                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+                                                                        <x-icons.lock class="h-2.5 w-2.5" />
+                                                                    </span>
+                                                                @else
+                                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
+                                                                @endif
+
+                                                                <span class="min-w-0 flex-1 text-xs text-gray-700 dark:text-gray-300">
+                                                                    {{ $section->title }} {{ $subIndex + 1 }}
+                                                                    @if (! $lessonIsLocked && $lessonQuestionCount) &middot; {{ $lessonQuestionCount }} question{{ $lessonQuestionCount === 1 ? '' : 's' }} @endif
                                                                 </span>
-                                                            @else
-                                                                <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
-                                                            @endif
 
-                                                            <span class="min-w-0 flex-1 text-xs text-gray-700 dark:text-gray-300">
-                                                                {{ $section->title }} {{ $subIndex + 1 }}
-                                                                @if (! $lessonIsLocked && $lessonQuestionCount) &middot; {{ $lessonQuestionCount }} question{{ $lessonQuestionCount === 1 ? '' : 's' }} @endif
-                                                            </span>
+                                                                @if ($lessonIsDone)
+                                                                    <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full border border-gray-300 px-2.5 py-0.5 text-[10px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
+                                                                @elseif ($lessonIsLocked)
+                                                                    <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
+                                                                @else
+                                                                    <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white hover:bg-indigo-500">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</a>
+                                                                @endif
 
-                                                            @if ($lessonIsDone)
-                                                                <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full border border-gray-300 px-2.5 py-0.5 text-[10px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
-                                                            @elseif ($lessonIsLocked)
-                                                                <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
-                                                            @else
-                                                                <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white hover:bg-indigo-500">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</a>
-                                                            @endif
+                                                                @unless ($lessonIsLocked)
+                                                                    <x-icons.chevron-left class="h-3 w-3 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openLesson === {{ $lesson->id }} ? '-rotate-90' : 'rotate-90'" />
+                                                                @endunless
+                                                            </div>
+
+                                                            @unless ($lessonIsLocked)
+                                                                <div x-show="openLesson === {{ $lesson->id }}" x-cloak x-transition class="space-y-3 px-2 pb-3">
+                                                                    @if ($lessonPrimaryVideo)
+                                                                        <x-video-player :media="$lessonPrimaryVideo" />
+                                                                    @elseif ($lessonPrimaryAudio)
+                                                                        <x-audio-player :media="$lessonPrimaryAudio->media" :title="$lessonPrimaryAudio->title" />
+                                                                    @else
+                                                                        <p class="text-xs text-gray-400">No preview media for this lesson yet.</p>
+                                                                    @endif
+
+                                                                    @if ($lesson->activity && $lesson->activity->questions->isNotEmpty())
+                                                                        <div class="space-y-2">
+                                                                            <p class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Questions in this lesson</p>
+                                                                            @foreach ($lesson->activity->questions as $question)
+                                                                                <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900/40">
+                                                                                    <p class="text-xs font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}. {{ $question->question }}</p>
+                                                                                    @if ($question->options->isNotEmpty())
+                                                                                        <ul class="mt-1.5 space-y-1">
+                                                                                            @foreach ($question->options as $option)
+                                                                                                <li class="rounded-md border border-gray-200 px-2 py-1 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300">{{ $option->option_text }}</li>
+                                                                                            @endforeach
+                                                                                        </ul>
+                                                                                    @endif
+                                                                                </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                                                                        {{ $lessonIsDone ? 'Open full lesson' : ($lessonHasStarted ? 'Continue full lesson' : 'Start full lesson') }}
+                                                                        <x-icons.chevron-right class="h-3 w-3" />
+                                                                    </a>
+                                                                </div>
+                                                            @endunless
                                                         </div>
                                                     @endforeach
                                                 </div>
