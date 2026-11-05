@@ -4,9 +4,9 @@
             ['route' => 'home', 'label' => 'Landing', 'icon' => 'home'],
             ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
             ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
-            ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
             ['route' => 'student.tracks.index', 'label' => 'My Course', 'icon' => 'book-open'],
             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
+            ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
             ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
         ];
