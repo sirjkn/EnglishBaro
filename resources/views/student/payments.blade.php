@@ -1,6 +1,25 @@
 <x-layouts.student :title="'Payments'">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Payments</h1>
 
+    <div class="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+        <x-stat-card
+            label="Track Expires"
+            :value="$nearestExpiry ? $nearestExpiry->expires_at->format('M j, Y') : 'N/A'"
+            :sub="$nearestExpiry ? max(0, (int) floor(now()->diffInDays($nearestExpiry->expires_at, false))).' Days Left' : 'No active subscription'"
+            icon="clock"
+            color="indigo"
+            label-size="text-[10px] sm:text-sm"
+        />
+        <x-stat-card
+            label="Total Paid"
+            :value="$paidCurrency.' '.number_format((float) $totalPaid, 2)"
+            :sub="$successfulPaymentsCount.' successful payment'.($successfulPaymentsCount === 1 ? '' : 's')"
+            icon="credit-card"
+            color="emerald"
+            label-size="text-[10px] sm:text-sm"
+        />
+    </div>
+
     <div class="mt-6">
         <h2 class="font-semibold text-gray-900 dark:text-white">Upcoming Payments</h2>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Tracks are prepaid in full — this shows the next track you're eligible for but haven't purchased yet, not tracks you've already paid for.</p>

@@ -34,16 +34,32 @@ class PaymentController extends Controller
         // "upcoming" — it's already paid (it's in Payment History below).
         // The only real upcoming payment is the next track the student has
         // been promoted/placed into but hasn't purchased yet.
-        $enrolledTrackIds = $user->enrollments()->where('status', 'active')->pluck('track_id');
+        $enrollments = $user->enrollments()->where('status', 'active')->with('subscription')->get();
+        $enrolledTrackIds = $enrollments->pluck('track_id');
         $currentTrack = $user->studentProfile?->track;
 
         $upcomingTrack = ($currentTrack && ! $enrolledTrackIds->contains($currentTrack->id))
             ? $currentTrack
             : null;
 
+        // Same "days remaining on the active subscription" the dashboard shows.
+        $nearestExpiry = $enrollments
+            ->map(fn ($enrollment) => $enrollment->subscription)
+            ->filter(fn ($subscription) => $subscription && $subscription->status === 'active')
+            ->sortBy('expires_at')
+            ->first();
+
+        $successfulPayments = $user->payments()->where('status', 'successful')->get();
+        $totalPaid = $successfulPayments->sum('amount');
+        $paidCurrency = $successfulPayments->first()?->currency ?? '';
+
         return view('student.payments', [
             'payments' => $payments,
             'upcomingTrack' => $upcomingTrack,
+            'nearestExpiry' => $nearestExpiry,
+            'totalPaid' => $totalPaid,
+            'paidCurrency' => $paidCurrency,
+            'successfulPaymentsCount' => $successfulPayments->count(),
         ]);
     }
 }
