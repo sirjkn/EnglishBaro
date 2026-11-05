@@ -31,11 +31,6 @@ class TrackSeeder extends Seeder
             ['code' => 'A2', 'name' => 'English A2', 'price' => 29.99, 'order' => 2, 'thumb_url' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Smiling_Student_Working_on_Assignments_at_Desk.jpg/960px-Smiling_Student_Working_on_Assignments_at_Desk.jpg'],
             ['code' => 'B1', 'name' => 'English B1', 'price' => 34.99, 'order' => 3],
             ['code' => 'B2', 'name' => 'English B2', 'price' => 39.99, 'order' => 4, 'thumb_url' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Innopolis_University_Lecture_Hall.jpg/960px-Innopolis_University_Lecture_Hall.jpg'],
-            ['code' => 'C1', 'name' => 'English C1', 'price' => 44.99, 'order' => 5, 'thumb_url' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/AnnapolisGraduation.jpg/960px-AnnapolisGraduation.jpg'],
-            ['code' => 'C2', 'name' => 'English C2', 'price' => 49.99, 'order' => 6, 'thumb_url' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Bookshelves_in_Hove_Library_2025-08-20.jpg/960px-Bookshelves_in_Hove_Library_2025-08-20.jpg'],
-            ['code' => 'ES', 'name' => 'Spanish', 'price' => 29.99, 'order' => 7, 'thumb_url' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Madrid_%28Spain%29_%2833115369301%29.jpg/960px-Madrid_%28Spain%29_%2833115369301%29.jpg'],
-            ['code' => 'CN', 'name' => 'Chinese', 'price' => 29.99, 'order' => 8, 'thumb_url' => 'https://upload.wikimedia.org/wikipedia/commons/5/55/Red_lanterns%2C_Spring_Festival%2C_Ditan_Park_Beijing.JPG'],
-            ['code' => 'SW', 'name' => 'Swahili', 'price' => 29.99, 'order' => 9, 'thumb_url' => 'https://upload.wikimedia.org/wikipedia/commons/2/22/Stone_Town%2C_Zanzibar%2C_2021%2C_36.jpg'],
         ];
 
         foreach ($tracks as $data) {
