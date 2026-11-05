@@ -13,6 +13,6 @@ class DashboardRedirectController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('student.dashboard');
+        return redirect()->route('home');
     }
 }
