@@ -4,9 +4,9 @@
             <x-icons.medal class="h-8 w-8 text-indigo-600 dark:text-indigo-300" />
         </div>
 
-        <h1 class="mt-4 text-2xl font-bold text-gray-900 dark:text-white">You've been placed into {{ $attempt->track->track_code }}</h1>
+        <h1 class="mt-4 text-2xl font-bold text-gray-900 dark:text-white">You've been placed into {{ $track->track_code }}</h1>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {{ $attempt->track->name }} — one payment unlocks this and every track on EnglishBaro, so you can
+            {{ $track->name }} — one payment unlocks this and every track on EnglishBaro, so you can
             progress all the way up at your own pace.
         </p>
 
@@ -15,7 +15,7 @@
         </a>
     </div>
 
-    @if ($attempt->answers->isNotEmpty())
+    @if ($attempt && $attempt->answers->isNotEmpty())
         <div class="mx-auto mt-10 max-w-2xl text-left">
             <p class="text-xs font-bold uppercase tracking-wide text-gray-400">Review your answers</p>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">

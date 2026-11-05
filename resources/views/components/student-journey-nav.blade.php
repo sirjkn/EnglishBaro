@@ -2,9 +2,9 @@
     @php
         $studentJourneyNav = [
             ['route' => 'home', 'label' => 'Landing', 'icon' => 'home'],
+            ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
             ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
-            ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
             ['route' => 'student.placement-test.result', 'label' => 'Result', 'icon' => 'medal'],
             ['route' => 'student.intro-video', 'label' => 'Intro Video', 'icon' => 'dashboard'],
             ['route' => 'student.tracks.index', 'label' => 'My Course', 'icon' => 'book-open'],

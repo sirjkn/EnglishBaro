@@ -53,16 +53,24 @@ class PlacementTestController extends Controller
 
     public function result(): View
     {
+        $user = Auth::user();
+
         $attempt = PlacementAttempt::query()
-            ->where('user_id', Auth::id())
+            ->where('user_id', $user->id)
             ->with(['track', 'answers.question', 'answers.option'])
             ->latest('completed_at')
             ->first();
 
-        abort_if(! $attempt, 404);
+        // A student's track can also be set directly by an admin, without
+        // ever taking the test — there's no attempt row in that case, so
+        // fall back to their assigned track instead of 404ing.
+        $track = $attempt?->track ?? $user->studentProfile?->track;
+
+        abort_if(! $track, 404);
 
         return view('student.placement-result', [
             'attempt' => $attempt,
+            'track' => $track,
         ]);
     }
 
