@@ -25,7 +25,7 @@ class MediaService
     {
         $this->validateUploadedFile($file, $type);
 
-        if (in_array($type, ['video', 'audio'], true)) {
+        if (in_array($type, ['video', 'audio'], true) && $this->muxConfigured()) {
             return $this->storeOnMux($file, $type, $title);
         }
 
@@ -44,6 +44,11 @@ class MediaService
             'title' => $title,
             'created_by' => Auth::id(),
         ]);
+    }
+
+    private function muxConfigured(): bool
+    {
+        return filled(config('services.mux.token_id')) && filled(config('services.mux.token_secret'));
     }
 
     private function storeOnMux(UploadedFile $file, string $type, ?string $title = null): Media

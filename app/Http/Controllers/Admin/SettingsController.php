@@ -74,7 +74,7 @@ class SettingsController extends Controller
 
         AuditLogger::log('admin.settings.intro_video_updated', null, [], ['media_id' => $validated['media_id'] ?? null]);
 
-        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', $validated['media_id'] ? 'Intro video updated.' : 'Intro video removed.');
+        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', ($validated['media_id'] ?? null) ? 'Intro video updated.' : 'Intro video removed.');
     }
 
     public function updateHelpVideo(Request $request): RedirectResponse
@@ -87,7 +87,7 @@ class SettingsController extends Controller
 
         AuditLogger::log('admin.settings.help_video_updated', null, [], ['media_id' => $validated['media_id'] ?? null]);
 
-        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', $validated['media_id'] ? 'Help video updated.' : 'Help video removed.');
+        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', ($validated['media_id'] ?? null) ? 'Help video updated.' : 'Help video removed.');
     }
 
     public function updatePayment(Request $request): RedirectResponse
