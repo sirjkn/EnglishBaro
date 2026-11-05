@@ -6,6 +6,30 @@
         </div>
     </section>
 
+    {{-- Explore Course --}}
+    <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Course</h2>
+        <p class="mt-2 text-gray-600 dark:text-gray-300">
+            Four tracks, 100 levels each. One payment unlocks every level in a track.
+        </p>
+
+        @if ($featuredTracks->isEmpty())
+            <x-empty-state class="mt-10" message="No courses available yet." />
+        @else
+            <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach ($featuredTracks as $track)
+                    <x-track-card :track="$track" :pricing-region="$pricingRegion" />
+                @endforeach
+            </div>
+
+            <div class="mt-10 text-center">
+                <a href="{{ route('tracks.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                    Browse All Courses
+                    <x-icons.arrow-right class="h-4 w-4" />
+                </a>
+            </div>
+        @endif
+    </section>
 
     {{-- Reviews --}}
     <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
