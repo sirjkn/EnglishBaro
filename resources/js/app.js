@@ -4,10 +4,11 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
-Alpine.data('lessonMediaUploader', () => ({
+Alpine.data('lessonMediaUploader', (lessonId = null) => ({
     uploads: [],
     nextKey: 1,
     lightboxUrl: null,
+    lessonId,
     muxPicker: {
         open: false,
         loading: false,
@@ -25,6 +26,23 @@ Alpine.data('lessonMediaUploader', () => ({
 
     get isUploading() {
         return this.uploads.some((u) => u.status === 'uploading');
+    },
+
+    // Uploading used to just show "Uploaded" and leave attaching it to the
+    // lesson to a separate, easy-to-miss "Save" click below — admins kept
+    // uploading videos that never actually got attached. Once editing an
+    // existing lesson, finishing an upload now submits the form itself so
+    // there's nothing left to forget.
+    autoSaveIfReady() {
+        if (! this.lessonId || this.isUploading) return;
+
+        this.$nextTick(() => {
+            if (this.$el.requestSubmit) {
+                this.$el.requestSubmit();
+            } else {
+                this.$el.submit();
+            }
+        });
     },
 
     openLightbox(url) {
@@ -112,6 +130,7 @@ Alpine.data('lessonMediaUploader', () => ({
             .then((data) => {
                 upload.mediaId = data.id;
                 upload.status = 'done';
+                this.autoSaveIfReady();
             })
             .catch((e) => {
                 upload.status = 'error';
@@ -171,6 +190,7 @@ Alpine.data('lessonMediaUploader', () => ({
         }));
 
         this.closeLibraryPicker();
+        this.autoSaveIfReady();
     },
 
     handleFiles(event, type) {
@@ -235,6 +255,7 @@ Alpine.data('lessonMediaUploader', () => ({
                         upload.mediaId = data.id;
                         upload.progress = 100;
                         upload.status = 'done';
+                        this.autoSaveIfReady();
                     } catch (e) {
                         upload.status = 'error';
                         upload.error = 'Unexpected server response';

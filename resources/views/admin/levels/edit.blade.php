@@ -50,7 +50,7 @@
                                     <button type="button" @click="lessonModalOpen = false" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">Close</button>
                                 </div>
 
-                                <form method="POST" action="{{ route('admin.tracks.lessons.update', [$track, $level, $lesson]) }}" enctype="multipart/form-data" class="mt-4 space-y-2" x-data="lessonMediaUploader()">
+                                <form method="POST" action="{{ route('admin.tracks.lessons.update', [$track, $level, $lesson]) }}" enctype="multipart/form-data" class="mt-4 space-y-2" x-data="lessonMediaUploader({{ $lesson->id }})">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="open" value="lesson-{{ $lesson->id }}">
