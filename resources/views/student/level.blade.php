@@ -83,8 +83,6 @@
                             @click="openLevel = (openLevel === {{ $levelItem->number }} ? null : {{ $levelItem->number }})"
                             class="flex w-full items-center gap-3 px-4 py-3 text-left"
                         >
-                            <span class="w-9 flex-none font-mono text-xs text-gray-400">{{ str_pad($levelItem->number, 3, '0', STR_PAD_LEFT) }}</span>
-
                             @if ($isCompleted)
                                 <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-green-500 text-xs text-white">&#10003;</span>
                             @elseif (! $isUnlocked)
