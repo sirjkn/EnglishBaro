@@ -189,95 +189,87 @@
                                             </div>
 
                                             @unless ($isLocked)
-                                                <div x-show="openSection === {{ $section->id }}" x-cloak x-transition class="space-y-1 bg-gray-50 px-2 pb-2.5 pl-10 dark:bg-gray-900/40">
-                                                    @php $subPriorDone = true; @endphp
-                                                    @foreach ($sectionLessons as $subIndex => $lesson)
+                                                <div x-show="openSection === {{ $section->id }}" x-cloak x-transition class="bg-gray-50 px-2 pb-2.5 pl-10 dark:bg-gray-900/40">
+                                                    @if ($sectionLessons->count() === 1)
+                                                        {{-- A section with a single lesson has nothing to choose between,
+                                                        so opening the section goes straight to its video and questions
+                                                        instead of making the student click through another row first. --}}
                                                         @php
-                                                            $lessonIsDone = $completedLessonIds->contains($lesson->id);
-                                                            $lessonIsLocked = ! $subPriorDone;
-                                                            $subPriorDone = $subPriorDone && $lessonIsDone;
-                                                            $lessonIsResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
-                                                            $lessonHasStarted = $startedLessonIds->contains($lesson->id);
-                                                            $lessonQuestionCount = $lesson->activity?->questions->count() ?? 0;
-                                                            $lessonVideoResources = $lesson->resources->filter(fn ($r) => $r->media?->type === 'video');
-                                                            $lessonAudioResources = $lesson->resources->filter(fn ($r) => $r->media?->type === 'audio');
-                                                            $lessonPrimaryVideo = $lessonVideoResources->first()?->media ?? $lesson->video;
-                                                            $lessonPrimaryAudio = $lessonPrimaryVideo ? null : $lessonAudioResources->first();
+                                                            $onlyLesson = $sectionLessons->first();
+                                                            $onlyLessonHasStarted = $startedLessonIds->contains($onlyLesson->id);
                                                         @endphp
-                                                        <div class="rounded-lg {{ $lessonIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white dark:bg-gray-800' }} {{ $lessonIsLocked ? 'opacity-60' : '' }}">
-                                                            <div
-                                                                @if (! $lessonIsLocked)
-                                                                    role="button"
-                                                                    tabindex="0"
-                                                                    @click="openLesson = (openLesson === {{ $lesson->id }} ? null : {{ $lesson->id }})"
-                                                                    @keydown.enter="openLesson = (openLesson === {{ $lesson->id }} ? null : {{ $lesson->id }})"
-                                                                @endif
-                                                                class="flex items-center gap-2 px-2 py-2 {{ ! $lessonIsLocked ? 'cursor-pointer' : '' }}"
-                                                            >
-                                                                @if ($lessonIsDone)
-                                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
-                                                                @elseif ($lessonIsLocked)
-                                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-                                                                        <x-icons.lock class="h-2.5 w-2.5" />
-                                                                    </span>
-                                                                @else
-                                                                    <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
-                                                                @endif
+                                                        @include('student.partials.lesson-preview', [
+                                                            'lesson' => $onlyLesson,
+                                                            'track' => $track,
+                                                            'level' => $levelItem,
+                                                            'lessonIsDone' => $isDone,
+                                                            'lessonHasStarted' => $onlyLessonHasStarted,
+                                                        ])
+                                                    @else
+                                                        <div class="space-y-1">
+                                                            @php $subPriorDone = true; @endphp
+                                                            @foreach ($sectionLessons as $subIndex => $lesson)
+                                                                @php
+                                                                    $lessonIsDone = $completedLessonIds->contains($lesson->id);
+                                                                    $lessonIsLocked = ! $subPriorDone;
+                                                                    $subPriorDone = $subPriorDone && $lessonIsDone;
+                                                                    $lessonIsResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
+                                                                    $lessonHasStarted = $startedLessonIds->contains($lesson->id);
+                                                                    $lessonQuestionCount = $lesson->activity?->questions->count() ?? 0;
+                                                                @endphp
+                                                                <div class="rounded-lg {{ $lessonIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white dark:bg-gray-800' }} {{ $lessonIsLocked ? 'opacity-60' : '' }}">
+                                                                    <div
+                                                                        @if (! $lessonIsLocked)
+                                                                            role="button"
+                                                                            tabindex="0"
+                                                                            @click="openLesson = (openLesson === {{ $lesson->id }} ? null : {{ $lesson->id }})"
+                                                                            @keydown.enter="openLesson = (openLesson === {{ $lesson->id }} ? null : {{ $lesson->id }})"
+                                                                        @endif
+                                                                        class="flex items-center gap-2 px-2 py-2 {{ ! $lessonIsLocked ? 'cursor-pointer' : '' }}"
+                                                                    >
+                                                                        @if ($lessonIsDone)
+                                                                            <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
+                                                                        @elseif ($lessonIsLocked)
+                                                                            <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+                                                                                <x-icons.lock class="h-2.5 w-2.5" />
+                                                                            </span>
+                                                                        @else
+                                                                            <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
+                                                                        @endif
 
-                                                                <span class="min-w-0 flex-1 text-xs text-gray-700 dark:text-gray-300">
-                                                                    {{ $section->title }} {{ $subIndex + 1 }}
-                                                                    @if (! $lessonIsLocked && $lessonQuestionCount) &middot; {{ $lessonQuestionCount }} question{{ $lessonQuestionCount === 1 ? '' : 's' }} @endif
-                                                                </span>
+                                                                        <span class="min-w-0 flex-1 text-xs text-gray-700 dark:text-gray-300">
+                                                                            {{ $section->title }} {{ $subIndex + 1 }}
+                                                                            @if (! $lessonIsLocked && $lessonQuestionCount) &middot; {{ $lessonQuestionCount }} question{{ $lessonQuestionCount === 1 ? '' : 's' }} @endif
+                                                                        </span>
 
-                                                                @if ($lessonIsDone)
-                                                                    <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full border border-gray-300 px-2.5 py-0.5 text-[10px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
-                                                                @elseif ($lessonIsLocked)
-                                                                    <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
-                                                                @else
-                                                                    <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white hover:bg-indigo-500">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</a>
-                                                                @endif
+                                                                        @if ($lessonIsDone)
+                                                                            <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full border border-gray-300 px-2.5 py-0.5 text-[10px] font-semibold text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Review</a>
+                                                                        @elseif ($lessonIsLocked)
+                                                                            <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
+                                                                        @else
+                                                                            <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" @click.stop class="rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold text-white hover:bg-indigo-500">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</a>
+                                                                        @endif
 
-                                                                @unless ($lessonIsLocked)
-                                                                    <x-icons.chevron-left class="h-3 w-3 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openLesson === {{ $lesson->id }} ? '-rotate-90' : 'rotate-90'" />
-                                                                @endunless
-                                                            </div>
+                                                                        @unless ($lessonIsLocked)
+                                                                            <x-icons.chevron-left class="h-3 w-3 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openLesson === {{ $lesson->id }} ? '-rotate-90' : 'rotate-90'" />
+                                                                        @endunless
+                                                                    </div>
 
-                                                            @unless ($lessonIsLocked)
-                                                                <div x-show="openLesson === {{ $lesson->id }}" x-cloak x-transition class="space-y-3 px-2 pb-3">
-                                                                    @if ($lessonPrimaryVideo)
-                                                                        <x-video-player :media="$lessonPrimaryVideo" />
-                                                                    @elseif ($lessonPrimaryAudio)
-                                                                        <x-audio-player :media="$lessonPrimaryAudio->media" :title="$lessonPrimaryAudio->title" />
-                                                                    @else
-                                                                        <p class="text-xs text-gray-400">No preview media for this lesson yet.</p>
-                                                                    @endif
-
-                                                                    @if ($lesson->activity && $lesson->activity->questions->isNotEmpty())
-                                                                        <div class="space-y-2">
-                                                                            <p class="text-[11px] font-bold uppercase tracking-wide text-gray-400">Questions in this lesson</p>
-                                                                            @foreach ($lesson->activity->questions as $question)
-                                                                                <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-900/40">
-                                                                                    <p class="text-xs font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}. {{ $question->question }}</p>
-                                                                                    @if ($question->options->isNotEmpty())
-                                                                                        <ul class="mt-1.5 space-y-1">
-                                                                                            @foreach ($question->options as $option)
-                                                                                                <li class="rounded-md border border-gray-200 px-2 py-1 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300">{{ $option->option_text }}</li>
-                                                                                            @endforeach
-                                                                                        </ul>
-                                                                                    @endif
-                                                                                </div>
-                                                                            @endforeach
+                                                                    @unless ($lessonIsLocked)
+                                                                        <div x-show="openLesson === {{ $lesson->id }}" x-cloak x-transition>
+                                                                            @include('student.partials.lesson-preview', [
+                                                                                'lesson' => $lesson,
+                                                                                'track' => $track,
+                                                                                'level' => $levelItem,
+                                                                                'lessonIsDone' => $lessonIsDone,
+                                                                                'lessonHasStarted' => $lessonHasStarted,
+                                                                            ])
                                                                         </div>
-                                                                    @endif
-
-                                                                    <a href="{{ route('student.tracks.learn', [$track, $levelItem, $lesson]) }}" class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
-                                                                        {{ $lessonIsDone ? 'Open full lesson' : ($lessonHasStarted ? 'Continue full lesson' : 'Start full lesson') }}
-                                                                        <x-icons.chevron-right class="h-3 w-3" />
-                                                                    </a>
+                                                                    @endunless
                                                                 </div>
-                                                            @endunless
+                                                            @endforeach
                                                         </div>
-                                                    @endforeach
+                                                    @endif
                                                 </div>
                                             @endunless
                                         </div>
