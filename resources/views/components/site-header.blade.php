@@ -31,15 +31,15 @@
             @else
                 <a href="{{ $helpHref }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 rounded-md bg-green-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-green-600">
                     {!! $helpIcon !!}
-                    WhatsApp
+                    <span class="hidden sm:inline">WhatsApp</span>
                 </a>
                 <a href="{{ route('login') }}" class="flex items-center gap-1.5 rounded-md border border-indigo-600 px-3 py-1.5 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">
                     <x-icons.login class="h-4 w-4" />
-                    Login
+                    <span class="hidden sm:inline">Login</span>
                 </a>
                 <a href="{{ route('register.create') }}" class="flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500">
                     <x-icons.user-plus class="h-4 w-4" />
-                    Join
+                    <span class="hidden sm:inline">Join</span>
                 </a>
             @endauth
         </div>

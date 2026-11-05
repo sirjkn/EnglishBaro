@@ -1,26 +1,9 @@
 <x-layouts.site :title="'Home'">
     {{-- Hero: a single intro-video slide, attached from Admin → Settings --}}
     <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-        @if ($introVideo)
-            <div class="overflow-hidden rounded-3xl shadow-xl">
-                <x-video-player :media="$introVideo" />
-            </div>
-        @else
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 shadow-xl">
-                <div class="relative flex min-h-[320px] flex-col items-start justify-center p-8 sm:min-h-[400px] sm:p-14">
-                    <h1 class="max-w-xl text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-5xl">
-                        Learn English your way
-                    </h1>
-                    <p class="mt-3 max-w-xl text-sm leading-6 text-indigo-100 sm:text-base">
-                        Video lessons, eBooks, and assessments across every level, from Beginner to Advanced.
-                    </p>
-                    <a href="{{ route('tracks.index') }}" class="mt-6 flex items-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-sm font-semibold text-indigo-950 shadow-sm hover:bg-amber-300">
-                        Browse Courses
-                        <x-icons.arrow-right class="h-4 w-4" />
-                    </a>
-                </div>
-            </div>
-        @endif
+        <div class="overflow-hidden rounded-3xl shadow-xl">
+            <x-video-player :media="$introVideo" placeholder="Intro video coming soon." />
+        </div>
     </section>
 
 

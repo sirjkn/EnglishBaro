@@ -1,8 +1,12 @@
-@props(['media'])
+@props(['media', 'placeholder' => 'No video uploaded yet.'])
 
-@if ($media)
 <div class="aspect-video w-full overflow-hidden rounded-xl bg-black">
-    @if ($media->provider === 'mux' && $media->mux_playback_id)
+    @if (! $media)
+        <div class="flex h-full w-full flex-col items-center justify-center gap-2 text-gray-400">
+            <x-icons.play-circle class="h-10 w-10" />
+            <span class="text-sm">{{ $placeholder }}</span>
+        </div>
+    @elseif ($media->provider === 'mux' && $media->mux_playback_id)
         @once
             <script src="https://cdn.jsdelivr.net/npm/@mux/mux-player@2.9.0/dist/mux-player.js" type="module"></script>
         @endonce
@@ -28,4 +32,3 @@
         <video class="h-full w-full" controls preload="metadata" src="{{ $media->resolved_url }}" x-init="typeof initPlayer === 'function' && initPlayer($el)"></video>
     @endif
 </div>
-@endif
