@@ -1,5 +1,11 @@
 <x-layouts.student :title="'Your Result'">
-    <div class="mx-auto max-w-3xl text-center">
+    <div class="mx-auto max-w-3xl">
+        <div class="overflow-hidden rounded-3xl shadow-xl">
+            <x-video-player :media="$introVideo" placeholder="Intro video coming soon." />
+        </div>
+    </div>
+
+    <div class="mx-auto mt-8 max-w-3xl text-center">
         <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
             <x-icons.medal class="h-8 w-8 text-indigo-600 dark:text-indigo-300" />
         </div>

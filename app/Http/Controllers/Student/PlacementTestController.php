@@ -22,11 +22,9 @@ class PlacementTestController extends Controller
             return redirect()->route('student.placement-test.result');
         }
 
-        $introVideoId = CompanySetting::get('intro_video_media_id');
-
         return view('student.placement-test', [
             'questions' => $placementTest->questions(),
-            'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
+            'introVideo' => $this->introVideo(),
         ]);
     }
 
@@ -74,6 +72,14 @@ class PlacementTestController extends Controller
         return view('student.placement-result', [
             'attempt' => $attempt,
             'track' => $track,
+            'introVideo' => $this->introVideo(),
         ]);
+    }
+
+    private function introVideo(): ?Media
+    {
+        $introVideoId = CompanySetting::get('intro_video_media_id');
+
+        return $introVideoId ? Media::find($introVideoId) : null;
     }
 }
