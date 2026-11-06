@@ -88,38 +88,7 @@
         />
     </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
-            <h2 class="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
-                <span class="flex h-7 w-7 items-center justify-center rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
-                    <x-icons.user-circle class="h-4 w-4" />
-                </span>
-                Personal Information
-            </h2>
-            <dl class="mt-4 space-y-2 text-sm">
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Phone</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->phone ?? '—' }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Country</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->country ?? '—' }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Gender</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->gender ? ucfirst($student->studentProfile->gender) : '—' }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Track</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->track?->track_code ?? '—' }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Referral Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->referral_email ?? '—' }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Status</dt><dd><x-badge :color="$student->is_active ? 'green' : 'gray'" dot>{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge></dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500 dark:text-gray-400">Email Verified</dt><dd><x-badge :color="$student->hasVerifiedEmail() ? 'green' : 'red'" dot>{{ $student->hasVerifiedEmail() ? 'Verified' : 'Not Verified' }}</x-badge></dd></div>
-            </dl>
-
-            <div class="mt-4 space-y-2 border-t border-gray-100 pt-4 dark:border-gray-700">
-                @unless ($student->hasVerifiedEmail())
-                    <form method="POST" action="{{ route('admin.students.verify-email', $student) }}" onsubmit="return confirm('Mark {{ $student->name }}\'s email as verified? Use this if their verification email never arrived or the link isn\'t working.');">
-                        @csrf
-                        <button type="submit" class="w-full rounded-md border border-emerald-300 px-3 py-2 text-xs font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-900/30">Verify Email</button>
-                    </form>
-                @endunless
-                <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
-                    @csrf
-                    <button type="submit" class="w-full rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">Reset Password</button>
-                </form>
-            </div>
-        </div>
-
+    <div class="mt-6 grid grid-cols-1 gap-8">
         <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
             <h2 class="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
                 <span class="flex h-7 w-7 items-center justify-center rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">

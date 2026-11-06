@@ -5,6 +5,13 @@
         </div>
     @endif
 
+    @if (session('newPassword'))
+        <div class="mt-4 rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+            <p class="text-sm font-semibold text-amber-900 dark:text-amber-200">New password generated — share this with the student now, it won't be shown again:</p>
+            <p class="mt-1 select-all rounded bg-white px-3 py-2 font-mono text-sm text-gray-900 dark:bg-gray-900 dark:text-white">{{ session('newPassword') }}</p>
+        </div>
+    @endif
+
     <div
         class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2"
         x-data="{ selected: {{ $openStudentId ?? 'null' }}, mode: '{{ $openStudentId ? 'edit' : 'create' }}' }"
@@ -107,6 +114,25 @@
                         </div>
 
                         <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                            <div class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
+                                    <x-badge :color="$student->hasVerifiedEmail() ? 'green' : 'red'" dot>{{ $student->hasVerifiedEmail() ? 'Verified' : 'Not Verified' }}</x-badge>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    @unless ($student->hasVerifiedEmail())
+                                        <form method="POST" action="{{ route('admin.students.verify-email', $student) }}" onsubmit="return confirm('Mark {{ $student->name }}\'s email as verified? Use this if their verification email never arrived or the link isn\'t working.');">
+                                            @csrf
+                                            <button type="submit" class="rounded-md border border-emerald-300 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-900/30">Verify Email</button>
+                                        </form>
+                                    @endunless
+                                    <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
+                                        @csrf
+                                        <button type="submit" class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Reset Password</button>
+                                    </form>
+                                </div>
+                            </div>
+
                             <form method="POST" action="{{ route('admin.students.update', $student) }}" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
