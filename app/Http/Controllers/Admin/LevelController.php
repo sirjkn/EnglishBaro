@@ -12,26 +12,6 @@ use Illuminate\View\View;
 
 class LevelController extends Controller
 {
-    public function all(Request $request): View
-    {
-        $this->authorize('viewAny', Track::class);
-
-        $tracks = Track::query()->orderBy('order')->get();
-
-        $selectedTrack = $tracks->firstWhere('track_code', $request->query('track'))
-            ?? $tracks->first();
-
-        $levels = $selectedTrack
-            ? $selectedTrack->levels()->withCount('sections')->paginate(25)
-            : null;
-
-        return view('admin.levels.all', [
-            'tracks' => $tracks,
-            'selectedTrack' => $selectedTrack,
-            'levels' => $levels,
-        ]);
-    }
-
     public function index(Track $track): View
     {
         $this->authorize('update', $track);

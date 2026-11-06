@@ -80,10 +80,6 @@ Route::middleware(['auth', 'verified', 'admin'])
             Route::delete('tracks/{track}/levels/{level}/lessons/{lesson}/activity/questions/{assessmentQuestion}', [LessonActivityController::class, 'destroyQuestion'])->name('tracks.lessons.activity.questions.destroy');
         });
 
-        Route::middleware('module:levels')->group(function () {
-            Route::get('levels', [LevelController::class, 'all'])->name('levels.index');
-        });
-
         Route::middleware('module:enrollments')->group(function () {
             Route::get('enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');
             Route::delete('enrollments/{enrollment}', [EnrollmentController::class, 'cancel'])->name('enrollments.cancel');

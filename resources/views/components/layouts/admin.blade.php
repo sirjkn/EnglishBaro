@@ -62,7 +62,6 @@
                                 'items' => [
                                     ['route' => 'admin.courses.index', 'label' => 'Courses', 'icon' => 'book-open', 'module' => 'tracks'],
                                     ['route' => 'admin.tracks.index', 'label' => 'Units (Tracks)', 'icon' => 'book-open', 'module' => 'tracks'],
-                                    ['route' => 'admin.levels.index', 'label' => 'Levels', 'icon' => 'book-open', 'module' => 'levels'],
                                     ['route' => 'admin.enrollments.index', 'label' => 'Enrollments', 'icon' => 'user-plus', 'module' => 'enrollments'],
                                     ['route' => 'admin.placement-test.index', 'label' => 'Placement Test', 'icon' => 'medal', 'module' => 'placement-test'],
                                     ['route' => 'admin.practice-questions.index', 'label' => 'More Practice', 'icon' => 'pencil', 'module' => 'more-practice'],
