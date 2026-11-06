@@ -15,12 +15,17 @@ use Illuminate\View\View;
 
 class CourseController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', Course::class);
 
+        // Edit forms for every course are rendered inline on this page (in a
+        // hidden panel each, toggled by Alpine) rather than on a separate
+        // page per course, so each one needs its thumbnail and units loaded
+        // up front here.
         $courses = Course::query()
             ->withCount('tracks')
+            ->with(['thumbnail', 'tracks' => fn ($query) => $query->withCount('levels')->orderBy('order')])
             ->orderBy('order')
             ->get();
 
@@ -30,9 +35,12 @@ class CourseController extends Controller
             ->groupBy('tracks.course_id')
             ->pluck('total', 'course_id');
 
+        $openCourseId = $request->integer('open') ?: $courses->first()?->id;
+
         return view('admin.courses.index', [
             'courses' => $courses,
             'enrollmentCounts' => $enrollmentCounts,
+            'openCourseId' => $openCourseId,
             'overview' => [
                 'total' => $courses->count(),
                 'published' => $courses->where('status', 'published')->count(),
@@ -93,7 +101,9 @@ class CourseController extends Controller
 
         AuditLogger::log('admin.course.updated', $course, $previous, $validated);
 
-        return redirect()->route('admin.courses.edit', $course)->with('status', 'Course updated.');
+        // Editing happens inline on the index page now, not on this page's
+        // own route — send the admin back there with this course still open.
+        return redirect()->route('admin.courses.index', ['open' => $course->id])->with('status', 'Course updated.');
     }
 
     public function destroy(Course $course): RedirectResponse
