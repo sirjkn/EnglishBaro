@@ -22,14 +22,19 @@ class TrackController extends Controller
     {
         $this->authorize('viewAny', Track::class);
 
-        $tracks = Track::query()
-            ->with('course')
-            ->withCount(['levels', 'enrollments', 'students'])
+        // Grouped by course so units from different courses (English,
+        // Spanish, ...) are never shown mixed in one flat list — easy to
+        // mistake for one another otherwise, since they can share codes
+        // like "A1" across courses.
+        $courses = Course::query()
+            ->with(['tracks' => fn ($query) => $query->withCount(['levels', 'enrollments', 'students'])->orderBy('order')])
             ->orderBy('order')
             ->get();
 
+        $tracks = $courses->flatMap->tracks;
+
         return view('admin.tracks.index', [
-            'tracks' => $tracks,
+            'courses' => $courses,
             'overview' => [
                 'total' => $tracks->count(),
                 'published' => $tracks->where('status', 'published')->count(),
