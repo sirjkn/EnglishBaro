@@ -1,20 +1,5 @@
 <x-layouts.admin :title="'Courses'">
-    <div class="flex flex-wrap items-center justify-between gap-3">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Courses</h1>
-        <div class="flex gap-2">
-            <a href="{{ route('admin.tracks.index') }}" class="rounded-md border border-indigo-600 px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">
-                All Units (Tracks)
-            </a>
-            <a href="{{ route('admin.courses.create') }}" class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
-                + Add Course
-            </a>
-        </div>
-    </div>
-
-    <p class="mt-2 max-w-3xl text-sm text-gray-600 dark:text-gray-400">
-        A student pays once for a course (e.g. "English") and that unlocks every unit (track) listed inside
-        it — the placement test decides which unit they start on. Click a course on the left to edit it here.
-    </p>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Courses</h1>
 
     @if (session('error'))
         <div class="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
@@ -26,12 +11,6 @@
             {{ session('status') }}
         </div>
     @endif
-
-    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <x-stat-card label="Total Courses" :value="$overview['total']" />
-        <x-stat-card label="Published Courses" :value="$overview['published']" />
-        <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" />
-    </div>
 
     <div
         class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4"
@@ -69,88 +48,106 @@
             </ul>
         </div>
 
-        {{-- 3/4: inline preview/edit panel --}}
+        {{-- 3/4: toolbar, overview, and inline preview/edit panel --}}
         <div class="lg:col-span-3">
-            @forelse ($courses as $course)
-                <div x-show="selected === {{ $course->id }}" x-cloak>
-                    @php
-                        $enrolledCount = $enrollmentCounts[$course->id] ?? 0;
-                        $deleteMessage = $enrolledCount > 0
-                            ? "This course has {$enrolledCount} enrolled student(s) and/or units linked to it. Remove its units first, or archive it instead."
-                            : 'This removes the course. Units (tracks) must be removed or reassigned first.';
-                    @endphp
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
+                    <x-stat-card label="Total Courses" :value="$overview['total']" compact class="p-3" />
+                    <x-stat-card label="Published Courses" :value="$overview['published']" compact class="p-3" />
+                    <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" compact class="p-3" />
+                </div>
+                <div class="flex flex-none gap-2">
+                    <a href="{{ route('admin.tracks.index') }}" class="rounded-md border border-indigo-600 px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30">
+                        All Units (Tracks)
+                    </a>
+                    <a href="{{ route('admin.courses.create') }}" class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
+                        + Add Course
+                    </a>
+                </div>
+            </div>
 
-                    <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl border border-b-0 border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
-                        <h2 class="text-sm font-bold text-gray-900 dark:text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
-                        <div class="flex items-center gap-3">
-                            <a href="{{ route('courses.show', $course) }}" target="_blank" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">View Live</a>
-                            <x-confirm-delete-form
-                                :action="route('admin.courses.destroy', $course)"
-                                label="Delete Course"
-                                :title="'Delete course '.$course->course_code.'?'"
-                                :message="$deleteMessage"
-                                class="text-xs font-medium text-red-600 hover:text-red-500"
-                            />
+            <div class="mt-6">
+                @forelse ($courses as $course)
+                    <div x-show="selected === {{ $course->id }}" x-cloak>
+                        @php
+                            $enrolledCount = $enrollmentCounts[$course->id] ?? 0;
+                            $deleteMessage = $enrolledCount > 0
+                                ? "This course has {$enrolledCount} enrolled student(s) and/or units linked to it. Remove its units first, or archive it instead."
+                                : 'This removes the course. Units (tracks) must be removed or reassigned first.';
+                        @endphp
+
+                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl border border-b-0 border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
+                            <h2 class="text-sm font-bold text-gray-900 dark:text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
+                            <div class="flex items-center gap-3">
+                                <a href="{{ route('courses.show', $course) }}" target="_blank" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">View Live</a>
+                                <x-confirm-delete-form
+                                    :action="route('admin.courses.destroy', $course)"
+                                    label="Delete Course"
+                                    :title="'Delete course '.$course->course_code.'?'"
+                                    :message="$deleteMessage"
+                                    class="text-xs font-medium text-red-600 hover:text-red-500"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                            <x-stat-card label="Units (Tracks)" :value="$course->tracks->count()" compact class="p-3" />
-                            <x-stat-card label="Enrolled Students" :value="$enrolledCount" compact class="p-3" />
-                            <x-stat-card label="Subscription" :value="$course->subscription_days.' days'" compact class="p-3" />
-                        </div>
+                        <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                <x-stat-card label="Units (Tracks)" :value="$course->tracks->count()" compact class="p-3" />
+                                <x-stat-card label="Enrolled Students" :value="$enrolledCount" compact class="p-3" />
+                                <x-stat-card label="Subscription" :value="$course->subscription_days.' days'" compact class="p-3" />
+                            </div>
 
-                        <div class="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                            <form method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
-                                @csrf
-                                @method('PUT')
-                                @include('admin.courses._form', ['course' => $course])
+                            <div class="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                                <form method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    @include('admin.courses._form', ['course' => $course])
 
-                                <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
-                            </form>
+                                    <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                </form>
 
-                            <div>
-                                <div class="flex items-center justify-between">
-                                    <h3 class="font-semibold text-gray-900 dark:text-white">Units in this Course</h3>
-                                    <a href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
-                                        + Add Unit
-                                    </a>
-                                </div>
-                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                    Students who buy {{ $course->name }} get every unit below. The placement test decides which one they start on.
-                                </p>
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-900 dark:text-white">Units in this Course</h3>
+                                        <a href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
+                                            + Add Unit
+                                        </a>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        Students who buy {{ $course->name }} get every unit below. The placement test decides which one they start on.
+                                    </p>
 
-                                <div class="mt-3 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 dark:divide-gray-700 dark:border-gray-700">
-                                    @forelse ($course->tracks as $track)
-                                        <div class="flex items-center justify-between gap-3 bg-white px-4 py-3 dark:bg-gray-800">
-                                            <div class="min-w-0">
-                                                <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                                                    {{ $track->track_code }} &middot; {{ $track->name }}
-                                                    @if ($track->is_default)
-                                                        <span class="ml-1 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-300">Entry unit</span>
-                                                    @endif
-                                                </p>
-                                                <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ $track->levels_count }} levels &middot; {{ ucfirst($track->status) }}</p>
+                                    <div class="mt-3 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 dark:divide-gray-700 dark:border-gray-700">
+                                        @forelse ($course->tracks as $track)
+                                            <div class="flex items-center justify-between gap-3 bg-white px-4 py-3 dark:bg-gray-800">
+                                                <div class="min-w-0">
+                                                    <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                                                        {{ $track->track_code }} &middot; {{ $track->name }}
+                                                        @if ($track->is_default)
+                                                            <span class="ml-1 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-300">Entry unit</span>
+                                                        @endif
+                                                    </p>
+                                                    <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ $track->levels_count }} levels &middot; {{ ucfirst($track->status) }}</p>
+                                                </div>
+                                                <div class="flex flex-none items-center gap-2">
+                                                    <a href="{{ route('admin.tracks.levels.index', $track) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Levels</a>
+                                                    <a href="{{ route('admin.tracks.edit', $track) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">Edit</a>
+                                                </div>
                                             </div>
-                                            <div class="flex flex-none items-center gap-2">
-                                                <a href="{{ route('admin.tracks.levels.index', $track) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Levels</a>
-                                                <a href="{{ route('admin.tracks.edit', $track) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">Edit</a>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <p class="bg-white px-4 py-6 text-center text-sm text-gray-400 dark:bg-gray-800">No units yet — add one to get started.</p>
-                                    @endforelse
+                                        @empty
+                                            <p class="bg-white px-4 py-6 text-center text-sm text-gray-400 dark:bg-gray-800">No units yet — add one to get started.</p>
+                                        @endforelse
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-300 p-12 text-center text-sm text-gray-400 dark:border-gray-600">
-                    Create a course to get started.
-                </div>
-            @endforelse
+                @empty
+                    <div class="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-300 p-12 text-center text-sm text-gray-400 dark:border-gray-600">
+                        Create a course to get started.
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 </x-layouts.admin>
