@@ -20,36 +20,51 @@
 <div class="relative overflow-hidden rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-100 p-6 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800">
     <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-200/50 dark:bg-blue-900/20"></div>
 
-    <div class="relative flex flex-col items-start gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <x-student-avatar :profile="$studentProfile" size="h-20 w-20" class="border-4 border-white shadow-sm dark:border-gray-700" />
-            <div>
-                <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $user->name }}</h1>
-                <p class="mt-0.5 text-sm font-semibold text-blue-700 dark:text-blue-300">{{ $studentProfile?->student_id ?? '—' }}</p>
-                <p class="mt-1 flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
-                    <x-icons.envelope class="h-4 w-4" /> {{ $user->email }}
-                </p>
-                @if ($activeSubscription)
-                    <div class="mt-1.5">
-                        <x-badge color="green" dot>Active</x-badge>
-                    </div>
+    <div class="relative grid grid-cols-1 gap-6 lg:grid-cols-2 lg:divide-x lg:divide-blue-200/60 dark:lg:divide-gray-700">
+        <div class="flex flex-col justify-between">
+            <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+                <x-student-avatar :profile="$studentProfile" size="h-20 w-20" class="border-4 border-white shadow-sm dark:border-gray-700" />
+                <div>
+                    <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $user->name }}</h1>
+                    <p class="mt-0.5 text-sm font-semibold text-blue-700 dark:text-blue-300">{{ $studentProfile?->student_id ?? '—' }}</p>
+                    <p class="mt-1 flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+                        <x-icons.envelope class="h-4 w-4" /> {{ $user->email }}
+                    </p>
+                    @if ($activeSubscription)
+                        <div class="mt-1.5">
+                            <x-badge color="green" dot>Active</x-badge>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="mt-5 flex flex-wrap items-center gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700">
+                @if ($studentProfile?->track)
+                    <x-badge color="indigo">Current Track: {{ $studentProfile->track->track_code }}</x-badge>
                 @endif
+                <span class="text-xs text-gray-400">&middot;</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>
+                <span class="text-xs text-gray-400">&middot;</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">Member since {{ $user->created_at->format('M Y') }}</span>
+                <a href="{{ route('student.account') }}" class="ml-auto flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
+                    <x-icons.pencil class="h-3 w-3" /> Edit Profile
+                </a>
             </div>
         </div>
 
-        <div class="flex w-full flex-col items-end gap-2 lg:w-auto">
+        <div class="flex flex-col items-end gap-2 lg:pl-6">
             @if ($activeSubscription)
                 <x-subscription-countdown :subscription="$activeSubscription" />
             @endif
 
-            <div class="grid w-full grid-cols-3 gap-1.5 sm:w-auto sm:gap-2">
+            <div class="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
                 <x-stat-card
                     label="Track Expires"
                     :value="$nearestExpiry ? $nearestExpiry->expires_at->format('M j') : 'N/A'"
                     icon="clock"
                     color="indigo"
                     compact
-                    class="w-full sm:w-28 !p-2"
+                    class="w-full !p-2"
                     label-size="text-[9px]"
                 />
                 <x-stat-card
@@ -58,7 +73,7 @@
                     icon="bolt"
                     color="amber"
                     compact
-                    class="w-full sm:w-28 !p-2"
+                    class="w-full !p-2"
                     label-size="text-[9px]"
                 />
                 <x-stat-card
@@ -67,24 +82,11 @@
                     icon="credit-card"
                     color="emerald"
                     compact
-                    class="w-full sm:w-28 !p-2"
+                    class="w-full !p-2"
                     label-size="text-[9px]"
                 />
             </div>
         </div>
-    </div>
-
-    <div class="relative mt-5 flex flex-wrap items-center gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700">
-        @if ($studentProfile?->track)
-            <x-badge color="indigo">Current Track: {{ $studentProfile->track->track_code }}</x-badge>
-        @endif
-        <span class="text-xs text-gray-400">&middot;</span>
-        <span class="text-xs text-gray-500 dark:text-gray-400">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>
-        <span class="text-xs text-gray-400">&middot;</span>
-        <span class="text-xs text-gray-500 dark:text-gray-400">Member since {{ $user->created_at->format('M Y') }}</span>
-        <a href="{{ route('student.account') }}" class="ml-auto flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
-            <x-icons.pencil class="h-3 w-3" /> Edit Profile
-        </a>
     </div>
 </div>
 
