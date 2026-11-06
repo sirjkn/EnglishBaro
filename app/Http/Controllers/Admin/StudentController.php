@@ -22,7 +22,16 @@ class StudentController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $query = User::query()->where('user_type', 'student')->with(['studentProfile.track']);
+        // Each student's inline panel (Track/Active Sessions/Payments) needs
+        // these relations loaded too, since it's rendered right here on the
+        // list rather than on a separate profile page.
+        $query = User::query()->where('user_type', 'student')->with([
+            'studentProfile.track',
+            'enrollments.track',
+            'enrollments.subscription',
+            'userSessions',
+            'payments.track',
+        ]);
 
         if ($search = $request->string('search')->trim()->value()) {
             $query->where(function ($q) use ($search) {
@@ -52,11 +61,17 @@ class StudentController extends Controller
         // above and this just decides which one (if any) opens by default.
         $openStudentId = $request->integer('open') ?: $students->first()?->id;
 
+        $sessionQuota = app(\App\Services\SessionQuotaService::class);
+        $sessionsThisMonthByStudentId = collect($students->items())
+            ->mapWithKeys(fn ($student) => [$student->id => $sessionQuota->countThisMonth($student)]);
+
         return view('admin.students.index', [
             'students' => $students,
             'tracks' => Track::query()->orderBy('order')->get(),
             'countries' => Countries::all(),
             'openStudentId' => $openStudentId,
+            'sessionsThisMonthByStudentId' => $sessionsThisMonthByStudentId,
+            'sessionMonthlyLimit' => \App\Services\SessionQuotaService::MONTHLY_LIMIT,
             'overview' => [
                 'total' => User::query()->where('user_type', 'student')->count(),
                 'active' => User::query()->where('user_type', 'student')->where('is_active', true)->count(),
