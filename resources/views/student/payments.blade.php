@@ -84,7 +84,17 @@
                                     <td class="px-4 py-3"><x-payment-status :status="$payment->status" /></td>
                                     <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->created_at->format('M d, Y') }}</td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('student.payments.receipt', $payment) }}" target="_blank" @click.stop class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Open</a>
+                                        {{-- Below lg the receipt panel isn't shown, so Open navigates to the full receipt page instead. --}}
+                                        <a href="{{ route('student.payments.receipt', $payment) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 lg:hidden">Open</a>
+                                        <button
+                                            type="button"
+                                            @click.stop="receiptUrl = '{{ route('student.payments.receipt', $payment) }}'; receiptId = {{ $payment->id }}"
+                                            class="hidden text-sm font-medium lg:inline"
+                                            :class="receiptId === {{ $payment->id }} ? 'text-gray-400 cursor-default' : 'text-indigo-600 hover:text-indigo-500'"
+                                            :disabled="receiptId === {{ $payment->id }}"
+                                        >
+                                            <span x-text="receiptId === {{ $payment->id }} ? 'Showing' : 'Open'"></span>
+                                        </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -94,8 +104,8 @@
                     <div class="px-4 py-3">{{ $payments->links() }}</div>
                 </div>
 
-                <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 lg:block">
-                    <iframe :src="receiptUrl" class="h-[640px] w-full" title="Receipt preview"></iframe>
+                <div class="sticky top-20 hidden overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 lg:block">
+                    <iframe :src="receiptUrl" class="h-[80vh] w-full" title="Receipt preview"></iframe>
                 </div>
             </div>
         @endif
