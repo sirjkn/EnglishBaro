@@ -1,7 +1,5 @@
 <x-layouts.admin :title="'Dashboard'">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-
-    <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <x-stat-card label="Total Students" :value="$stats['total_students']" icon="users" color="indigo" labelSize="text-[10px]" compact class="p-3" />
         <x-stat-card label="Active Students" :value="$stats['active_students']" icon="user-check" color="emerald" labelSize="text-[10px]" compact class="p-3" />
         <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" icon="book-open" color="purple" labelSize="text-[10px]" compact class="p-3" />
@@ -10,8 +8,8 @@
         <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" icon="clock" color="rose" labelSize="text-[10px]" compact class="p-3" />
     </div>
 
-    <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div class="flex h-full flex-col rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
+    <div class="mt-4 grid h-[calc(100vh-18rem)] min-h-[420px] grid-cols-1 grid-rows-4 gap-4 lg:grid-cols-2 lg:grid-rows-2">
+        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Revenue ({{ $selectedRevenueMonthLabel }})</h2>
                 <div class="flex items-center gap-2">
@@ -30,11 +28,11 @@
                     </form>
                 </div>
             </div>
-            <div class="mt-2 min-h-[180px] flex-1">
+            <div class="mt-2 min-h-0 flex-1">
                 <canvas id="revenueChart"></canvas>
             </div>
         </div>
-        <div class="flex h-full flex-col rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
+        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">New Students ({{ $selectedMonthLabel }})</h2>
                 <div class="flex items-center gap-2">
@@ -53,17 +51,21 @@
                     </form>
                 </div>
             </div>
-            <div class="mt-2 min-h-[180px] flex-1">
+            <div class="mt-2 min-h-0 flex-1">
                 <canvas id="studentsChart"></canvas>
             </div>
         </div>
-        <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
+        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Track Popularity</h2>
-            <canvas id="trackChart" height="180"></canvas>
+            <div class="mt-2 min-h-0 flex-1">
+                <canvas id="trackChart"></canvas>
+            </div>
         </div>
-        <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
+        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Payment Status</h2>
-            <canvas id="paymentChart" height="180"></canvas>
+            <div class="mt-2 min-h-0 flex-1">
+                <canvas id="paymentChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -198,12 +200,13 @@
         new Chart(document.getElementById('trackChart'), {
             type: 'bar',
             data: { labels: trackLabels, datasets: [{ label: 'Active Enrollments', data: trackValues, backgroundColor: '#f59e0b' }] },
-            options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+            options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
 
         new Chart(document.getElementById('paymentChart'), {
             type: 'doughnut',
             data: { labels: paymentLabels, datasets: [{ data: paymentValues, backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#0084FF', '#9ca3af'] }] },
+            options: { maintainAspectRatio: false },
         });
     </script>
     @endpush
