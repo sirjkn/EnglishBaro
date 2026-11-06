@@ -16,7 +16,7 @@
             progress all the way up at your own pace.
         </p>
 
-        <a href="{{ route('student.dashboard') }}" class="mt-6 inline-flex items-center justify-center rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500">
+        <a href="{{ route('home') }}" class="mt-6 inline-flex items-center justify-center rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500">
             Continue
         </a>
     </div>

@@ -54,7 +54,7 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_dashboard_redirects_students_to_student_dashboard(): void
+    public function test_dashboard_redirects_students_to_home(): void
     {
         $user = User::factory()->create(['user_type' => 'student']);
 
@@ -62,7 +62,7 @@ class AuthenticationTest extends TestCase
 
         $response = $this->get('/dashboard');
 
-        $response->assertRedirect(route('student.dashboard'));
+        $response->assertRedirect(route('home'));
     }
 
     public function test_dashboard_redirects_admins_to_admin_dashboard(): void

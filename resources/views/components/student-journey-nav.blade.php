@@ -3,7 +3,6 @@
         $studentJourneyNav = [
             ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
             ['route' => 'home', 'label' => 'My Course', 'icon' => 'home'],
-            ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],

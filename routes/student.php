@@ -3,7 +3,6 @@
 use App\Http\Controllers\Student\AccountController;
 use App\Http\Controllers\Student\ChangeLevelController;
 use App\Http\Controllers\Student\CoursePaymentController;
-use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\HelpController;
 use App\Http\Controllers\Student\LearningController;
 use App\Http\Controllers\Student\MorePracticeController;
@@ -20,8 +19,6 @@ Route::middleware(['auth', 'verified'])
     ->prefix('student')
     ->name('student.')
     ->group(function () {
-        Route::get('dashboard', DashboardController::class)->name('dashboard');
-
         Route::get('placement-test', [PlacementTestController::class, 'show'])->name('placement-test');
         Route::post('placement-test', [PlacementTestController::class, 'store'])->name('placement-test.store');
         Route::get('placement-test/result', [PlacementTestController::class, 'result'])->name('placement-test.result');

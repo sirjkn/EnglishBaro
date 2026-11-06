@@ -61,7 +61,7 @@
                                     Back to Courses
                                 </a>
                             @elseif ($isEnrolled)
-                                <a href="{{ route('student.dashboard') }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
+                                <a href="{{ route('student.tracks.show', $course->defaultTrack()) }}" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500">
                                     {{ $hasStartedLearning ? 'Continue Learning' : 'Start Learning' }}
                                 </a>
                             @elseif (! auth()->user()->studentProfile?->track_id)

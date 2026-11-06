@@ -33,7 +33,7 @@ class PlacementTestController extends Controller
         $user = Auth::user();
 
         if ($placementTest->hasCompletedPlacement($user)) {
-            return redirect()->route('student.dashboard');
+            return redirect()->route('home');
         }
 
         $questionIds = $placementTest->questions()->pluck('id')->all();

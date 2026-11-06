@@ -31,7 +31,7 @@
             <div class="flex">
                 <div x-show="!distractionFree" :class="collapsed ? 'w-20' : 'w-64'" class="hidden shrink-0 border-r border-gray-200 bg-white transition-all duration-200 dark:border-gray-800 dark:bg-gray-800 md:block">
                     <div class="flex h-16 items-center border-b border-gray-200 px-6 dark:border-gray-800" :class="collapsed ? 'justify-center px-0' : ''">
-                        <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2">
+                        <a href="{{ route('home') }}" class="flex items-center gap-2">
                             <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-8 w-8 flex-none">
                             <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-7 w-auto" x-show="!collapsed">
                         </a>
@@ -98,7 +98,7 @@
 
             {{-- Mobile top bar --}}
             <header x-show="!distractionFree" class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-800 md:hidden">
-                <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2">
+                <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <img src="{{ asset('images/logo-icon.png') }}" alt="" class="h-7 w-7">
                     <img src="{{ asset('images/logo-wordmark.png') }}" alt="EnglishBaro" class="h-6 w-auto">
                 </a>
@@ -133,7 +133,6 @@
                         'items' => [
                             ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
                             ['route' => 'home', 'label' => 'My Course', 'icon' => 'home'],
-                            ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
                             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
                             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
@@ -215,8 +214,8 @@
                 {{-- Mobile bottom tab bar --}}
                 @php
                     $mobilePrimaryNav = [
-                        ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'active' => request()->routeIs('student.dashboard')],
                         ['route' => 'home', 'label' => 'My Course', 'icon' => 'book-open', 'active' => request()->routeIs('home')],
+                        ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal', 'active' => request()->routeIs('student.placement-test*')],
                         ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card', 'active' => request()->routeIs('student.payments')],
                     ];
                     $mobileMoreNav = [

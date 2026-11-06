@@ -85,7 +85,7 @@ class CoursePaymentController extends Controller
             ]);
         });
 
-        return redirect()->route('student.dashboard')
+        return redirect()->route('home')
             ->with('status', "Payment successful! You now have access to every unit in {$course->name}.");
     }
 }
