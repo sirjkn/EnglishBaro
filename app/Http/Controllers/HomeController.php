@@ -24,12 +24,13 @@ class HomeController extends Controller
             ->orderBy('order')
             ->get();
 
-        $testimonials = Testimonial::query()
-            ->where('is_published', true)
-            ->with('avatar')
-            ->orderBy('order')
-            ->take(6)
-            ->get();
+        // Social proof for an anonymous visitor deciding whether to sign up —
+        // a logged-in student landing here from the journey nav has already
+        // decided, so skip the query rather than fetch rows the view won't
+        // render for them.
+        $testimonials = auth()->guest()
+            ? Testimonial::query()->where('is_published', true)->with('avatar')->orderBy('order')->take(6)->get()
+            : collect();
 
         $stats = [
             'tracks' => Course::query()->where('status', 'published')->withCount('tracks')->get()->sum('tracks_count'),
