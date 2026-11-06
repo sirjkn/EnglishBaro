@@ -1,7 +1,7 @@
 <x-layouts.admin :title="'Add Student'">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Add Student</h1>
 
-    <form method="POST" action="{{ route('admin.students.store') }}" class="mt-6 max-w-lg" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.students.store') }}" class="mt-6 max-w-2xl" enctype="multipart/form-data">
         @csrf
 
         @include('admin.students._create-fields', ['countries' => $countries])

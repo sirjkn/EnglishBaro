@@ -82,11 +82,11 @@
             <div class="mt-6">
                 {{-- Create panel --}}
                 <div x-show="mode === 'create'" x-cloak>
-                    <div class="rounded-t-xl border border-b-0 border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
-                        <h2 class="text-sm font-bold text-gray-900 dark:text-white">Add a new student</h2>
+                    <div class="rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
+                        <h2 class="text-sm font-bold text-white">Add a new student</h2>
                     </div>
                     <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                        <form method="POST" action="{{ route('admin.students.store') }}" class="max-w-lg" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('admin.students.store') }}" enctype="multipart/form-data">
                             @csrf
                             @include('admin.students._create-fields', ['countries' => $countries])
                             <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Student</button>
@@ -97,20 +97,20 @@
                 {{-- Edit panels, one per student on this page --}}
                 @forelse ($students as $student)
                     <div x-show="mode === 'edit' && selected === {{ $student->id }}" x-cloak>
-                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl border border-b-0 border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
-                            <h2 class="text-sm font-bold text-gray-900 dark:text-white">Editing: {{ $student->name }}</h2>
+                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
+                            <h2 class="text-sm font-bold text-white">Editing: {{ $student->name }}</h2>
                             <div class="flex items-center gap-3">
-                                <a href="{{ route('admin.students.show', $student) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Full Profile</a>
+                                <a href="{{ route('admin.students.show', $student) }}" class="text-xs font-medium text-indigo-100 hover:text-white">Full Profile</a>
                                 <form method="POST" action="{{ route('admin.students.destroy', $student) }}" class="inline" onsubmit="return confirm('Remove this student? This cannot be undone.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Delete</button>
+                                    <button type="submit" class="text-xs font-medium text-red-200 hover:text-white">Delete</button>
                                 </form>
                             </div>
                         </div>
 
                         <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                            <form method="POST" action="{{ route('admin.students.update', $student) }}" class="max-w-lg" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('admin.students.update', $student) }}" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="redirect" value="{{ request()->fullUrlWithQuery(['open' => $student->id]) }}">
