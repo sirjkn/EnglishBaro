@@ -1,7 +1,6 @@
 <x-layouts.student :title="'Dashboard'">
     @php
         $user = auth()->user();
-        $unreadCount = $recentNotifications->whereNull('read_at')->count();
     @endphp
 
     <x-student-dashboard-summary
@@ -78,33 +77,6 @@
                             </a>
                         @endif
                     </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
-
-    <div class="mt-8 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
-        <h2 class="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
-            <span class="flex h-7 w-7 items-center justify-center rounded-md bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300">
-                <x-icons.bell class="h-4 w-4" />
-            </span>
-            Recent Notifications
-        </h2>
-
-        @if ($recentNotifications->isEmpty())
-            <x-empty-state class="mt-4" message="No notifications yet." />
-        @else
-            <div class="mt-4 divide-y divide-gray-100 dark:divide-gray-700">
-                @foreach ($recentNotifications as $notification)
-                    <a href="{{ $notification->data['url'] ?? route('student.notifications') }}" class="flex items-center justify-between py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $notification->title }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $notification->created_at->diffForHumans() }}</p>
-                        </div>
-                        @unless ($notification->read_at)
-                            <span class="h-2 w-2 flex-none rounded-full bg-indigo-600"></span>
-                        @endunless
-                    </a>
                 @endforeach
             </div>
         @endif
