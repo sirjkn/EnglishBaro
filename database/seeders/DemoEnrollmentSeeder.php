@@ -23,43 +23,60 @@ class DemoEnrollmentSeeder extends Seeder
             return;
         }
 
-        $enrollment = Enrollment::query()->updateOrCreate(
-            ['user_id' => $student->id, 'track_id' => $track->id],
-            ['status' => 'active', 'enrolled_at' => now()->subDays(4)]
-        );
+        $course = $track->course;
+
+        // One payment unlocks every unit (track) in the course, not just A1 —
+        // mirror that here so the demo account matches what a real course
+        // purchase (CoursePaymentController::pay) produces, with an active
+        // Enrollment + Subscription per track rather than just the one the
+        // student happens to be on right now.
+        $courseTracks = $course->tracks()->where('status', 'published')->get();
 
         // Tracks are prepaid in full up front, so this enrollment must be backed
         // by a real (successful) Payment record — visible in Payment History,
         // not shown as an "upcoming" payment since it's already been paid.
         $payment = Payment::query()->updateOrCreate(
-            ['user_id' => $student->id, 'track_id' => $track->id],
+            ['user_id' => $student->id, 'course_id' => $course->id],
             [
                 'transaction_id' => 'DEMO-'.Str::upper(Str::random(10)),
-                'course_id' => $track->course_id,
-                'amount' => $track->priceForRegion('Africa'),
-                'currency' => $track->course->currency,
+                'track_id' => $track->id,
+                'amount' => $course->priceForRegion('Africa'),
+                'currency' => $course->currency,
                 'region' => 'Africa',
                 'payment_method' => 'flutterwave',
                 'status' => 'successful',
-                'subscription_days' => $track->course->subscription_days,
+                'subscription_days' => $course->subscription_days,
                 'verified_at' => now()->subDays(4),
                 'created_at' => now()->subDays(4),
             ]
         );
 
-        $subscription = Subscription::query()->updateOrCreate(
-            ['enrollment_id' => $enrollment->id],
-            [
-                'user_id' => $student->id,
-                'track_id' => $track->id,
-                'payment_id' => $payment->id,
-                'starts_at' => now()->subDays(4),
-                'expires_at' => now()->addDays($track->course->subscription_days - 4),
-                'duration_days' => $track->course->subscription_days,
-                'status' => 'active',
-                'region' => 'Africa',
-            ]
-        );
+        $enrollment = null;
+
+        foreach ($courseTracks as $courseTrack) {
+            $courseEnrollment = Enrollment::query()->updateOrCreate(
+                ['user_id' => $student->id, 'track_id' => $courseTrack->id],
+                ['status' => 'active', 'enrolled_at' => now()->subDays(4)]
+            );
+
+            Subscription::query()->updateOrCreate(
+                ['enrollment_id' => $courseEnrollment->id],
+                [
+                    'user_id' => $student->id,
+                    'track_id' => $courseTrack->id,
+                    'payment_id' => $payment->id,
+                    'starts_at' => now()->subDays(4),
+                    'expires_at' => now()->addDays($course->subscription_days - 4),
+                    'duration_days' => $course->subscription_days,
+                    'status' => 'active',
+                    'region' => 'Africa',
+                ]
+            );
+
+            if ($courseTrack->id === $track->id) {
+                $enrollment = $courseEnrollment;
+            }
+        }
 
         $firstLevel = $track->levels()->first();
 
