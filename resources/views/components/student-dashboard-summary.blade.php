@@ -55,6 +55,33 @@
             <x-icons.pencil class="h-3 w-3" /> Edit Profile
         </a>
     </div>
+
+    <div class="relative mt-4 grid grid-cols-3 gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700 sm:gap-4">
+        <x-stat-card
+            label="Track Expires"
+            :value="$nearestExpiry ? $nearestExpiry->expires_at->format('M j, Y') : 'N/A'"
+            :sub="$nearestExpiry ? max(0, (int) floor(now()->diffInDays($nearestExpiry->expires_at, false))).' Days Left' : 'No active subscription'"
+            icon="clock"
+            color="indigo"
+            label-size="text-[10px] sm:text-sm"
+        />
+        <x-stat-card
+            label="Sessions This Month"
+            :value="$sessionsThisMonth.' of '.$sessionMonthlyLimit"
+            :sub="$latestSession ? $latestSession->device.', '.($latestSession->status === 'active' ? 'active now' : $latestSession->last_activity_at?->diffForHumans()) : 'No sessions yet'"
+            icon="bolt"
+            color="amber"
+            label-size="text-[10px] sm:text-sm"
+        />
+        <x-stat-card
+            label="Total Paid"
+            :value="$paidCurrency.' '.number_format((float) $totalPaid, 2)"
+            :sub="$successfulPaymentsCount.' successful payment'.($successfulPaymentsCount === 1 ? '' : 's')"
+            icon="credit-card"
+            color="emerald"
+            label-size="text-[10px] sm:text-sm"
+        />
+    </div>
 </div>
 
 @if ($needsPlacementTest)
@@ -86,30 +113,3 @@
         <x-payment-method-modal :course="$upcomingTrack->course" label="Pay for {{ $upcomingTrack->course->name }}" class="shrink-0 rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600" />
     </div>
 @endif
-
-<div class="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
-    <x-stat-card
-        label="Track Expires"
-        :value="$nearestExpiry ? $nearestExpiry->expires_at->format('M j, Y') : 'N/A'"
-        :sub="$nearestExpiry ? max(0, (int) floor(now()->diffInDays($nearestExpiry->expires_at, false))).' Days Left' : 'No active subscription'"
-        icon="clock"
-        color="indigo"
-        label-size="text-[10px] sm:text-sm"
-    />
-    <x-stat-card
-        label="Sessions This Month"
-        :value="$sessionsThisMonth.' of '.$sessionMonthlyLimit"
-        :sub="$latestSession ? $latestSession->device.', '.($latestSession->status === 'active' ? 'active now' : $latestSession->last_activity_at?->diffForHumans()) : 'No sessions yet'"
-        icon="bolt"
-        color="amber"
-        label-size="text-[10px] sm:text-sm"
-    />
-    <x-stat-card
-        label="Total Paid"
-        :value="$paidCurrency.' '.number_format((float) $totalPaid, 2)"
-        :sub="$successfulPaymentsCount.' successful payment'.($successfulPaymentsCount === 1 ? '' : 's')"
-        icon="credit-card"
-        color="emerald"
-        label-size="text-[10px] sm:text-sm"
-    />
-</div>
