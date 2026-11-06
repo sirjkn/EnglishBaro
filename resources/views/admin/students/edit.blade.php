@@ -2,7 +2,7 @@
     <a href="{{ \App\Support\SafeRedirect::resolve($redirectTo, route('admin.students.show', $student)) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">&larr; Back to Profile</a>
     <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">Edit Student</h1>
 
-    <form method="POST" action="{{ route('admin.students.update', $student) }}" class="mt-6 max-w-2xl" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.students.update', $student) }}" class="mt-6 max-w-4xl" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         @if ($redirectTo)

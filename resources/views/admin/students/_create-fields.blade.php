@@ -1,5 +1,5 @@
-<div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-    <div class="sm:col-span-2">
+<div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="sm:col-span-2 lg:col-span-3">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
         <div class="mt-1 flex items-center gap-4">
             <x-student-avatar size="h-16 w-16" />
@@ -8,7 +8,7 @@
         @error('avatar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    <div class="sm:col-span-2">
+    <div class="sm:col-span-2 lg:col-span-1">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Names</label>
         <input type="text" name="name" value="{{ old('name') }}" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
         @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror

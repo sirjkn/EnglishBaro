@@ -13,11 +13,11 @@
     @endif
 
     <div
-        class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2"
+        class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-4"
         x-data="{ selected: {{ $openStudentId ?? 'null' }}, mode: '{{ $openStudentId ? 'edit' : 'create' }}' }"
     >
-        {{-- 1/2: overview, Add Student, student list --}}
-        <div>
+        {{-- 1/4: overview, Add Student, student list --}}
+        <div class="lg:col-span-1">
             <div class="grid grid-cols-3 gap-2">
                 <x-stat-card label="Total Students" :value="$overview['total']" compact class="!p-2" label-size="text-[9px]" />
                 <x-stat-card label="Active Students" :value="$overview['active']" compact class="!p-2" label-size="text-[9px]" />
@@ -63,11 +63,11 @@
             <div class="mt-3">{{ $students->links() }}</div>
         </div>
 
-        {{-- 1/2: filters + inline create/edit panel --}}
-        <div>
+        {{-- 3/4: filters + inline create/edit panel --}}
+        <div class="lg:col-span-3">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
 
-            <form method="GET" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <form method="GET" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
                 <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                 <select name="track" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                     <option value="">All Tracks</option>
