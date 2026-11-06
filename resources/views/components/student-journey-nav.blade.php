@@ -13,13 +13,10 @@
     @endphp
 
     <div class="hidden border-b border-gray-200 bg-blue-500 px-2 py-1.5 dark:border-gray-800 md:block">
-        <div class="flex w-full items-center justify-between gap-0.5">
+        <div class="flex w-full items-center justify-between gap-1.5 overflow-x-auto">
             @foreach ($studentJourneyNav as $item)
-                @if (! $loop->first)
-                    <span class="shrink-0 text-[10px] text-blue-200">&gt;</span>
-                @endif
                 <a href="{{ route($item['route']) }}"
-                   class="flex shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-medium {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'bg-white text-blue-700' : 'text-white hover:bg-blue-400' }}">
+                   class="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border px-3 py-1 text-[11px] font-semibold transition {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'border-white bg-white text-blue-700 shadow-sm' : 'border-blue-300 bg-blue-600/40 text-white hover:bg-blue-400' }}">
                     {{ $item['label'] }}
                 </a>
             @endforeach
