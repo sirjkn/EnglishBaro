@@ -1,4 +1,25 @@
 <x-layouts.site :title="'Home'">
+    @if ($dashboardData)
+        {{-- A logged-in student's own profile/progress summary, above
+        everything else on Landing. --}}
+        <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+            <x-student-dashboard-summary
+                :student-profile="$dashboardData['studentProfile']"
+                :active-subscription="$dashboardData['activeSubscription']"
+                :enrollments="$dashboardData['enrollments']"
+                :needs-placement-test="$dashboardData['needsPlacementTest']"
+                :upcoming-track="$dashboardData['upcomingTrack']"
+                :nearest-expiry="$dashboardData['nearestExpiry']"
+                :sessions-this-month="$dashboardData['sessionsThisMonth']"
+                :session-monthly-limit="$dashboardData['sessionMonthlyLimit']"
+                :latest-session="$dashboardData['latestSession']"
+                :paid-currency="$dashboardData['paidCurrency']"
+                :total-paid="$dashboardData['totalPaid']"
+                :successful-payments-count="$dashboardData['successfulPaymentsCount']"
+            />
+        </section>
+    @endif
+
     {{-- Hero: a single intro-video slide, attached from Admin → Settings --}}
     <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
         <div class="overflow-hidden rounded-3xl shadow-xl">

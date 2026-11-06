@@ -9,12 +9,14 @@ use App\Models\Level;
 use App\Models\Media;
 use App\Models\Testimonial;
 use App\Services\RegionPricingService;
+use App\Services\StudentDashboardSummaryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke(Request $request, RegionPricingService $regionPricingService): View
+    public function __invoke(Request $request, RegionPricingService $regionPricingService, StudentDashboardSummaryService $dashboardSummary): View
     {
         $featuredCourses = Course::query()
             ->where('status', 'published')
@@ -41,12 +43,21 @@ class HomeController extends Controller
 
         $introVideoId = CompanySetting::get('intro_video_media_id');
 
+        // A logged-in student's profile/progress summary, shown above the
+        // video on Landing — the same block the Dashboard tab shows them,
+        // reused here rather than making them click through to see it.
+        $user = Auth::user();
+        $dashboardData = $user?->isStudent()
+            ? $dashboardSummary->forUser($user)
+            : null;
+
         return view('guest.home', [
             'featuredCourses' => $featuredCourses,
             'testimonials' => $testimonials,
             'stats' => $stats,
             'pricingRegion' => $regionPricingService->resolveRegion($request),
             'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
+            'dashboardData' => $dashboardData,
         ]);
     }
 }
