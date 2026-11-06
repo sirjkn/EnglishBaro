@@ -20,7 +20,7 @@
 <div class="relative overflow-hidden rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-100 p-6 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800">
     <div class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-200/50 dark:bg-blue-900/20"></div>
 
-    <div class="relative flex flex-col items-start gap-4 pr-20 sm:flex-row sm:items-center sm:justify-between sm:pr-0">
+    <div class="relative flex flex-col items-start gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <x-student-avatar :profile="$studentProfile" size="h-20 w-20" class="border-4 border-white shadow-sm dark:border-gray-700" />
             <div>
@@ -36,11 +36,42 @@
                 @endif
             </div>
         </div>
-        @if ($activeSubscription)
-            <div class="absolute right-0 top-0">
+
+        <div class="flex w-full flex-col items-end gap-2 lg:w-auto">
+            @if ($activeSubscription)
                 <x-subscription-countdown :subscription="$activeSubscription" />
+            @endif
+
+            <div class="grid w-full grid-cols-3 gap-1.5 sm:w-auto sm:gap-2">
+                <x-stat-card
+                    label="Track Expires"
+                    :value="$nearestExpiry ? $nearestExpiry->expires_at->format('M j') : 'N/A'"
+                    icon="clock"
+                    color="indigo"
+                    compact
+                    class="w-full sm:w-28 !p-2"
+                    label-size="text-[9px]"
+                />
+                <x-stat-card
+                    label="Sessions"
+                    :value="$sessionsThisMonth.'/'.$sessionMonthlyLimit"
+                    icon="bolt"
+                    color="amber"
+                    compact
+                    class="w-full sm:w-28 !p-2"
+                    label-size="text-[9px]"
+                />
+                <x-stat-card
+                    label="Total Paid"
+                    :value="$paidCurrency.' '.number_format((float) $totalPaid, 2)"
+                    icon="credit-card"
+                    color="emerald"
+                    compact
+                    class="w-full sm:w-28 !p-2"
+                    label-size="text-[9px]"
+                />
             </div>
-        @endif
+        </div>
     </div>
 
     <div class="relative mt-5 flex flex-wrap items-center gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700">
@@ -54,33 +85,6 @@
         <a href="{{ route('student.account') }}" class="ml-auto flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
             <x-icons.pencil class="h-3 w-3" /> Edit Profile
         </a>
-    </div>
-
-    <div class="relative mt-4 grid grid-cols-3 gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700 sm:gap-4">
-        <x-stat-card
-            label="Track Expires"
-            :value="$nearestExpiry ? $nearestExpiry->expires_at->format('M j, Y') : 'N/A'"
-            :sub="$nearestExpiry ? max(0, (int) floor(now()->diffInDays($nearestExpiry->expires_at, false))).' Days Left' : 'No active subscription'"
-            icon="clock"
-            color="indigo"
-            label-size="text-[10px] sm:text-sm"
-        />
-        <x-stat-card
-            label="Sessions This Month"
-            :value="$sessionsThisMonth.' of '.$sessionMonthlyLimit"
-            :sub="$latestSession ? $latestSession->device.', '.($latestSession->status === 'active' ? 'active now' : $latestSession->last_activity_at?->diffForHumans()) : 'No sessions yet'"
-            icon="bolt"
-            color="amber"
-            label-size="text-[10px] sm:text-sm"
-        />
-        <x-stat-card
-            label="Total Paid"
-            :value="$paidCurrency.' '.number_format((float) $totalPaid, 2)"
-            :sub="$successfulPaymentsCount.' successful payment'.($successfulPaymentsCount === 1 ? '' : 's')"
-            icon="credit-card"
-            color="emerald"
-            label-size="text-[10px] sm:text-sm"
-        />
     </div>
 </div>
 
