@@ -6,15 +6,15 @@
     @endif
 
     <div
-        class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-4"
+        class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2"
         x-data="{ selected: {{ $openStudentId ?? 'null' }}, mode: '{{ $openStudentId ? 'edit' : 'create' }}' }"
     >
-        {{-- 1/4: overview, Add Student, student list --}}
-        <div class="lg:col-span-1">
-            <div class="grid grid-cols-1 gap-2">
-                <x-stat-card label="Total Students" :value="$overview['total']" compact class="p-3" />
-                <x-stat-card label="Active Students" :value="$overview['active']" compact class="p-3" />
-                <x-stat-card label="New This Month" :value="$overview['new_this_month']" compact class="p-3" />
+        {{-- 1/2: overview, Add Student, student list --}}
+        <div>
+            <div class="grid grid-cols-3 gap-2">
+                <x-stat-card label="Total Students" :value="$overview['total']" compact class="!p-2" label-size="text-[9px]" />
+                <x-stat-card label="Active Students" :value="$overview['active']" compact class="!p-2" label-size="text-[9px]" />
+                <x-stat-card label="New This Month" :value="$overview['new_this_month']" compact class="!p-2" label-size="text-[9px]" />
             </div>
 
             <button
@@ -56,14 +56,14 @@
             <div class="mt-3">{{ $students->links() }}</div>
         </div>
 
-        {{-- 3/4: filters + inline create/edit panel --}}
-        <div class="lg:col-span-3">
+        {{-- 1/2: filters + inline create/edit panel --}}
+        <div>
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
                 <a href="{{ route('admin.tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">All Units (Tracks)</a>
             </div>
 
-            <form method="GET" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
+            <form method="GET" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                 <select name="track" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                     <option value="">All Tracks</option>
