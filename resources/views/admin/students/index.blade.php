@@ -1,74 +1,127 @@
 <x-layouts.admin :title="'Students'">
-    <div class="flex flex-wrap items-center justify-between gap-3">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
-        <div class="flex gap-2">
-            <a href="{{ route('admin.tracks.index') }}" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">Tracks</a>
-            <a href="{{ route('admin.students.create') }}" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Add Student</a>
+    @if (session('status'))
+        <div class="rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            {{ session('status') }}
+        </div>
+    @endif
+
+    <div
+        class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-4"
+        x-data="{ selected: {{ $openStudentId ?? 'null' }}, mode: '{{ $openStudentId ? 'edit' : 'create' }}' }"
+    >
+        {{-- 1/4: overview, Add Student, student list --}}
+        <div class="lg:col-span-1">
+            <div class="grid grid-cols-1 gap-2">
+                <x-stat-card label="Total Students" :value="$overview['total']" compact class="p-3" />
+                <x-stat-card label="Active Students" :value="$overview['active']" compact class="p-3" />
+                <x-stat-card label="New This Month" :value="$overview['new_this_month']" compact class="p-3" />
+            </div>
+
+            <button
+                type="button"
+                @click="mode = 'create'; selected = null"
+                class="mt-4 block w-full rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-center text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400"
+            >
+                + Add Student
+            </button>
+
+            <div class="mt-4 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                <div class="bg-indigo-600 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white dark:bg-indigo-800">
+                    Students
+                </div>
+                <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse ($students as $student)
+                        <li>
+                            <button
+                                type="button"
+                                @click="mode = 'edit'; selected = {{ $student->id }}"
+                                class="w-full px-3 py-2.5 text-left transition"
+                                :class="(mode === 'edit' && selected === {{ $student->id }}) ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'"
+                            >
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $student->name }}</span>
+                                    <x-badge :color="$student->is_active ? 'green' : 'gray'">{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge>
+                                </div>
+                                <p class="mt-1 truncate text-[11px] text-gray-500 dark:text-gray-400">
+                                    {{ $student->studentProfile?->student_id }} &middot; {{ $student->studentProfile?->track?->track_code ?? 'No track' }} &middot; {{ $student->enrollments_count }} enroll.
+                                </p>
+                            </button>
+                        </li>
+                    @empty
+                        <li class="px-3 py-8 text-center text-xs text-gray-400">No students found.</li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <div class="mt-3">{{ $students->links() }}</div>
+        </div>
+
+        {{-- 3/4: filters + inline create/edit panel --}}
+        <div class="lg:col-span-3">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
+                <a href="{{ route('admin.tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">All Units (Tracks)</a>
+            </div>
+
+            <form method="GET" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
+                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                <select name="track" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    <option value="">All Tracks</option>
+                    @foreach ($tracks as $track)
+                        <option value="{{ $track->id }}" @selected(($filters['track'] ?? null) == $track->id)>{{ $track->track_code }} — {{ $track->name }}</option>
+                    @endforeach
+                </select>
+                <select name="status" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    <option value="">All Statuses</option>
+                    <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
+                    <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
+                </select>
+                <button type="submit" class="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200">Filter</button>
+            </form>
+
+            <div class="mt-6">
+                {{-- Create panel --}}
+                <div x-show="mode === 'create'" x-cloak>
+                    <div class="rounded-t-xl border border-b-0 border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
+                        <h2 class="text-sm font-bold text-gray-900 dark:text-white">Add a new student</h2>
+                    </div>
+                    <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                        <form method="POST" action="{{ route('admin.students.store') }}" class="max-w-lg" enctype="multipart/form-data">
+                            @csrf
+                            @include('admin.students._create-fields', ['countries' => $countries])
+                            <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Student</button>
+                        </form>
+                    </div>
+                </div>
+
+                {{-- Edit panels, one per student on this page --}}
+                @forelse ($students as $student)
+                    <div x-show="mode === 'edit' && selected === {{ $student->id }}" x-cloak>
+                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl border border-b-0 border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
+                            <h2 class="text-sm font-bold text-gray-900 dark:text-white">Editing: {{ $student->name }}</h2>
+                            <div class="flex items-center gap-3">
+                                <a href="{{ route('admin.students.show', $student) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Full Profile</a>
+                                <form method="POST" action="{{ route('admin.students.destroy', $student) }}" class="inline" onsubmit="return confirm('Remove this student? This cannot be undone.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                            <form method="POST" action="{{ route('admin.students.update', $student) }}" class="max-w-lg" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="redirect" value="{{ request()->fullUrlWithQuery(['open' => $student->id]) }}">
+                                @include('admin.students._edit-fields', ['student' => $student, 'tracks' => $tracks, 'countries' => $countries])
+                                <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                @endforelse
+            </div>
         </div>
     </div>
-
-    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <x-stat-card label="Total Students" :value="$overview['total']" />
-        <x-stat-card label="Active Students" :value="$overview['active']" />
-        <x-stat-card label="New This Month" :value="$overview['new_this_month']" />
-    </div>
-
-    <form method="GET" class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-4">
-        <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-        <select name="track" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            <option value="">All Tracks</option>
-            @foreach ($tracks as $track)
-                <option value="{{ $track->id }}" @selected(($filters['track'] ?? null) == $track->id)>{{ $track->track_code }} — {{ $track->name }}</option>
-            @endforeach
-        </select>
-        <select name="status" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            <option value="">All Statuses</option>
-            <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
-            <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
-        </select>
-        <button type="submit" class="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200">Filter</button>
-    </form>
-
-    <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-        <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
-            <thead>
-                <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                    <th class="px-4 py-2">Student</th>
-                    <th class="px-4 py-2">Student ID</th>
-                    <th class="px-4 py-2">Email</th>
-                    <th class="px-4 py-2">Track</th>
-                    <th class="px-4 py-2">Enrollments</th>
-                    <th class="px-4 py-2">Status</th>
-                    <th class="px-4 py-2"></th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
-                @forelse ($students as $student)
-                    <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
-                        <td class="px-4 py-3 font-medium"><a href="{{ route('admin.students.show', $student) }}" class="text-indigo-600 hover:text-indigo-500 hover:underline dark:text-indigo-400">{{ $student->name }}</a></td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->studentProfile?->student_id }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->email }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->studentProfile?->track?->track_code ?? '—' }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $student->enrollments_count }}</td>
-                        <td class="px-4 py-3">
-                            <x-badge :color="$student->is_active ? 'green' : 'gray'">{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <a href="{{ route('admin.students.show', $student) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View</a>
-                            <a href="{{ route('admin.students.edit', ['student' => $student, 'redirect' => request()->getRequestUri()]) }}" class="ml-3 text-sm font-medium text-gray-600 hover:text-gray-800 dark:text-gray-300">Edit</a>
-                            <form method="POST" action="{{ route('admin.students.destroy', $student) }}" class="inline" onsubmit="return confirm('Remove this student? This cannot be undone.');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="ml-3 text-sm font-medium text-red-600 hover:text-red-500">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No students found.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mt-4">{{ $students->links() }}</div>
 </x-layouts.admin>

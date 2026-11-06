@@ -46,9 +46,17 @@ class StudentController extends Controller
 
         $students = $query->withCount('enrollments')->latest()->paginate(15)->withQueryString();
 
+        // Edit forms for every student on this page are rendered inline in a
+        // hidden panel each (toggled by Alpine) rather than on a separate
+        // page per student, so their studentProfile is already eager-loaded
+        // above and this just decides which one (if any) opens by default.
+        $openStudentId = $request->integer('open') ?: $students->first()?->id;
+
         return view('admin.students.index', [
             'students' => $students,
             'tracks' => Track::query()->orderBy('order')->get(),
+            'countries' => Countries::all(),
+            'openStudentId' => $openStudentId,
             'overview' => [
                 'total' => User::query()->where('user_type', 'student')->count(),
                 'active' => User::query()->where('user_type', 'student')->where('is_active', true)->count(),
