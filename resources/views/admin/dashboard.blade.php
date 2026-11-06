@@ -1,13 +1,13 @@
 <x-layouts.admin :title="'Dashboard'">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
 
-    <div class="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-3">
-        <x-stat-card label="Total Students" :value="$stats['total_students']" icon="users" color="indigo" />
-        <x-stat-card label="Active Students" :value="$stats['active_students']" icon="user-check" color="emerald" />
-        <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" icon="book-open" color="purple" />
-        <x-stat-card label="Active Enrollments" :value="$stats['active_enrollments']" icon="clipboard-check" color="amber" />
-        <x-stat-card label="Revenue" :value="'$'.number_format($stats['revenue'], 2)" icon="currency-dollar" color="teal" />
-        <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" icon="clock" color="rose" />
+    <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <x-stat-card label="Total Students" :value="$stats['total_students']" icon="users" color="indigo" labelSize="text-[10px]" compact class="p-3" />
+        <x-stat-card label="Active Students" :value="$stats['active_students']" icon="user-check" color="emerald" labelSize="text-[10px]" compact class="p-3" />
+        <x-stat-card label="Total Tracks" :value="$stats['total_tracks']" icon="book-open" color="purple" labelSize="text-[10px]" compact class="p-3" />
+        <x-stat-card label="Active Enrollments" :value="$stats['active_enrollments']" icon="clipboard-check" color="amber" labelSize="text-[10px]" compact class="p-3" />
+        <x-stat-card label="Revenue" :value="'$'.number_format($stats['revenue'], 2)" icon="currency-dollar" color="teal" labelSize="text-[10px]" compact class="p-3" />
+        <x-stat-card label="Pending Payments" :value="$stats['pending_payments']" icon="clock" color="rose" labelSize="text-[10px]" compact class="p-3" />
     </div>
 
     <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
