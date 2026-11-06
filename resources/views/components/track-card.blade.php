@@ -1,8 +1,6 @@
-@props(['track', 'pricingRegion' => null, 'progress' => null])
+@props(['track', 'progress' => null])
 
 @php
-    $displayPrice = $track->priceForRegion($pricingRegion);
-
     $authUser = auth()->user();
 
     $badge = match (true) {
@@ -40,7 +38,7 @@
             {{ $track->name }}
         </h3>
         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Track {{ $track->track_code }} &middot; {{ $track->levels_count ?? $track->levels()->count() }} levels &middot; {{ $track->subscription_days }} days access
+            Unit {{ $track->track_code }} &middot; {{ $track->levels_count ?? $track->levels()->count() }} levels
         </p>
 
         @if ($progress)

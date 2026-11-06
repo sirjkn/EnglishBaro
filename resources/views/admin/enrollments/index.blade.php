@@ -24,7 +24,7 @@
                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $track->track_code }} &middot; {{ $track->name }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->levels_count ?? $track->levels()->count() }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->currency }} {{ number_format($track->defaultPrice(), 2) }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->course->currency }} {{ number_format($track->defaultPrice(), 2) }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->enrollments_count }}</td>
                         <td class="px-4 py-3 text-right">
                             <button type="button" @click="open = {{ $track->id }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
@@ -53,8 +53,8 @@
 
                                 <dl class="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
                                     <div><dt class="inline font-medium">Levels:</dt> <dd class="inline">{{ $track->levels_count ?? $track->levels()->count() }}</dd></div>
-                                    <div><dt class="inline font-medium">Price:</dt> <dd class="inline">{{ $track->currency }} {{ number_format($track->defaultPrice(), 2) }}</dd></div>
-                                    <div><dt class="inline font-medium">Subscription:</dt> <dd class="inline">{{ $track->subscription_days }} days</dd></div>
+                                    <div><dt class="inline font-medium">Price:</dt> <dd class="inline">{{ $track->course->currency }} {{ number_format($track->defaultPrice(), 2) }}</dd></div>
+                                    <div><dt class="inline font-medium">Subscription:</dt> <dd class="inline">{{ $track->course->subscription_days }} days</dd></div>
                                 </dl>
 
                                 <div class="mt-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">

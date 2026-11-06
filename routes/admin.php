@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AnswerReviewController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\SupportTicketController;
+use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\LessonActivityController;
@@ -31,8 +32,16 @@ Route::middleware(['auth', 'verified', 'admin'])
 
         // Also covers the nested levels/lessons/activity editor and its
         // media-upload helper endpoints — all part of the same track-editing
-        // flow, so they share the 'tracks' module grant.
+        // flow, so they share the 'tracks' module grant. Courses share it
+        // too: a course is just the sellable wrapper around a set of tracks.
         Route::middleware('module:tracks')->group(function () {
+            Route::get('courses', [CourseController::class, 'index'])->name('courses.index');
+            Route::get('courses/create', [CourseController::class, 'create'])->name('courses.create');
+            Route::post('courses', [CourseController::class, 'store'])->name('courses.store');
+            Route::get('courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+            Route::put('courses/{course}', [CourseController::class, 'update'])->name('courses.update');
+            Route::delete('courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+
             Route::get('tracks', [TrackController::class, 'index'])->name('tracks.index');
             Route::get('tracks/create', [TrackController::class, 'create'])->name('tracks.create');
             Route::post('tracks', [TrackController::class, 'store'])->name('tracks.store');

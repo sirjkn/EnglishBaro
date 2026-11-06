@@ -29,10 +29,9 @@
                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
                     <th class="px-4 py-2">Code</th>
                     <th class="px-4 py-2">Track</th>
+                    <th class="px-4 py-2">Course</th>
                     <th class="px-4 py-2">Levels</th>
-                    <th class="px-4 py-2">Price</th>
                     <th class="px-4 py-2">Students</th>
-                    <th class="px-4 py-2">Subscription</th>
                     <th class="px-4 py-2">Status</th>
                     <th class="px-4 py-2"></th>
                 </tr>
@@ -42,10 +41,11 @@
                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                         <td class="px-4 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{{ $track->track_code }}</td>
                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $track->name }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                            <a href="{{ route('admin.courses.edit', $track->course) }}" class="hover:text-indigo-600">{{ $track->course->name }}</a>
+                        </td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->levels_count }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->currency }} {{ number_format($track->defaultPrice(), 2) }}</td>
                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->students_count }}</td>
-                        <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->subscription_days }} days</td>
                         <td class="px-4 py-3">
                             <x-badge :color="$track->status === 'published' ? 'green' : ($track->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($track->status) }}</x-badge>
                         </td>
@@ -68,7 +68,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No tracks found.</td></tr>
+                    <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">No tracks found.</td></tr>
                 @endforelse
             </tbody>
         </table>

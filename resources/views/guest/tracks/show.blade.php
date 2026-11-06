@@ -7,6 +7,8 @@
                 <span class="sr-only">Home</span>
             </a>
             <svg class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
+            <a href="{{ route('courses.show', $track->course) }}" class="hover:text-indigo-600 dark:hover:text-indigo-400">{{ $track->course->name }}</a>
+            <svg class="h-3.5 w-3.5 flex-none text-gray-300 dark:text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
             <span class="font-medium text-gray-900 dark:text-white">{{ $track->track_code }}</span>
         </nav>
     </div>
@@ -29,7 +31,7 @@
             <div>
                 <div class="relative z-10 rounded-2xl border border-black/10 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-900 lg:sticky lg:top-24">
                     <p class="text-3xl font-bold text-gray-900 dark:text-white">
-                        {{ $track->currency }} {{ number_format($track->priceForRegion($pricingRegion), 2) }}
+                        {{ $track->course->currency }} {{ number_format($track->priceForRegion($pricingRegion), 2) }}
                     </p>
                     @if ($pricingRegion)
                         <p class="mt-1 text-xs text-gray-400">Pricing shown for your region: {{ $pricingRegion }}</p>
@@ -38,7 +40,7 @@
                         <div class="flex justify-between"><dt>Track</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $track->track_code }}</dd></div>
                         <div class="flex justify-between"><dt>Levels</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $levels->count() }}</dd></div>
                         <div class="flex justify-between"><dt>Lessons</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $totalLessons }}</dd></div>
-                        <div class="flex justify-between"><dt>Subscription</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $track->subscription_days }} days</dd></div>
+                        <div class="flex justify-between"><dt>Subscription</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $track->course->subscription_days }} days</dd></div>
                     </dl>
                     <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
                         One payment unlocks every course on EnglishBaro, start to finish. You'll progress through {{ $track->track_code }} first, then automatically move up through every level after it as you complete each one.
@@ -65,7 +67,7 @@
                                     New students take a quick placement test first so we can enroll you into the right track.
                                 </p>
                             @elseif (auth()->user()->can('enroll', $track))
-                                <x-payment-method-modal :track="$track" label="Enroll" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500" />
+                                <x-payment-method-modal :course="$track->course" label="Enroll" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500" />
                             @else
                                 <button type="button" disabled class="block w-full cursor-not-allowed rounded-md bg-gray-200 px-4 py-2.5 text-center text-sm font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400">
                                     Track Locked
@@ -173,7 +175,7 @@
             <div class="mx-auto mt-4 grid w-3/4 grid-cols-2 gap-2">
                 <x-stat-card label="Total Levels" :value="$levels->count()" icon="book-open" color="indigo" labelSize="text-[10px]" compact class="p-2.5" />
                 <x-stat-card label="Levels to Finish" :value="'All '.$levels->count()" icon="medal" color="emerald" labelSize="text-[10px]" compact class="p-2.5" />
-                <x-stat-card label="Access Period" :value="$track->subscription_days.' days'" icon="clock" color="amber" labelSize="text-[10px]" compact class="p-2.5" />
+                <x-stat-card label="Access Period" :value="$track->course->subscription_days.' days'" icon="clock" color="amber" labelSize="text-[10px]" compact class="p-2.5" />
                 <x-stat-card label="Pace" value="Self-paced" icon="bolt" color="purple" labelSize="text-[10px]" compact class="p-2.5" />
             </div>
 
@@ -183,7 +185,7 @@
                     <ul>
                         <li>Levels must be completed in order — finishing a level unlocks the next one.</li>
                         <li>Every lesson in a level, plus its Activity Questions, must be completed before moving on.</li>
-                        <li>One payment unlocks every level of this track for {{ $track->subscription_days }} days from the date of purchase.</li>
+                        <li>One payment unlocks every level of this track for {{ $track->course->subscription_days }} days from the date of purchase.</li>
                         <li>Your certificate is issued once every level in the track has been completed.</li>
                     </ul>
                 </div>
@@ -245,9 +247,9 @@
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Subscription terms</h2>
             <div class="prose prose-sm dark:prose-invert mt-4 max-w-none">
                 <ul>
-                    <li>One payment unlocks every course on EnglishBaro for {{ $track->subscription_days }} days from the date of purchase — not just {{ $track->track_code }}.</li>
+                    <li>One payment unlocks every course on EnglishBaro for {{ $track->course->subscription_days }} days from the date of purchase — not just {{ $track->track_code }}.</li>
                     <li>You progress through courses in order, starting with {{ $track->track_code }}: finishing one automatically unlocks the next.</li>
-                    <li>Pricing is shown in {{ $track->currency }} and may vary by region.</li>
+                    <li>Pricing is shown in {{ $track->course->currency }} and may vary by region.</li>
                     <li>Your subscription covers all video lessons, eBooks, assessments, and an end-of-course certificate for every course you complete.</li>
                 </ul>
             </div>

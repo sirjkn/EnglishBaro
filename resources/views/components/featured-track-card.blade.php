@@ -43,12 +43,12 @@
             {{ $track->name }}
         </h3>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 sm:mt-2 sm:text-sm">
-            Track {{ $track->track_code }} &middot; {{ $track->levels_count ?? $track->levels()->count() }} levels &middot; {{ $track->subscription_days }} days access
+            Track {{ $track->track_code }} &middot; {{ $track->levels_count ?? $track->levels()->count() }} levels &middot; {{ $track->course->subscription_days }} days access
         </p>
 
         <div class="mt-auto flex items-center justify-between pt-3 sm:pt-5">
             <span class="text-xs font-bold text-gray-900 dark:text-white sm:text-sm">
-                {{ $track->currency }} {{ number_format($displayPrice, 2) }}
+                {{ $track->course->currency }} {{ number_format($displayPrice, 2) }}
                 @if ($pricingRegion)
                     <span class="ml-1 text-[10px] font-normal uppercase text-gray-400" title="Price for {{ $pricingRegion }}">{{ $pricingRegion }}</span>
                 @endif

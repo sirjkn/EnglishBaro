@@ -35,12 +35,13 @@ class DemoEnrollmentSeeder extends Seeder
             ['user_id' => $student->id, 'track_id' => $track->id],
             [
                 'transaction_id' => 'DEMO-'.Str::upper(Str::random(10)),
+                'course_id' => $track->course_id,
                 'amount' => $track->priceForRegion('Africa'),
-                'currency' => $track->currency,
+                'currency' => $track->course->currency,
                 'region' => 'Africa',
                 'payment_method' => 'flutterwave',
                 'status' => 'successful',
-                'subscription_days' => $track->subscription_days,
+                'subscription_days' => $track->course->subscription_days,
                 'verified_at' => now()->subDays(4),
                 'created_at' => now()->subDays(4),
             ]
@@ -53,8 +54,8 @@ class DemoEnrollmentSeeder extends Seeder
                 'track_id' => $track->id,
                 'payment_id' => $payment->id,
                 'starts_at' => now()->subDays(4),
-                'expires_at' => now()->addDays($track->subscription_days - 4),
-                'duration_days' => $track->subscription_days,
+                'expires_at' => now()->addDays($track->course->subscription_days - 4),
+                'duration_days' => $track->course->subscription_days,
                 'status' => 'active',
                 'region' => 'Africa',
             ]

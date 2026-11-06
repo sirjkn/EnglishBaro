@@ -14,7 +14,7 @@ class TrackController extends Controller
     {
         abort_unless($track->status === 'published', 404);
 
-        $track->load('thumbnail');
+        $track->load('thumbnail', 'course');
 
         // All of a track's levels are fetched in one go (never more than a few
         // hundred) so the landing page can reveal them client-side in batches

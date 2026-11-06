@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Level;
 use App\Models\Track;
@@ -22,6 +23,7 @@ class TrackController extends Controller
         $this->authorize('viewAny', Track::class);
 
         $tracks = Track::query()
+            ->with('course')
             ->withCount(['levels', 'enrollments', 'students'])
             ->orderBy('order')
             ->get();
@@ -36,12 +38,13 @@ class TrackController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
         $this->authorize('create', Track::class);
 
         return view('admin.tracks.create', [
-            'track' => new Track(['price' => 0, 'currency' => 'USD', 'subscription_days' => 120, 'status' => 'draft']),
+            'track' => new Track(['status' => 'draft', 'course_id' => $request->integer('course_id') ?: null]),
+            'courses' => Course::query()->orderBy('order')->get(),
         ]);
     }
 
@@ -50,24 +53,18 @@ class TrackController extends Controller
         $this->authorize('create', Track::class);
 
         $validated = $request->validate([
+            'course_id' => ['required', 'integer', 'exists:courses,id'],
             'track_code' => ['required', 'string', 'max:10', 'alpha_dash', 'uppercase', 'unique:tracks,track_code'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'learning_outcomes' => ['nullable', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'price_africa' => ['nullable', 'numeric', 'min:0'],
-            'price_europe' => ['nullable', 'numeric', 'min:0'],
-            'price_north_america' => ['nullable', 'numeric', 'min:0'],
-            'price_asia' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'size:3'],
-            'subscription_days' => ['required', 'integer', 'min:1'],
             'status' => ['required', 'in:draft,published,archived'],
-            'is_featured' => ['boolean'],
-        ]) + ['is_featured' => $request->boolean('is_featured')];
+        ]);
 
         $validated['slug'] = Str::slug($validated['track_code'].'-'.$validated['name']);
-        $validated['order'] = (int) Track::query()->max('order') + 1;
+        $validated['order'] = (int) Track::query()->where('course_id', $validated['course_id'])->max('order') + 1;
         $validated['is_active'] = true;
+        $validated['is_default'] = ! Track::query()->where('course_id', $validated['course_id'])->exists();
 
         $track = Track::query()->create($validated);
 
@@ -101,10 +98,11 @@ class TrackController extends Controller
     {
         $this->authorize('update', $track);
 
-        $track->load('thumbnail');
+        $track->load('thumbnail', 'course');
 
         return view('admin.tracks.edit', [
             'track' => $track,
+            'courses' => Course::query()->orderBy('order')->get(),
             'levelCount' => Level::query()->where('track_id', $track->id)->count(),
             'lessonCount' => $track->lessonCount(),
         ]);
@@ -115,19 +113,12 @@ class TrackController extends Controller
         $this->authorize('update', $track);
 
         $validated = $request->validate([
+            'course_id' => ['required', 'integer', 'exists:courses,id'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'learning_outcomes' => ['nullable', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'price_africa' => ['nullable', 'numeric', 'min:0'],
-            'price_europe' => ['nullable', 'numeric', 'min:0'],
-            'price_north_america' => ['nullable', 'numeric', 'min:0'],
-            'price_asia' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'size:3'],
-            'subscription_days' => ['required', 'integer', 'min:1'],
             'status' => ['required', 'in:draft,published,archived'],
-            'is_featured' => ['boolean'],
-        ]) + ['is_featured' => $request->boolean('is_featured')];
+        ]);
 
         if ($thumbnailId = $this->handleThumbnail($request, $mediaService)) {
             $validated['thumbnail_id'] = $thumbnailId;

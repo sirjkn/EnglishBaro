@@ -17,6 +17,7 @@ class EnrollmentController extends Controller
 
         $tracks = Track::query()
             ->withCount('enrollments')
+            ->with('course')
             ->with(['enrollments' => function ($query) {
                 $query->with(['user', 'subscription', 'progress'])->latest('enrolled_at');
             }])

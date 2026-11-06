@@ -21,23 +21,14 @@ class Track extends Model
     public const CODES = ['A1', 'A2', 'B1', 'B2'];
 
     protected $fillable = [
+        'course_id',
         'name',
         'slug',
         'track_code',
         'description',
         'learning_outcomes',
         'thumbnail_id',
-        'price',
-        'price_africa',
-        'price_europe',
-        'price_north_america',
-        'price_asia',
-        'currency',
-        'subscription_days',
         'status',
-        'is_featured',
-        'seo_title',
-        'seo_description',
         'order',
         'is_default',
         'is_active',
@@ -46,62 +37,30 @@ class Track extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:2',
-            'price_africa' => 'decimal:2',
-            'price_europe' => 'decimal:2',
-            'price_north_america' => 'decimal:2',
-            'price_asia' => 'decimal:2',
-            'is_featured' => 'boolean',
             'is_default' => 'boolean',
             'is_active' => 'boolean',
         ];
     }
 
     /**
-     * Columns holding this track's per-region overrides.
+     * Pricing now lives on the parent course — a track (unit) is unlocked as
+     * part of buying the whole course, not sold on its own. These delegate
+     * so any existing caller asking a track its price still gets a sensible
+     * answer.
      */
-    public const REGION_PRICE_COLUMNS = [
-        'price_africa',
-        'price_europe',
-        'price_north_america',
-        'price_asia',
-    ];
-
     public function priceForRegion(?string $region): float
     {
-        $column = match ($region) {
-            'Africa' => 'price_africa',
-            'Europe' => 'price_europe',
-            'North America' => 'price_north_america',
-            'Asia' => 'price_asia',
-            default => null,
-        };
-
-        if ($column && $this->{$column} !== null) {
-            return (float) $this->{$column};
-        }
-
-        // Unrecognized or unset region: default to the highest configured
-        // regional price (unless the admin has set a base price above it),
-        // so an unmatched region is never under-charged.
-        return $this->defaultPrice();
+        return $this->course->priceForRegion($region);
     }
 
-    /**
-     * The base price used whenever no regional override applies: the highest
-     * of the base price and any configured regional price, unless an admin
-     * has explicitly set a lower base price.
-     */
     public function defaultPrice(): float
     {
-        $regionalPrices = collect(self::REGION_PRICE_COLUMNS)
-            ->map(fn ($column) => $this->{$column})
-            ->filter(fn ($value) => $value !== null)
-            ->map(fn ($value) => (float) $value);
+        return $this->course->defaultPrice();
+    }
 
-        return $regionalPrices->isEmpty()
-            ? (float) $this->price
-            : max((float) $this->price, $regionalPrices->max());
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
     }
 
     public function levels(): HasMany

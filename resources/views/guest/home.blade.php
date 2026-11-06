@@ -6,19 +6,19 @@
         </div>
     </section>
 
-    {{-- Explore Course --}}
+    {{-- Explore Courses --}}
     <section id="explore-course" class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Course</h2>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Courses</h2>
         <p class="mt-2 text-gray-600 dark:text-gray-300">
-            Four tracks, 100 levels each. One payment unlocks every level in a track.
+            One payment per course unlocks every unit inside it — the placement test decides where you start.
         </p>
 
-        @if ($featuredTracks->isEmpty())
+        @if ($featuredCourses->isEmpty())
             <x-empty-state class="mt-10" message="No courses available yet." />
         @else
             <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($featuredTracks as $track)
-                    <x-track-card :track="$track" :pricing-region="$pricingRegion" />
+                @foreach ($featuredCourses as $course)
+                    <x-course-card :course="$course" :pricing-region="$pricingRegion" />
                 @endforeach
             </div>
         @endif

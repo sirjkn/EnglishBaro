@@ -1,4 +1,4 @@
-@props(['track', 'label' => 'Pay', 'class' => 'rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500'])
+@props(['course', 'label' => 'Pay', 'class' => 'rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500'])
 
 @php
     $gateways = [
@@ -19,12 +19,12 @@
             <div class="relative w-full max-w-sm rounded-xl border border-black/10 bg-white p-6 shadow-xl dark:border-white/10 dark:bg-gray-800">
                 <h2 class="text-base font-semibold text-gray-900 dark:text-white">Choose a payment method</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    {{ $track->track_code }} &middot; {{ $track->currency }} {{ number_format($track->defaultPrice(), 2) }}
+                    {{ $course->name }} &middot; {{ $course->currency }} {{ number_format($course->defaultPrice(), 2) }}
                 </p>
 
                 <div class="mt-4 space-y-2">
                     @foreach ($gateways as $key => $gateway)
-                        <form method="POST" action="{{ route('student.tracks.pay', $track) }}" @submit="submitting = true">
+                        <form method="POST" action="{{ route('student.courses.pay', $course) }}" @submit="submitting = true">
                             @csrf
                             <input type="hidden" name="gateway" value="{{ $key }}">
                             <button type="submit" :disabled="submitting"

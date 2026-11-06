@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\CompanySetting;
+use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Level;
 use App\Models\Media;
 use App\Models\Testimonial;
-use App\Models\Track;
 use App\Services\RegionPricingService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -16,24 +16,12 @@ class HomeController extends Controller
 {
     public function __invoke(Request $request, RegionPricingService $regionPricingService): View
     {
-        $featuredTracks = Track::query()
+        $featuredCourses = Course::query()
             ->where('status', 'published')
             ->where('is_featured', true)
-            ->with('thumbnail')
-            ->withCount('levels')
+            ->with(['thumbnail', 'tracks'])
+            ->withCount('tracks')
             ->orderBy('order')
-            ->get();
-
-        // "Most popular" by actual enrollment count. With most tracks tied at
-        // zero enrollments today, this just falls back to catalog order — it
-        // will naturally reorder itself as real enrollments come in.
-        $popularTracks = Track::query()
-            ->where('status', 'published')
-            ->with('thumbnail')
-            ->withCount('enrollments')
-            ->orderByDesc('enrollments_count')
-            ->orderBy('order')
-            ->take(4)
             ->get();
 
         $testimonials = Testimonial::query()
@@ -44,17 +32,16 @@ class HomeController extends Controller
             ->get();
 
         $stats = [
-            'tracks' => Track::query()->where('status', 'published')->count(),
+            'tracks' => Course::query()->where('status', 'published')->withCount('tracks')->get()->sum('tracks_count'),
             'levels' => Level::query()->count(),
             'lessons' => Lesson::query()->count(),
-            'access_days' => Track::query()->where('status', 'published')->min('subscription_days') ?? 0,
+            'access_days' => Course::query()->where('status', 'published')->min('subscription_days') ?? 0,
         ];
 
         $introVideoId = CompanySetting::get('intro_video_media_id');
 
         return view('guest.home', [
-            'featuredTracks' => $featuredTracks,
-            'popularTracks' => $popularTracks,
+            'featuredCourses' => $featuredCourses,
             'testimonials' => $testimonials,
             'stats' => $stats,
             'pricingRegion' => $regionPricingService->resolveRegion($request),

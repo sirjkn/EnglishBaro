@@ -2,12 +2,15 @@
 
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::get('courses/{course}', [CourseController::class, 'show'])->name('courses.show');
 
 Route::get('tracks/{track}', [TrackController::class, 'show'])->name('tracks.show');
 Route::get('tracks/{track}/levels/{level}', [TrackController::class, 'level'])->scopeBindings()->name('tracks.level');

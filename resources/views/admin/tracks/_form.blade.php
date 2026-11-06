@@ -1,5 +1,17 @@
 <div class="space-y-4">
     <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course</label>
+        <select name="course_id" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+            <option value="">Select a course&hellip;</option>
+            @foreach ($courses as $courseOption)
+                <option value="{{ $courseOption->id }}" @selected((int) old('course_id', $track->course_id) === $courseOption->id)>{{ $courseOption->name }} ({{ $courseOption->course_code }})</option>
+            @endforeach
+        </select>
+        <p class="mt-1 text-xs text-gray-400">This unit is unlocked whenever a student buys this course — it isn't sold on its own.</p>
+        @error('course_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+    </div>
+
+    <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Track Code</label>
         @if ($creating ?? false)
             <input type="text" name="track_code" value="{{ old('track_code') }}" placeholder="e.g. C1" maxlength="10"
@@ -28,44 +40,6 @@
         <textarea name="learning_outcomes" rows="3" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">{{ old('learning_outcomes', $track->learning_outcomes) }}</textarea>
     </div>
 
-    <div class="grid grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
-            <input type="number" step="0.01" min="0" name="price" value="{{ old('price', $track->price) }}" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Currency</label>
-            <input type="text" name="currency" value="{{ old('currency', $track->currency) }}" maxlength="3" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subscription Days</label>
-            <input type="number" min="1" name="subscription_days" value="{{ old('subscription_days', $track->subscription_days) }}" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-        </div>
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Regional Pricing (optional overrides)</label>
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Leave blank to fall back to the base price above for that region.</p>
-        <div class="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div>
-                <label class="block text-xs text-gray-500 dark:text-gray-400">Africa</label>
-                <input type="number" step="0.01" min="0" name="price_africa" value="{{ old('price_africa', $track->price_africa) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-500 dark:text-gray-400">Europe</label>
-                <input type="number" step="0.01" min="0" name="price_europe" value="{{ old('price_europe', $track->price_europe) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-500 dark:text-gray-400">North America</label>
-                <input type="number" step="0.01" min="0" name="price_north_america" value="{{ old('price_north_america', $track->price_north_america) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-500 dark:text-gray-400">Asia</label>
-                <input type="number" step="0.01" min="0" name="price_asia" value="{{ old('price_asia', $track->price_asia) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            </div>
-        </div>
-    </div>
-
     <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
         <select name="status" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
@@ -73,11 +47,6 @@
             <option value="published" @selected(old('status', $track->status) === 'published')>Published</option>
             <option value="archived" @selected(old('status', $track->status) === 'archived')>Archived</option>
         </select>
-    </div>
-
-    <div class="flex items-center gap-2">
-        <input type="checkbox" name="is_featured" value="1" id="is_featured" @checked(old('is_featured', $track->is_featured)) class="rounded border-gray-300 text-indigo-600">
-        <label for="is_featured" class="text-sm text-gray-700 dark:text-gray-300">Featured on homepage</label>
     </div>
 
     <div>

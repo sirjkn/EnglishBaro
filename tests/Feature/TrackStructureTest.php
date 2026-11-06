@@ -22,7 +22,6 @@ class TrackStructureTest extends TestCase
         return Track::factory()->create([
             'track_code' => 'A1',
             'status' => 'published',
-            'subscription_days' => 120,
         ]);
     }
 
@@ -57,8 +56,8 @@ class TrackStructureTest extends TestCase
             'track_id' => $track->id,
             'enrollment_id' => $enrollment->id,
             'starts_at' => now(),
-            'expires_at' => now()->addDays($track->subscription_days),
-            'duration_days' => $track->subscription_days,
+            'expires_at' => now()->addDays($track->course->subscription_days),
+            'duration_days' => $track->course->subscription_days,
             'status' => 'active',
         ]);
 

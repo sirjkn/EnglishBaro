@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Student\AccountController;
 use App\Http\Controllers\Student\ChangeLevelController;
+use App\Http\Controllers\Student\CoursePaymentController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\HelpController;
 use App\Http\Controllers\Student\LearningController;
@@ -13,7 +14,6 @@ use App\Http\Controllers\Student\PlacementTestController;
 use App\Http\Controllers\Student\ProgressController;
 use App\Http\Controllers\Student\SessionController;
 use App\Http\Controllers\Student\SupportTicketController;
-use App\Http\Controllers\Student\TrackPaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])
@@ -35,7 +35,7 @@ Route::middleware(['auth', 'verified'])
 
         Route::get('tracks', [MyTrackController::class, 'index'])->name('tracks.index');
         Route::get('tracks/{track}', [MyTrackController::class, 'show'])->name('tracks.show');
-        Route::post('tracks/{track}/pay', [TrackPaymentController::class, 'pay'])->name('tracks.pay');
+        Route::post('courses/{course}/pay', [CoursePaymentController::class, 'pay'])->name('courses.pay');
 
         Route::scopeBindings()->group(function () {
             Route::get('tracks/{track}/levels/{level}', [LearningController::class, 'level'])->name('tracks.level');

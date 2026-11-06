@@ -36,7 +36,7 @@ class PaymentController extends Controller
         // been promoted/placed into but hasn't purchased yet.
         $enrollments = $user->enrollments()->where('status', 'active')->with('subscription')->get();
         $enrolledTrackIds = $enrollments->pluck('track_id');
-        $currentTrack = $user->studentProfile?->track;
+        $currentTrack = $user->studentProfile?->track?->load('course');
 
         $upcomingTrack = ($currentTrack && ! $enrolledTrackIds->contains($currentTrack->id))
             ? $currentTrack

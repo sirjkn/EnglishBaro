@@ -25,7 +25,7 @@
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <x-stat-card label="Levels" :value="$levelCount" />
         <x-stat-card label="Lessons" :value="$lessonCount" />
-        <x-stat-card label="Subscription" :value="$track->subscription_days.' days'" />
+        <x-stat-card label="Course" :value="$track->course->name" />
     </div>
 
     <form method="POST" action="{{ route('admin.tracks.update', $track) }}" enctype="multipart/form-data" class="mt-6 max-w-3xl">
