@@ -58,10 +58,7 @@
 
         {{-- 1/2: filters + inline create/edit panel --}}
         <div>
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
-                <a href="{{ route('admin.tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">All Units (Tracks)</a>
-            </div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
 
             <form method="GET" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
