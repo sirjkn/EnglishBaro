@@ -27,7 +27,7 @@
                 </span>
                 My Progress
             </h2>
-            <a href="{{ route('student.tracks.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">View all &rarr;</a>
+            <a href="{{ route('home') }}#explore-course" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">View all &rarr;</a>
         </div>
 
         @php

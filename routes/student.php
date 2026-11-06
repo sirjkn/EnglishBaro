@@ -33,7 +33,6 @@ Route::middleware(['auth', 'verified'])
 
         Route::post('change-level', [ChangeLevelController::class, 'store'])->name('change-level');
 
-        Route::get('tracks', [MyTrackController::class, 'index'])->name('tracks.index');
         Route::get('tracks/{track}', [MyTrackController::class, 'show'])->name('tracks.show');
         Route::post('courses/{course}/pay', [CoursePaymentController::class, 'pay'])->name('courses.pay');
 

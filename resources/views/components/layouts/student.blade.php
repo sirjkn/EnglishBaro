@@ -131,10 +131,9 @@
                     [
                         'label' => null,
                         'items' => [
-                            ['route' => 'home', 'label' => 'Landing', 'icon' => 'home'],
+                            ['route' => 'home', 'label' => 'My Course', 'icon' => 'home'],
                             ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
                             ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
-                            ['route' => 'student.tracks.index', 'label' => 'My Course', 'icon' => 'book-open'],
                             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
                             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
                             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
@@ -217,7 +216,7 @@
                 @php
                     $mobilePrimaryNav = [
                         ['route' => 'student.dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'active' => request()->routeIs('student.dashboard')],
-                        ['route' => 'student.tracks.index', 'label' => 'My Courses', 'icon' => 'book-open', 'active' => request()->routeIs('student.tracks.*')],
+                        ['route' => 'home', 'label' => 'My Course', 'icon' => 'book-open', 'active' => request()->routeIs('home')],
                         ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card', 'active' => request()->routeIs('student.payments')],
                     ];
                     $mobileMoreNav = [

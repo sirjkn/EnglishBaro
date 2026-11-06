@@ -10,43 +10,9 @@ use App\Services\LevelAccessService;
 use App\Services\RegionPricingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class MyTrackController extends Controller
 {
-    public function index(): View
-    {
-        $user = Auth::user();
-
-        $enrollments = $user->enrollments()
-            ->with(['track.thumbnail', 'progress', 'subscription'])
-            ->whereHas('track')
-            ->get()
-            ->sortBy(fn ($enrollment) => $enrollment->track->order)
-            ->values();
-
-        // The student's current track (from placement, or wherever they've
-        // been auto-promoted to on completing the one before it) is the only
-        // one that's actively "in progress" — everything before it in the
-        // sequence is done, everything after it is still locked.
-        $currentTrackOrder = $user->studentProfile?->track?->order;
-
-        // All tracks are unlocked by the same single payment, so there's one
-        // subscription clock for the whole course rather than one per track
-        // — show whichever active subscription expires soonest.
-        $subscription = $enrollments
-            ->pluck('subscription')
-            ->filter(fn ($sub) => $sub && $sub->status === 'active')
-            ->sortBy('expires_at')
-            ->first();
-
-        return view('student.tracks.index', [
-            'enrollments' => $enrollments,
-            'currentTrackOrder' => $currentTrackOrder,
-            'subscription' => $subscription,
-        ]);
-    }
-
     /**
      * There's no standalone track overview page: a student goes straight
      * into their course material, landing on whichever level they're
