@@ -56,38 +56,48 @@
         @if ($payments->isEmpty())
             <x-empty-state class="mt-4" message="No payments yet." />
         @else
-            <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-                <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
-                    <thead>
-                        <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                            <th class="px-4 py-2">Transaction ID</th>
-                            <th class="px-4 py-2">Track</th>
-                            <th class="px-4 py-2">Amount</th>
-                            <th class="px-4 py-2">Method</th>
-                            <th class="px-4 py-2">Status</th>
-                            <th class="px-4 py-2">Date</th>
-                            <th class="px-4 py-2"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
-                        @foreach ($payments as $payment)
-                            <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->transaction_id }}</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->track->track_code }} — {{ $payment->track->name }}</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ ucfirst($payment->payment_method) }}</td>
-                                <td class="px-4 py-3"><x-payment-status :status="$payment->status" /></td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->created_at->format('M d, Y') }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    <a href="{{ route('student.payments.receipt', $payment) }}" target="_blank" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Receipt</a>
-                                </td>
+            <div x-data="{ receiptUrl: '{{ route('student.payments.receipt', $payments->first()) }}', receiptId: {{ $payments->first()->id }} }" class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
+                <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                    <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
+                        <thead>
+                            <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
+                                <th class="px-4 py-2">Transaction ID</th>
+                                <th class="px-4 py-2">Track</th>
+                                <th class="px-4 py-2">Amount</th>
+                                <th class="px-4 py-2">Method</th>
+                                <th class="px-4 py-2">Status</th>
+                                <th class="px-4 py-2">Date</th>
+                                <th class="px-4 py-2"></th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody class="divide-y divide-indigo-100 dark:divide-gray-800 dark:bg-gray-800">
+                            @foreach ($payments as $payment)
+                                <tr
+                                    @click="receiptUrl = '{{ route('student.payments.receipt', $payment) }}'; receiptId = {{ $payment->id }}"
+                                    :class="receiptId === {{ $payment->id }} ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'odd:bg-white even:bg-indigo-50/40 dark:odd:bg-gray-800 dark:even:bg-gray-900'"
+                                    class="cursor-pointer divide-x divide-gray-200 dark:divide-gray-700"
+                                >
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->transaction_id }}</td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->track->track_code }} — {{ $payment->track->name }}</td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ ucfirst($payment->payment_method) }}</td>
+                                    <td class="px-4 py-3"><x-payment-status :status="$payment->status" /></td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $payment->created_at->format('M d, Y') }}</td>
+                                    <td class="px-4 py-3 text-right">
+                                        <a href="{{ route('student.payments.receipt', $payment) }}" target="_blank" @click.stop class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Open</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
 
-            <div class="mt-4">{{ $payments->links() }}</div>
+                    <div class="px-4 py-3">{{ $payments->links() }}</div>
+                </div>
+
+                <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 lg:block">
+                    <iframe :src="receiptUrl" class="h-[640px] w-full" title="Receipt preview"></iframe>
+                </div>
+            </div>
         @endif
     </div>
 </x-layouts.student>
