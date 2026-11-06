@@ -1,6 +1,10 @@
 <x-layouts.student :title="'Placement Test'">
     <div class="mx-auto max-w-3xl">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome! Let's find your level.</h1>
+        <div class="overflow-hidden rounded-3xl shadow-xl">
+            <x-video-player :media="$introVideo" placeholder="Intro video coming soon." />
+        </div>
+
+        <h1 class="mt-8 text-2xl font-bold text-gray-900 dark:text-white">Welcome! Let's find your level.</h1>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Before you can enroll in a track, answer these {{ $questions->count() }} quick questions.
             We'll place you into the track that matches your current English level — A1, A2, B1, or B2 —

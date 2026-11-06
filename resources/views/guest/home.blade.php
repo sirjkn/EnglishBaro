@@ -20,13 +20,6 @@
         </section>
     @endif
 
-    {{-- Hero: a single intro-video slide, attached from Admin → Settings --}}
-    <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-        <div class="overflow-hidden rounded-3xl shadow-xl">
-            <x-video-player :media="$introVideo" placeholder="Intro video coming soon." />
-        </div>
-    </section>
-
     {{-- Explore Courses --}}
     <section id="explore-course" class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Courses</h2>

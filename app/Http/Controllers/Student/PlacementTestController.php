@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanySetting;
+use App\Models\Media;
 use App\Models\PlacementAttempt;
 use App\Services\PlacementTestService;
 use Illuminate\Http\RedirectResponse;
@@ -20,8 +22,11 @@ class PlacementTestController extends Controller
             return redirect()->route('student.placement-test.result');
         }
 
+        $introVideoId = CompanySetting::get('intro_video_media_id');
+
         return view('student.placement-test', [
             'questions' => $placementTest->questions(),
+            'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
         ]);
     }
 

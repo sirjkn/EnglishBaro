@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CompanySetting;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Level;
-use App\Models\Media;
 use App\Models\Testimonial;
 use App\Services\RegionPricingService;
 use App\Services\StudentDashboardSummaryService;
@@ -41,11 +39,9 @@ class HomeController extends Controller
             'access_days' => Course::query()->where('status', 'published')->min('subscription_days') ?? 0,
         ];
 
-        $introVideoId = CompanySetting::get('intro_video_media_id');
-
-        // A logged-in student's profile/progress summary, shown above the
-        // video on Landing — the same block the Dashboard tab shows them,
-        // reused here rather than making them click through to see it.
+        // A logged-in student's profile/progress summary, shown at the top
+        // of Landing — the same block the Dashboard tab shows them, reused
+        // here rather than making them click through to see it.
         $user = Auth::user();
         $dashboardData = $user?->isStudent()
             ? $dashboardSummary->forUser($user)
@@ -56,7 +52,6 @@ class HomeController extends Controller
             'testimonials' => $testimonials,
             'stats' => $stats,
             'pricingRegion' => $regionPricingService->resolveRegion($request),
-            'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
             'dashboardData' => $dashboardData,
         ]);
     }
