@@ -130,42 +130,62 @@
                                 <div x-data="{ editingCourse: {{ $reopenCourseDetails ? 'true' : 'false' }} }">
                                     {{-- Read-only view: shown by default so a stray click or keystroke
                                          can't change a price or other figure by accident. --}}
-                                    <div x-show="! editingCourse">
-                                        <div class="flex items-center justify-between">
+                                    <div x-show="! editingCourse" class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                                        <div class="flex items-center justify-between gap-2 bg-gray-50 px-4 py-3 dark:bg-gray-800/60">
                                             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Course Details</h3>
                                             <button type="button" @click="editingCourse = true" class="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
                                                 <x-icons.pencil class="h-3.5 w-3.5" /> Edit
                                             </button>
                                         </div>
 
-                                        <div class="mt-3 flex items-start gap-4">
-                                            @if ($course->thumbnail)
-                                                <img src="{{ $course->thumbnail->resolved_url }}" class="h-20 w-20 flex-none rounded-lg object-cover">
-                                            @else
-                                                <div class="flex h-20 w-20 flex-none items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-gray-800">
-                                                    <x-icons.photo class="h-7 w-7" />
-                                                </div>
-                                            @endif
+                                        <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                                            <div class="flex items-start gap-4 p-4">
+                                                @if ($course->thumbnail)
+                                                    <img src="{{ $course->thumbnail->resolved_url }}" class="h-20 w-20 flex-none rounded-lg object-cover">
+                                                @else
+                                                    <div class="flex h-20 w-20 flex-none items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-gray-800">
+                                                        <x-icons.photo class="h-7 w-7" />
+                                                    </div>
+                                                @endif
 
-                                            <dl class="grid flex-1 grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                                                <div><dt class="text-xs text-gray-400">Course Code</dt><dd class="font-mono text-gray-900 dark:text-white">{{ $course->course_code }}</dd></div>
-                                                <div><dt class="text-xs text-gray-400">Name</dt><dd class="text-gray-900 dark:text-white">{{ $course->name }}</dd></div>
-                                                <div class="col-span-2"><dt class="text-xs text-gray-400">Description</dt><dd class="text-gray-900 dark:text-white">{{ $course->description ?: '—' }}</dd></div>
-                                                <div class="col-span-2"><dt class="text-xs text-gray-400">Learning Outcomes</dt><dd class="text-gray-900 dark:text-white">{{ $course->learning_outcomes ?: '—' }}</dd></div>
-                                                <div><dt class="text-xs text-gray-400">Price</dt><dd class="text-gray-900 dark:text-white">{{ $course->currency }} {{ number_format($course->price, 2) }}</dd></div>
-                                                <div><dt class="text-xs text-gray-400">Subscription Days</dt><dd class="text-gray-900 dark:text-white">{{ $course->subscription_days }}</dd></div>
-                                                <div class="col-span-2">
-                                                    <dt class="text-xs text-gray-400">Regional Pricing</dt>
-                                                    <dd class="text-gray-900 dark:text-white">
-                                                        Africa {{ $course->price_africa !== null ? number_format($course->price_africa, 2) : '—' }}
-                                                        &middot; Europe {{ $course->price_europe !== null ? number_format($course->price_europe, 2) : '—' }}
-                                                        &middot; N. America {{ $course->price_north_america !== null ? number_format($course->price_north_america, 2) : '—' }}
-                                                        &middot; Asia {{ $course->price_asia !== null ? number_format($course->price_asia, 2) : '—' }}
+                                                <dl class="grid flex-1 grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Course Code</dt><dd class="mt-0.5 font-mono text-gray-900 dark:text-white">{{ $course->course_code }}</dd></div>
+                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Name</dt><dd class="mt-0.5 text-gray-900 dark:text-white">{{ $course->name }}</dd></div>
+                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Status</dt><dd class="mt-1"><x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge></dd></div>
+                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Featured</dt><dd class="mt-1"><x-badge :color="$course->is_featured ? 'indigo' : 'gray'">{{ $course->is_featured ? 'Yes' : 'No' }}</x-badge></dd></div>
+                                                </dl>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+                                                <div>
+                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Description</dt>
+                                                    <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ $course->description ?: '—' }}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Learning Outcomes</dt>
+                                                    <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ $course->learning_outcomes ?: '—' }}</dd>
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+                                                <div>
+                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Price</dt>
+                                                    <dd class="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">{{ $course->currency }} {{ number_format($course->price, 2) }}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Subscription Days</dt>
+                                                    <dd class="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">{{ $course->subscription_days }}</dd>
+                                                </div>
+                                                <div class="sm:col-span-2">
+                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Regional Pricing</dt>
+                                                    <dd class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                                        <span>Africa: {{ $course->price_africa !== null ? number_format($course->price_africa, 2) : '—' }}</span>
+                                                        <span>Europe: {{ $course->price_europe !== null ? number_format($course->price_europe, 2) : '—' }}</span>
+                                                        <span>N. America: {{ $course->price_north_america !== null ? number_format($course->price_north_america, 2) : '—' }}</span>
+                                                        <span>Asia: {{ $course->price_asia !== null ? number_format($course->price_asia, 2) : '—' }}</span>
                                                     </dd>
                                                 </div>
-                                                <div><dt class="text-xs text-gray-400">Status</dt><dd class="text-gray-900 dark:text-white">{{ ucfirst($course->status) }}</dd></div>
-                                                <div><dt class="text-xs text-gray-400">Featured</dt><dd class="text-gray-900 dark:text-white">{{ $course->is_featured ? 'Yes' : 'No' }}</dd></div>
-                                            </dl>
+                                            </div>
                                         </div>
                                     </div>
 
