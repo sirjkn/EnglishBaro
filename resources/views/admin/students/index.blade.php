@@ -188,7 +188,7 @@
                                                     <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                                         <thead>
                                                             <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                                                                <th class="py-2 pr-4 pl-3">Unit</th>
+                                                                <th class="py-2 pr-4 pl-3">Track</th>
                                                                 <th class="py-2 pr-4">Enrolled</th>
                                                                 <th class="py-2 pr-4">Expires</th>
                                                                 <th class="py-2 pr-4">Progress</th>
@@ -220,7 +220,7 @@
                                                         <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                                             <thead>
                                                                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                                                                    <th class="py-2 pr-4 pl-3">Unit</th>
+                                                                    <th class="py-2 pr-4 pl-3">Track</th>
                                                                     <th class="py-2 pr-4">Enrolled</th>
                                                                     <th class="py-2 pr-4">Expires</th>
                                                                     <th class="py-2 pr-4">Progress</th>
