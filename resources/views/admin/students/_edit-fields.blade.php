@@ -1,7 +1,7 @@
 @php $student = $student ?? null; @endphp
 
-<div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-    <div class="sm:col-span-2 lg:col-span-3">
+<div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+    <div class="sm:col-span-2">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
         <div class="mt-1 flex items-center gap-4">
             <x-student-avatar :profile="$student->studentProfile" size="h-16 w-16" />
