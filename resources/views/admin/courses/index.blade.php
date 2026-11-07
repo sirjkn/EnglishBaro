@@ -129,7 +129,7 @@
                                     <div x-show="! editingCourse" class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
                                         <div class="flex items-center justify-between gap-2 bg-gray-50 px-4 py-3 dark:bg-gray-800/60">
                                             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Course Details</h3>
-                                            <button type="button" @click="editingCourse = true" class="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                                            <button type="button" @click="editingCourse = true" class="flex items-center gap-1 rounded-md border border-indigo-600 px-3 py-1 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">
                                                 <x-icons.pencil class="h-3.5 w-3.5" /> Edit
                                             </button>
                                         </div>
