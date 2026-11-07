@@ -23,16 +23,19 @@ class UserManagementController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.users.index', ['users' => $users]);
+        return view('admin.users.index', [
+            'users' => $users,
+            'modules' => Permission::query()->where('slug', 'like', 'module.%')->orderBy('name')->get(),
+            'openUserId' => $request->integer('open') ?: null,
+        ]);
     }
 
-    public function create(): View
+    public function create(): RedirectResponse
     {
-        return view('admin.users.form', [
-            'user' => new User(['user_type' => 'staff', 'is_active' => true]),
-            'modules' => Permission::query()->where('slug', 'like', 'module.%')->orderBy('name')->get(),
-            'grantedIds' => [],
-        ]);
+        // Creating happens inline on the index page now, not on this page's
+        // own route — links elsewhere in the admin still point here, so keep
+        // this route alive as a redirect.
+        return redirect()->route('admin.users.index');
     }
 
     public function store(Request $request): RedirectResponse
@@ -54,18 +57,18 @@ class UserManagementController extends Controller
 
         AuditLogger::log('admin.users.created', $user, [], ['user_type' => $user->user_type]);
 
-        return redirect()->route('admin.users.index')->with('status', 'User created.');
+        $redirectTo = \App\Support\SafeRedirect::resolve($request->input('redirect'), route('admin.users.index'));
+
+        return redirect($redirectTo)->with('status', 'User created.');
     }
 
-    public function edit(User $user): View
+    public function edit(User $user): RedirectResponse
     {
         abort_unless(in_array($user->user_type, ['admin', 'staff'], true), 404);
 
-        return view('admin.users.form', [
-            'user' => $user,
-            'modules' => Permission::query()->where('slug', 'like', 'module.%')->orderBy('name')->get(),
-            'grantedIds' => $user->permissions->pluck('id')->all(),
-        ]);
+        // Editing happens inline on the index page now, not on this page's
+        // own route — keep this route alive as a redirect for old links.
+        return redirect()->route('admin.users.index', ['open' => $user->id]);
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -86,7 +89,9 @@ class UserManagementController extends Controller
 
         AuditLogger::log('admin.users.updated', $user, [], ['user_type' => $user->user_type]);
 
-        return redirect()->route('admin.users.index')->with('status', 'User updated.');
+        $redirectTo = \App\Support\SafeRedirect::resolve($request->input('redirect'), route('admin.users.index', ['open' => $user->id]));
+
+        return redirect($redirectTo)->with('status', 'User updated.');
     }
 
     public function destroy(Request $request, User $user): RedirectResponse
