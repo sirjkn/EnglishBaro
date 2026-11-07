@@ -50,7 +50,7 @@
                                             <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
                                         </span>
                                         <span class="mt-1 block text-[11px] text-gray-500 dark:text-gray-400">
-                                            {{ $course->tracks_count }} unit{{ $course->tracks_count === 1 ? '' : 's' }} &middot; {{ $course->currency }} {{ number_format($course->defaultPrice(), 2) }} &middot; {{ $enrollmentCounts[$course->id] ?? 0 }} enrolled
+                                            {{ $course->tracks_count }} track{{ $course->tracks_count === 1 ? '' : 's' }} &middot; {{ $course->currency }} {{ number_format($course->defaultPrice(), 2) }} &middot; {{ $enrollmentCounts[$course->id] ?? 0 }} enrolled
                                         </span>
                                     </span>
                                     <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
@@ -92,8 +92,8 @@
                         @php
                             $enrolledCount = $enrollmentCounts[$course->id] ?? 0;
                             $deleteMessage = $enrolledCount > 0
-                                ? "This course has {$enrolledCount} enrolled student(s) and/or units linked to it. Remove its units first, or archive it instead."
-                                : 'This removes the course. Units (tracks) must be removed or reassigned first.';
+                                ? "This course has {$enrolledCount} enrolled student(s) and/or tracks linked to it. Remove its tracks first, or archive it instead."
+                                : 'This removes the course. Tracks must be removed or reassigned first.';
                         @endphp
 
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
@@ -138,8 +138,8 @@
                                         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
                                             <div class="flex items-center justify-between gap-2 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                                                 <div>
-                                                    <h3 class="text-sm font-bold text-white">Units in this Course</h3>
-                                                    <p class="mt-0.5 text-[11px] text-indigo-100">Students who buy {{ $course->name }} get every unit below. The placement test decides which one they start on.</p>
+                                                    <h3 class="text-sm font-bold text-white">Tracks in this Course</h3>
+                                                    <p class="mt-0.5 text-[11px] text-indigo-100">Students who buy {{ $course->name }} get every track below. The placement test decides which one they start on.</p>
                                                 </div>
                                                 <button type="button" x-show="editingTrack === null" @click="addingUnit = ! addingUnit" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
                                                     <span x-text="addingUnit ? 'Cancel' : '+ Add Track'"></span>
@@ -154,7 +154,7 @@
                                                     @csrf
                                                     @include('admin.tracks._form', ['track' => new \App\Models\Track(['status' => 'draft', 'course_id' => $course->id]), 'creating' => true, 'hideCourseField' => true])
                                                     <input type="hidden" name="redirect" value="{{ route('admin.courses.index', ['open' => $course->id], false) }}">
-                                                    <button type="submit" class="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Unit</button>
+                                                    <button type="submit" class="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Track</button>
                                                 </form>
                                             </div>
 
@@ -201,7 +201,7 @@
                                                                 <td class="px-4 py-2 font-medium text-gray-900 dark:text-white">
                                                                     {{ $track->track_code }} &middot; {{ $track->name }}
                                                                     @if ($track->is_default)
-                                                                        <span class="ml-1 rounded bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-300">Entry unit</span>
+                                                                        <span class="ml-1 rounded bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-300">Entry track</span>
                                                                     @endif
                                                                 </td>
                                                                 <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $track->levels_count }}</td>
@@ -212,7 +212,7 @@
                                                                 </td>
                                                             </tr>
                                                         @empty
-                                                            <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400 dark:text-gray-500">No units yet — add one to get started.</td></tr>
+                                                            <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400 dark:text-gray-500">No tracks yet — add one to get started.</td></tr>
                                                         @endforelse
                                                     </tbody>
                                                 </table>
