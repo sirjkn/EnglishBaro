@@ -169,19 +169,44 @@
                                         </span>
                                         Track
                                     </h2>
-                                    @if ($student->enrollments->isEmpty())
-                                        <x-empty-state class="mt-4" message="No enrollments yet." />
-                                    @else
-                                        @php
-                                            // A course purchase unlocks every track (unit) inside it, so group
-                                            // enrollments by their course rather than listing tracks as if
-                                            // each were a separate, independently-bought item.
-                                            $enrollmentsByCourse = $student->enrollments
-                                                ->sortBy(fn ($e) => $e->track->order)
-                                                ->groupBy(fn ($e) => $e->track->course_id);
-                                        @endphp
-                                        <div class="mt-4 space-y-4">
-                                            @foreach ($enrollmentsByCourse as $courseEnrollments)
+                                    @php
+                                        // A course purchase unlocks every track (unit) inside it, so group
+                                        // enrollments by their course rather than listing tracks as if
+                                        // each were a separate, independently-bought item.
+                                        $enrollmentsByCourse = $student->enrollments
+                                            ->sortBy(fn ($e) => $e->track->order)
+                                            ->groupBy(fn ($e) => $e->track->course_id);
+                                    @endphp
+                                    <div class="mt-4 space-y-4">
+                                        @if ($enrollmentsByCourse->isEmpty())
+                                            <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                                <div class="flex items-center justify-between gap-2 bg-blue-50 px-3 py-2 dark:bg-blue-900/20">
+                                                    <span class="text-xs font-bold text-gray-900 dark:text-white">No course</span>
+                                                    <span class="text-[11px] text-gray-500 dark:text-gray-400">0 of 0 units enrolled</span>
+                                                </div>
+                                                <div class="overflow-x-auto">
+                                                    <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
+                                                        <thead>
+                                                            <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
+                                                                <th class="py-2 pr-4 pl-3">Unit</th>
+                                                                <th class="py-2 pr-4">Enrolled</th>
+                                                                <th class="py-2 pr-4">Expires</th>
+                                                                <th class="py-2 pr-4">Progress</th>
+                                                                <th class="py-2 pr-4">Status</th>
+                                                                <th class="py-2 pr-4">Current</th>
+                                                                <th class="py-2"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr class="divide-x divide-gray-200 dark:divide-gray-700">
+                                                                <td colspan="7" class="py-4 text-center text-gray-400">No enrollments yet.</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @foreach ($enrollmentsByCourse as $courseEnrollments)
                                                 @php
                                                     $course = $courseEnrollments->first()->track->course;
                                                     $totalUnits = $course->tracks->count();
@@ -252,9 +277,8 @@
                                                         </table>
                                                     </div>
                                                 </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
 
