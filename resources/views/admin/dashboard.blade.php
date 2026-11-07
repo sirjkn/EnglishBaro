@@ -206,7 +206,10 @@
         new Chart(document.getElementById('paymentChart'), {
             type: 'doughnut',
             data: { labels: paymentLabels, datasets: [{ data: paymentValues, backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#0084FF', '#9ca3af'] }] },
-            options: { maintainAspectRatio: false },
+            options: {
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 12 } } },
+            },
         });
     </script>
     @endpush
