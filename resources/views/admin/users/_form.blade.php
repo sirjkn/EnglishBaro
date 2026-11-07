@@ -2,7 +2,9 @@
       x-data="{ userType: '{{ old('user_type', $user->user_type ?? 'staff') }}' }" class="space-y-6">
     @csrf
     @if ($user->exists) @method('PUT') @endif
-    <input type="hidden" name="redirect" value="{{ route('admin.users.index', $user->exists ? ['open' => $user->id] : [], false) }}">
+    {{-- No ?open= here on purpose: after saving, the panel should close back
+         to the list rather than reopen the same user automatically. --}}
+    <input type="hidden" name="redirect" value="{{ route('admin.users.index', [], false) }}">
 
     <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
