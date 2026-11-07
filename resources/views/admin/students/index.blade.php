@@ -109,7 +109,7 @@
                             </div>
                         </div>
 
-                        <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                        <div class="max-h-[75vh] overflow-y-auto rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
                             <div class="grid grid-cols-1 gap-6">
                                 {{-- Bio data --}}
                                 <div x-data="{ editingBio: false }">
