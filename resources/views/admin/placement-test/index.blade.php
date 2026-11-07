@@ -106,20 +106,23 @@
         </div>
     </div>
 
-    <div class="mt-6 space-y-4">
+    <div class="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
         @forelse ($questions as $question)
             <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
                 <form method="POST" action="{{ route('admin.placement-test.update', $question) }}" class="space-y-3">
                     @csrf
                     @method('PUT')
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Question {{ $loop->iteration }}</label>
-                        <input type="text" name="question" value="{{ old('question', $question->question) }}" required
-                               class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    <div class="flex items-start gap-3">
+                        <span class="mt-1 flex h-7 w-7 flex-none items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white dark:bg-indigo-500">{{ $loop->iteration }}</span>
+                        <div class="flex-1">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Question {{ $loop->iteration }}</label>
+                            <input type="text" name="question" value="{{ old('question', $question->question) }}" required
+                                   class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         @foreach ($question->options as $option)
                             <div>
                                 <label class="block text-xs font-medium text-indigo-600 dark:text-indigo-400">{{ $option->track->track_code }} answer</label>
