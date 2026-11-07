@@ -49,15 +49,6 @@ class CourseController extends Controller
         ]);
     }
 
-    public function create(): View
-    {
-        $this->authorize('create', Course::class);
-
-        return view('admin.courses.create', [
-            'course' => new Course(['price' => 0, 'currency' => 'USD', 'subscription_days' => 120, 'status' => 'draft']),
-        ]);
-    }
-
     public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', Course::class);
@@ -72,17 +63,18 @@ class CourseController extends Controller
 
         AuditLogger::log('admin.course.created', $course, [], $validated);
 
-        return redirect()->route('admin.courses.edit', $course)
+        return redirect()->route('admin.courses.index', ['open' => $course->id])
             ->with('status', "Course {$course->course_code} created. Now add units (tracks) to it.");
     }
 
-    public function edit(Course $course): View
+    public function edit(Course $course): RedirectResponse
     {
         $this->authorize('update', $course);
 
-        $course->load(['thumbnail', 'tracks' => fn ($query) => $query->withCount('levels')]);
-
-        return view('admin.courses.edit', ['course' => $course]);
+        // The standalone edit page was retired in favor of the inline panel
+        // on the courses list — links elsewhere in the admin still point
+        // here, so keep this route alive as a redirect.
+        return redirect()->route('admin.courses.index', ['open' => $course->id]);
     }
 
     public function update(Request $request, Course $course, MediaService $mediaService): RedirectResponse

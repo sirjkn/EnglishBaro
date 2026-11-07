@@ -14,24 +14,28 @@
 
     <div
         class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4"
-        x-data="{ selected: {{ $openCourseId ?? 'null' }} }"
+        x-data="{ selected: {{ $openCourseId ?? 'null' }}, mode: '{{ $openCourseId ? 'edit' : 'create' }}' }"
     >
         {{-- 1/4: course list --}}
         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 lg:col-span-1">
             <div class="flex items-center justify-between gap-2 bg-indigo-600 px-3 py-2 dark:bg-indigo-800">
                 <span class="text-[11px] font-semibold uppercase tracking-wide text-white">Courses</span>
-                <a href="{{ route('admin.courses.create') }}" class="rounded-full border border-white/40 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/10">
+                <button
+                    type="button"
+                    @click="mode = 'create'; selected = null"
+                    class="rounded-full border border-white/40 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/10"
+                >
                     + Add Course
-                </a>
+                </button>
             </div>
             <ul class="divide-y divide-gray-100 dark:divide-gray-700">
                 @forelse ($courses as $course)
                     <li>
                         <button
                             type="button"
-                            @click="selected = {{ $course->id }}"
+                            @click="mode = 'edit'; selected = {{ $course->id }}"
                             class="w-full px-3 py-2.5 text-left transition"
-                            :class="selected === {{ $course->id }} ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'"
+                            :class="(mode === 'edit' && selected === {{ $course->id }}) ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'"
                         >
                             <div class="flex items-center justify-between gap-2">
                                 <span class="flex items-center gap-1.5 min-w-0">
@@ -60,8 +64,22 @@
             </div>
 
             <div class="mt-6">
+                {{-- Create panel --}}
+                <div x-show="mode === 'create'" x-cloak>
+                    <div class="rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
+                        <h2 class="text-sm font-bold text-white">Add a new course</h2>
+                    </div>
+                    <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                        <form method="POST" action="{{ route('admin.courses.store') }}" enctype="multipart/form-data">
+                            @csrf
+                            @include('admin.courses._form', ['course' => new \App\Models\Course(['price' => 0, 'currency' => 'USD', 'subscription_days' => 120, 'status' => 'draft']), 'creating' => true])
+                            <button type="submit" class="mt-6 rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">Create Course</button>
+                        </form>
+                    </div>
+                </div>
+
                 @forelse ($courses as $course)
-                    <div x-show="selected === {{ $course->id }}" x-cloak>
+                    <div x-show="mode === 'edit' && selected === {{ $course->id }}" x-cloak>
                         @php
                             $enrolledCount = $enrollmentCounts[$course->id] ?? 0;
                             $deleteMessage = $enrolledCount > 0
