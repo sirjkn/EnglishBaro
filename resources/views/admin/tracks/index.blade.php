@@ -18,8 +18,8 @@
     @endif
 
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <x-stat-card label="Total Course Tracks" :value="$overview['total']" />
         <x-stat-card label="Published Course Tracks" :value="$overview['published']" />
+        <x-stat-card label="Total Course Tracks" :value="$overview['total']" />
         <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" />
     </div>
 
