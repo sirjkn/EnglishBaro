@@ -13,7 +13,7 @@
     @endif
 
     <div
-        class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4"
+        class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-4"
         x-data="{ selected: {{ $openCourseId ?? 'null' }}, mode: '{{ $openCourseId ? 'edit' : 'create' }}' }"
     >
         {{-- 1/4: course list --}}
