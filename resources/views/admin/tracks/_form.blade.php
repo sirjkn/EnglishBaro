@@ -15,8 +15,8 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div class="space-y-4 lg:col-span-2">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Thumbnail</label>
                 <div class="mt-2 flex items-center gap-4">
