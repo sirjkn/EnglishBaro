@@ -12,7 +12,7 @@
         {{-- 1/4: course list --}}
         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 lg:col-span-1">
             <div class="flex items-center justify-between gap-2 bg-indigo-600 px-3 py-2 dark:bg-indigo-800">
-                <span class="text-[11px] font-semibold uppercase tracking-wide text-white">Courses</span>
+                <span class="text-sm font-bold text-white">Courses</span>
                 <button
                     type="button"
                     @click="mode = 'create'; selected = null"
@@ -24,8 +24,8 @@
             <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                 <thead>
                     <tr class="bg-indigo-600 text-left text-[11px] uppercase text-white dark:bg-indigo-800">
-                        <th class="px-3 py-2">Course</th>
-                        <th class="px-3 py-2">Status</th>
+                        <th class="px-3 py-2"></th>
+                        <th class="px-3 py-2 text-right">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
