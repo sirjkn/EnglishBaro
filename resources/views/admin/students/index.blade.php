@@ -95,7 +95,10 @@
                 @forelse ($students as $student)
                     <div x-show="mode === 'edit' && selected === {{ $student->id }}" x-cloak>
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
-                            <h2 class="text-sm font-bold text-white">Editing: {{ $student->name }}</h2>
+                            <div class="flex items-center gap-3">
+                                <h2 class="text-sm font-bold text-white">Editing: {{ $student->name }}</h2>
+                                <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ $student->is_active ? 'bg-green-500' : 'bg-red-500' }}">{{ $student->is_active ? 'Active' : 'Inactive' }}</span>
+                            </div>
                             <div class="flex items-center gap-2">
                                 <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
                                     @csrf
@@ -114,15 +117,9 @@
                                 {{-- Bio data --}}
                                 <div x-data="{ editingBio: false }">
                                     <div class="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 dark:border-gray-700 dark:bg-gray-900/40">
-                                        <div class="flex items-center gap-4 text-sm">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
-                                                <x-badge :color="$student->hasVerifiedEmail() ? 'green' : 'red'" dot>{{ $student->hasVerifiedEmail() ? 'Verified' : 'Not Verified' }}</x-badge>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-gray-500 dark:text-gray-400">Status:</span>
-                                                <x-badge :color="$student->is_active ? 'green' : 'gray'" dot>{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge>
-                                            </div>
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
+                                            <x-badge :color="$student->hasVerifiedEmail() ? 'green' : 'red'" dot>{{ $student->hasVerifiedEmail() ? 'Verified' : 'Not Verified' }}</x-badge>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             @unless ($student->hasVerifiedEmail())
