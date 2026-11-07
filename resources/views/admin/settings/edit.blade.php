@@ -67,7 +67,7 @@
         <h2 class="font-semibold text-gray-900 dark:text-white">Payment Gateways</h2>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Credentials are encrypted at rest and never exposed to the frontend.</p>
 
-        <div class="mt-4 space-y-6">
+        <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
             @foreach ($gateways as $gateway)
                 @php $setting = $paymentSettings[$gateway] ?? null; @endphp
                 <form method="POST" action="{{ route('admin.settings.payment') }}" class="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
