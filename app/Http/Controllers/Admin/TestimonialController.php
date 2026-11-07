@@ -73,7 +73,12 @@ class TestimonialController extends Controller
 
         AuditLogger::log('admin.testimonial.toggled', $testimonial, [], ['is_published' => $testimonial->is_published]);
 
-        return back()->with('status', $testimonial->is_published ? 'Testimonial published.' : 'Testimonial unpublished.');
+        // Which testimonial is selected is client-side Alpine state, not
+        // reflected in the URL, so back()/Referer has no way to know which
+        // one to reopen — it was defaulting to the first testimonial in the
+        // list. Pass it explicitly instead.
+        return redirect()->route('admin.testimonials.index', ['open' => $testimonial->id])
+            ->with('status', $testimonial->is_published ? 'Testimonial published.' : 'Testimonial unpublished.');
     }
 
     private function validated(Request $request): array
