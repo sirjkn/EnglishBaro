@@ -57,12 +57,6 @@
         </div>
     </div>
 
-    @if (session('status'))
-        <div class="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/30 dark:text-green-300">
-            {{ session('status') }}
-        </div>
-    @endif
-
     @if (session('newPassword'))
         <div class="mt-4 rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
             <p class="text-sm font-semibold text-amber-900 dark:text-amber-200">New password generated — share this with {{ $student->name }} now, it won't be shown again:</p>
