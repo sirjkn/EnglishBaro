@@ -163,12 +163,6 @@
                     </div>
                 </header>
 
-                @if (session('status'))
-                    <div class="mx-4 mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/30 dark:text-green-300 sm:mx-6 lg:mx-8">
-                        {{ session('status') }}
-                    </div>
-                @endif
-
                 <main class="p-4 pb-24 sm:p-6 lg:p-8 md:pb-8">
                     {{ $slot }}
                 </main>
