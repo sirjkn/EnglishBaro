@@ -208,6 +208,7 @@
                                                                     <th class="py-2 pr-4 pl-3">Unit</th>
                                                                     <th class="py-2 pr-4">Enrolled</th>
                                                                     <th class="py-2 pr-4">Expires</th>
+                                                                    <th class="py-2 pr-4">Progress</th>
                                                                     <th class="py-2 pr-4">Status</th>
                                                                     <th class="py-2"></th>
                                                                 </tr>
@@ -216,11 +217,20 @@
                                                                 @foreach ($courseEnrollments as $enrollment)
                                                                     @php
                                                                         $cancelMessage = "This revokes {$student->name}'s access to {$enrollment->track->track_code}. Their payment record is kept — this does not refund them.";
+                                                                        $percent = (int) round($enrollment->progress?->percent_complete ?? 0);
                                                                     @endphp
                                                                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                                                                         <td class="py-2 pr-4 pl-3 font-medium text-gray-900 dark:text-white">{{ $enrollment->track->track_code }} — {{ $enrollment->track->name }}</td>
                                                                         <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $enrollment->enrolled_at->format('M d, Y') }}</td>
                                                                         <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $enrollment->subscription?->expires_at?->format('M d, Y') ?? '—' }}</td>
+                                                                        <td class="py-2 pr-4">
+                                                                            <div class="flex items-center gap-2">
+                                                                                <div class="h-1.5 w-16 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                                                                                    <div class="h-full rounded-full bg-indigo-500" style="width: {{ $percent }}%"></div>
+                                                                                </div>
+                                                                                <span class="text-gray-700 dark:text-gray-300">{{ $percent }}%</span>
+                                                                            </div>
+                                                                        </td>
                                                                         <td class="py-2 pr-4"><x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($enrollment->status) }}</x-badge></td>
                                                                         <td class="py-2 pr-2 text-right">
                                                                             @if ($enrollment->status === 'active')

@@ -30,6 +30,7 @@ class StudentController extends Controller
             'studentProfile.profileImage',
             'enrollments.track.course.tracks',
             'enrollments.subscription',
+            'enrollments.progress',
             'userSessions',
             'payments.track',
         ]);
