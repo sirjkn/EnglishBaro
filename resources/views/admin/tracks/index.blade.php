@@ -18,7 +18,15 @@
         <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" />
     </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4" x-data="{ selected: {{ $openCourseId ?? 'null' }}, editingTrack: null }">
+    @php
+        // If a track create/edit just failed validation, the redirect lands
+        // back here with no indication of which panel to reopen unless we
+        // work it out from the old input ourselves — otherwise the error is
+        // flashed but the panel showing it stays collapsed.
+        $reopenAddingTrack = $errors->any() && old('track_code') !== null;
+        $reopenEditingTrackId = $errors->any() && old('_editing_track_id') !== null ? (int) old('_editing_track_id') : null;
+    @endphp
+    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4" x-data="{ selected: {{ $openCourseId ?? 'null' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }}, addingTrack: {{ $reopenAddingTrack ? 'true' : 'false' }} }">
         {{-- 1/4: courses, stacked in one column --}}
         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 lg:col-span-1">
             <div class="bg-indigo-600 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white dark:bg-indigo-800">
@@ -37,7 +45,7 @@
                             <td class="p-0" colspan="2">
                                 <button
                                     type="button"
-                                    @click="selected = {{ $course->id }}; editingTrack = null"
+                                    @click="selected = {{ $course->id }}; editingTrack = null; addingTrack = false"
                                     class="grid w-full grid-cols-[1fr_auto] items-center gap-2 px-3 py-2.5 text-left"
                                 >
                                     <span class="min-w-0">
@@ -70,8 +78,10 @@
                             <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
                         </div>
                         <div class="flex items-center gap-2">
-                            <a x-show="editingTrack === null" href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">+ Add Track</a>
-                            <a x-show="editingTrack === null" href="{{ route('admin.courses.edit', $course) }}" class="rounded-md border border-orange-600 bg-orange-500 px-3 py-1 text-xs font-semibold text-white hover:bg-orange-400">Edit Course &rarr;</a>
+                            <button type="button" x-show="editingTrack === null" @click="addingTrack = ! addingTrack" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">
+                                <span x-text="addingTrack ? 'Cancel' : '+ Add Track'"></span>
+                            </button>
+                            <a x-show="editingTrack === null && ! addingTrack" href="{{ route('admin.courses.edit', $course) }}" class="rounded-md border border-orange-600 bg-orange-500 px-3 py-1 text-xs font-semibold text-white hover:bg-orange-400">Edit Course &rarr;</a>
                             @foreach ($course->tracks as $track)
                                 @php
                                     $headerTrackDeleteMessage = $track->students_count > 0
@@ -93,7 +103,19 @@
                         </div>
                     </div>
 
-                    <div x-show="editingTrack === null" class="overflow-x-auto rounded-b-xl border border-gray-200 dark:border-gray-700">
+                    <div x-show="addingTrack" x-cloak class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                        <form method="POST" action="{{ route('admin.tracks.store') }}" enctype="multipart/form-data">
+                            @csrf
+                            @include('admin.tracks._form', ['track' => new \App\Models\Track(['status' => 'draft', 'course_id' => $course->id]), 'creating' => true, 'hideCourseField' => true])
+                            <input type="hidden" name="redirect" value="{{ route('admin.tracks.index', ['open' => $course->id], false) }}">
+                            <div class="mt-6 flex items-center gap-2">
+                                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Track</button>
+                                <button type="button" @click="addingTrack = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div x-show="editingTrack === null && ! addingTrack" class="overflow-x-auto rounded-b-xl border border-gray-200 dark:border-gray-700">
                         <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                             <thead>
                                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
