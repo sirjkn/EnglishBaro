@@ -276,40 +276,44 @@
                                             <button type="submit" class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">Reset Session Quota</button>
                                         </form>
                                     </div>
-                                    <div class="mt-4 overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
-                                            <thead>
-                                                <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                                                    <th class="py-2 pr-4">Device</th>
-                                                    <th class="py-2 pr-4">Browser</th>
-                                                    <th class="py-2 pr-4">IP</th>
-                                                    <th class="py-2 pr-4">Last Activity</th>
-                                                    <th class="py-2 pr-4">Status</th>
-                                                    <th class="py-2"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
-                                                @foreach ($student->userSessions as $session)
-                                                    <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
-                                                        <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->device }}</td>
-                                                        <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->browser }}</td>
-                                                        <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->ip_address }}</td>
-                                                        <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->last_activity_at?->diffForHumans() }}</td>
-                                                        <td class="py-2 pr-4"><x-badge :color="$session->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($session->status) }}</x-badge></td>
-                                                        <td class="py-2 text-right">
-                                                            @if ($session->status === 'active')
-                                                                <form method="POST" action="{{ route('admin.sessions.destroy', $session) }}" onsubmit="return confirm('Terminate this session?');">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Terminate</button>
-                                                                </form>
-                                                            @endif
-                                                        </td>
+                                    @if ($student->userSessions->isEmpty())
+                                        <x-empty-state class="mt-4" message="No active sessions." />
+                                    @else
+                                        <div class="mt-4 overflow-x-auto">
+                                            <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
+                                                <thead>
+                                                    <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
+                                                        <th class="py-2 pr-4">Device</th>
+                                                        <th class="py-2 pr-4">Browser</th>
+                                                        <th class="py-2 pr-4">IP</th>
+                                                        <th class="py-2 pr-4">Last Activity</th>
+                                                        <th class="py-2 pr-4">Status</th>
+                                                        <th class="py-2"></th>
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </thead>
+                                                <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
+                                                    @foreach ($student->userSessions as $session)
+                                                        <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
+                                                            <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->device }}</td>
+                                                            <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->browser }}</td>
+                                                            <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->ip_address }}</td>
+                                                            <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->last_activity_at?->diffForHumans() }}</td>
+                                                            <td class="py-2 pr-4"><x-badge :color="$session->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($session->status) }}</x-badge></td>
+                                                            <td class="py-2 text-right">
+                                                                @if ($session->status === 'active')
+                                                                    <form method="POST" action="{{ route('admin.sessions.destroy', $session) }}" onsubmit="return confirm('Terminate this session?');">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Terminate</button>
+                                                                    </form>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 {{-- Payments --}}
