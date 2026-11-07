@@ -28,31 +28,40 @@
                     + Add Course
                 </button>
             </div>
-            <ul class="divide-y divide-gray-100 dark:divide-gray-700">
-                @forelse ($courses as $course)
-                    <li>
-                        <button
-                            type="button"
-                            @click="mode = 'edit'; selected = {{ $course->id }}"
-                            class="w-full px-3 py-2.5 text-left transition"
-                            :class="(mode === 'edit' && selected === {{ $course->id }}) ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'"
-                        >
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="flex items-center gap-1.5 min-w-0">
-                                    <span class="flex-none rounded-full bg-indigo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">{{ $course->course_code }}</span>
-                                    <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
-                                </span>
-                                <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
-                            </div>
-                            <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
-                                {{ $course->tracks_count }} unit{{ $course->tracks_count === 1 ? '' : 's' }} &middot; {{ $course->currency }} {{ number_format($course->defaultPrice(), 2) }} &middot; {{ $enrollmentCounts[$course->id] ?? 0 }} enrolled
-                            </p>
-                        </button>
-                    </li>
-                @empty
-                    <li class="px-3 py-8 text-center text-xs text-gray-400">No courses found.</li>
-                @endforelse
-            </ul>
+            <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
+                <thead>
+                    <tr class="bg-indigo-600 text-left text-[11px] uppercase text-white dark:bg-indigo-800">
+                        <th class="px-3 py-2">Course</th>
+                        <th class="px-3 py-2">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
+                    @forelse ($courses as $course)
+                        <tr :class="(mode === 'edit' && selected === {{ $course->id }}) ? 'bg-indigo-100 dark:bg-indigo-900/40' : 'odd:bg-white even:bg-indigo-50 hover:bg-indigo-100 dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:hover:bg-gray-700'">
+                            <td class="p-0" colspan="2">
+                                <button
+                                    type="button"
+                                    @click="mode = 'edit'; selected = {{ $course->id }}"
+                                    class="grid w-full grid-cols-[1fr_auto] items-center gap-2 px-3 py-2.5 text-left"
+                                >
+                                    <span class="min-w-0">
+                                        <span class="flex items-center gap-1.5">
+                                            <span class="flex-none rounded bg-indigo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">{{ $course->course_code }}</span>
+                                            <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
+                                        </span>
+                                        <span class="mt-1 block text-[11px] text-gray-500 dark:text-gray-400">
+                                            {{ $course->tracks_count }} unit{{ $course->tracks_count === 1 ? '' : 's' }} &middot; {{ $course->currency }} {{ number_format($course->defaultPrice(), 2) }} &middot; {{ $enrollmentCounts[$course->id] ?? 0 }} enrolled
+                                        </span>
+                                    </span>
+                                    <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="2" class="px-3 py-8 text-center text-gray-400">No courses found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
         {{-- 3/4: toolbar, overview, and inline preview/edit panel --}}
