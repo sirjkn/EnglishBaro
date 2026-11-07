@@ -7,14 +7,15 @@ use App\Models\Track;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Builds out a track's full curriculum: 100 levels, each with the four
- * fixed sections (Grammar/Listening/Speaking/Reading), sample lessons, and
- * one Activity Questions assessment per section. Used both by the initial
- * database seeder and by admins creating a new track from the UI.
+ * Builds out a track's full curriculum: a given number of levels (100 by
+ * default), each with the four fixed sections (Grammar/Listening/
+ * Speaking/Reading), sample lessons, and one Activity Questions assessment
+ * per section. Used both by the initial database seeder and by admins
+ * creating a new track from the UI.
  */
 class TrackCurriculumGenerator
 {
-    private const LEVELS_PER_TRACK = 100;
+    const DEFAULT_LEVELS_PER_TRACK = 100;
 
     private const LESSONS_PER_SECTION = 2;
 
@@ -41,11 +42,13 @@ class TrackCurriculumGenerator
         ],
     ];
 
-    public function generate(Track $track): void
+    public function generate(Track $track, ?int $levelCount = null): void
     {
+        $levelCount ??= self::DEFAULT_LEVELS_PER_TRACK;
+
         $now = now();
 
-        if ($track->levels()->count() >= self::LEVELS_PER_TRACK) {
+        if ($track->levels()->count() >= $levelCount) {
             return;
         }
 
@@ -53,7 +56,7 @@ class TrackCurriculumGenerator
 
         $levelRows = [];
 
-        foreach (range(1, self::LEVELS_PER_TRACK) as $number) {
+        foreach (range(1, $levelCount) as $number) {
             if (in_array($number, $existingNumbers, true)) {
                 continue;
             }

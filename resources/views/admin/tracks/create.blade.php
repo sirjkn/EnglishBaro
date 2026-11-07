@@ -7,9 +7,9 @@
     </div>
 
     <p class="mt-2 max-w-3xl text-sm text-gray-600 dark:text-gray-400">
-        Creating a track automatically generates its full curriculum: 100 levels, each with the four
-        Grammar/Listening/Speaking/Reading sections, sample lessons, and Activity Questions. You can edit
-        the content afterwards from the track's Levels page.
+        Creating a track automatically generates its full curriculum: however many levels you set below,
+        each with the four Grammar/Listening/Speaking/Reading sections, sample lessons, and Activity
+        Questions. You can edit the content afterwards from the track's Levels page.
     </p>
 
     <form method="POST" action="{{ route('admin.tracks.store') }}" enctype="multipart/form-data" class="mt-6 max-w-3xl">

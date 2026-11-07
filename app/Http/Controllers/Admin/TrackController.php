@@ -72,7 +72,11 @@ class TrackController extends Controller
             'description' => ['nullable', 'string'],
             'learning_outcomes' => ['nullable', 'string'],
             'status' => ['required', 'in:draft,published,archived'],
+            'level_count' => ['nullable', 'integer', 'min:1', 'max:500'],
         ]);
+
+        $levelCount = $validated['level_count'] ?? TrackCurriculumGenerator::DEFAULT_LEVELS_PER_TRACK;
+        unset($validated['level_count']);
 
         $validated['slug'] = Str::slug($validated['track_code'].'-'.$validated['name']);
         $validated['order'] = (int) Track::query()->where('course_id', $validated['course_id'])->max('order') + 1;
@@ -81,7 +85,12 @@ class TrackController extends Controller
 
         $track = Track::query()->create($validated);
 
-        $curriculumGenerator->generate($track);
+        // The number of levels is only ever set here, at creation — the edit
+        // form intentionally has no way to change it afterward. Growing or
+        // shrinking a track's level count later is a curriculum decision the
+        // admin makes explicitly in the Levels editor, not a side effect of
+        // editing the track's name or status.
+        $curriculumGenerator->generate($track, $levelCount);
 
         $this->grantExistingCourseOwnersAccess($track);
 
@@ -92,7 +101,7 @@ class TrackController extends Controller
             route('admin.tracks.edit', $track)
         );
 
-        return redirect($redirectTo)->with('status', "Track {$track->track_code} created with 100 levels.");
+        return redirect($redirectTo)->with('status', "Track {$track->track_code} created with {$levelCount} levels.");
     }
 
     /**
