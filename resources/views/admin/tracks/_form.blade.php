@@ -57,23 +57,25 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                <textarea name="description" rows="4" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">{{ old('description', $track->description) }}</textarea>
-            </div>
-
-            <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Learning Outcomes</label>
                 <textarea name="learning_outcomes" rows="3" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">{{ old('learning_outcomes', $track->learning_outcomes) }}</textarea>
             </div>
         </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
-            <select name="status" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                <option value="draft" @selected(old('status', $track->status) === 'draft')>Draft</option>
-                <option value="published" @selected(old('status', $track->status) === 'published')>Published</option>
-                <option value="archived" @selected(old('status', $track->status) === 'archived')>Archived</option>
-            </select>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                <select name="status" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    <option value="draft" @selected(old('status', $track->status) === 'draft')>Draft</option>
+                    <option value="published" @selected(old('status', $track->status) === 'published')>Published</option>
+                    <option value="archived" @selected(old('status', $track->status) === 'archived')>Archived</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                <textarea name="description" rows="4" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">{{ old('description', $track->description) }}</textarea>
+            </div>
         </div>
     </div>
 </div>
