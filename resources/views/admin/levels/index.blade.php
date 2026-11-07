@@ -6,26 +6,26 @@
 
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4">
         {{-- 1/4: level list --}}
-        <div class="lg:col-span-1">
-            <details class="rounded-xl border border-dashed border-gray-300 p-4 dark:border-gray-700">
-                <summary class="cursor-pointer text-sm font-medium text-indigo-600">+ Add Level</summary>
-                <form method="POST" action="{{ route('admin.tracks.levels.store', $track) }}" class="mt-3 space-y-2">
-                    @csrf
-                    <input type="number" name="number" min="1" placeholder="Level number" required class="w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    <input type="text" name="title" placeholder="Level title" required class="w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    <button type="submit" class="w-full rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500">Add Level</button>
-                </form>
-                @error('number') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </details>
+        <div class="lg:col-span-1" x-data="{ addingLevel: {{ $errors->has('number') ? 'true' : 'false' }} }">
+            <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between gap-2 bg-indigo-600 px-3 py-2 dark:bg-indigo-800">
+                    <span class="text-[11px] font-semibold uppercase tracking-wide text-white">Levels</span>
+                    <button type="button" @click="addingLevel = ! addingLevel" class="flex-none rounded-md border border-green-600 bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-green-400">
+                        <span x-text="addingLevel ? 'Cancel' : '+ Add Level'"></span>
+                    </button>
+                </div>
 
-            <div class="mt-4 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-                <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
-                    <thead>
-                        <tr class="bg-indigo-600 text-left text-[11px] uppercase text-white dark:bg-indigo-800">
-                            <th class="px-3 py-2">Level</th>
-                            <th class="px-3 py-2">Sections</th>
-                        </tr>
-                    </thead>
+                <div x-show="addingLevel" x-cloak class="border-t border-gray-200 p-3 dark:border-gray-700">
+                    <form method="POST" action="{{ route('admin.tracks.levels.store', $track) }}" class="space-y-2">
+                        @csrf
+                        <input type="number" name="number" min="1" placeholder="Level number" required class="w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        <input type="text" name="title" placeholder="Level title" required class="w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        <button type="submit" class="w-full rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500">Add Level</button>
+                        @error('number') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </form>
+                </div>
+
+                <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700" x-show="! addingLevel">
                     <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
                         @forelse ($levels as $level)
                             <tr class="{{ $openLevel?->id === $level->id ? 'bg-indigo-100 dark:bg-indigo-900/40' : 'odd:bg-white even:bg-indigo-50 hover:bg-indigo-100 dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:hover:bg-gray-700' }}">
@@ -46,7 +46,7 @@
                 </table>
             </div>
 
-            <div class="mt-3">{{ $levels->withQueryString()->links() }}</div>
+            <div class="mt-3" x-show="! addingLevel">{{ $levels->withQueryString()->links() }}</div>
         </div>
 
         {{-- 3/4: selected level's editor --}}
