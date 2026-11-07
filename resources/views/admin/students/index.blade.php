@@ -38,7 +38,7 @@
                                 type="button"
                                 @click="mode = 'edit'; selected = {{ $student->id }}"
                                 class="w-full px-3 py-2.5 text-left transition"
-                                :class="(mode === 'edit' && selected === {{ $student->id }}) ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'"
+                                :class="(mode === 'edit' && selected === {{ $student->id }}) ? 'bg-yellow-100 dark:bg-yellow-900/40' : 'bg-white hover:bg-yellow-100 dark:bg-gray-800 dark:hover:bg-yellow-900/30'"
                             >
                                 <div class="flex items-center justify-between gap-2">
                                     <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $student->name }}</span>
