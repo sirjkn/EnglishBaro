@@ -221,7 +221,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-8 grid grid-cols-1 gap-8 border-t border-gray-100 pt-6 dark:border-gray-700 xl:grid-cols-2">
+                            <div class="mt-8 grid grid-cols-1 gap-8 border-t border-gray-100 pt-6 dark:border-gray-700">
                                 {{-- Active Sessions --}}
                                 <div>
                                     <div class="flex flex-wrap items-center justify-between gap-3">
