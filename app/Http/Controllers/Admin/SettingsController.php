@@ -29,16 +29,12 @@ class SettingsController extends Controller
         $company = CompanySetting::query()->pluck('value', 'key');
         $system = SystemSetting::query()->pluck('value', 'key');
         $paymentSettings = PaymentSetting::query()->get()->keyBy('gateway');
-        $introVideoId = CompanySetting::get('intro_video_media_id');
-        $helpVideoId = CompanySetting::get('help_video_media_id');
 
         return view('admin.settings.edit', [
             'company' => $company,
             'system' => $system,
             'paymentSettings' => $paymentSettings,
             'gateways' => self::GATEWAYS,
-            'introVideo' => $introVideoId ? \App\Models\Media::find($introVideoId) : null,
-            'helpVideo' => $helpVideoId ? \App\Models\Media::find($helpVideoId) : null,
         ]);
     }
 
@@ -74,7 +70,7 @@ class SettingsController extends Controller
 
         AuditLogger::log('admin.settings.intro_video_updated', null, [], ['media_id' => $validated['media_id'] ?? null]);
 
-        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', ($validated['media_id'] ?? null) ? 'Intro video updated.' : 'Intro video removed.');
+        return redirect()->route('admin.placement-test.index')->with('status', ($validated['media_id'] ?? null) ? 'Intro video updated.' : 'Intro video removed.');
     }
 
     public function updateHelpVideo(Request $request): RedirectResponse
@@ -87,7 +83,7 @@ class SettingsController extends Controller
 
         AuditLogger::log('admin.settings.help_video_updated', null, [], ['media_id' => $validated['media_id'] ?? null]);
 
-        return redirect()->route('admin.settings.edit', ['tab' => 'company'])->with('status', ($validated['media_id'] ?? null) ? 'Help video updated.' : 'Help video removed.');
+        return redirect()->route('admin.placement-test.index')->with('status', ($validated['media_id'] ?? null) ? 'Help video updated.' : 'Help video removed.');
     }
 
     public function updatePayment(Request $request): RedirectResponse

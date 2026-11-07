@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanySetting;
+use App\Models\Media;
 use App\Models\PlacementQuestion;
 use App\Models\Track;
 use App\Services\AuditLogger;
@@ -16,9 +18,14 @@ class PlacementQuestionController extends Controller
     {
         $questions = PlacementQuestion::query()->with('options.track')->orderBy('order')->get();
 
+        $introVideoId = CompanySetting::get('intro_video_media_id');
+        $helpVideoId = CompanySetting::get('help_video_media_id');
+
         return view('admin.placement-test.index', [
             'questions' => $questions,
             'tracks' => Track::query()->orderBy('order')->get(),
+            'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
+            'helpVideo' => $helpVideoId ? Media::find($helpVideoId) : null,
         ]);
     }
 
