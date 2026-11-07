@@ -28,7 +28,7 @@ class StudentController extends Controller
         $query = User::query()->where('user_type', 'student')->with([
             'studentProfile.track',
             'studentProfile.profileImage',
-            'enrollments.track',
+            'enrollments.track.course.tracks',
             'enrollments.subscription',
             'userSessions',
             'payments.track',

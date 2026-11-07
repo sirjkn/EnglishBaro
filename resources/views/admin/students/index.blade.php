@@ -179,42 +179,62 @@
                                     @if ($student->enrollments->isEmpty())
                                         <x-empty-state class="mt-4" message="No enrollments yet." />
                                     @else
-                                        <div class="mt-4 overflow-x-auto">
-                                            <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
-                                                <thead>
-                                                    <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                                                        <th class="py-2 pr-4">Track</th>
-                                                        <th class="py-2 pr-4">Enrolled</th>
-                                                        <th class="py-2 pr-4">Expires</th>
-                                                        <th class="py-2 pr-4">Status</th>
-                                                        <th class="py-2"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
-                                                    @foreach ($student->enrollments as $enrollment)
-                                                        @php
-                                                            $cancelMessage = "This revokes {$student->name}'s access to {$enrollment->track->track_code}. Their payment record is kept — this does not refund them.";
-                                                        @endphp
-                                                        <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
-                                                            <td class="py-2 pr-4 font-medium text-gray-900 dark:text-white">{{ $enrollment->track->track_code }} — {{ $enrollment->track->name }}</td>
-                                                            <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $enrollment->enrolled_at->format('M d, Y') }}</td>
-                                                            <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $enrollment->subscription?->expires_at?->format('M d, Y') ?? '—' }}</td>
-                                                            <td class="py-2 pr-4"><x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($enrollment->status) }}</x-badge></td>
-                                                            <td class="py-2 text-right">
-                                                                @if ($enrollment->status === 'active')
-                                                                    <x-double-confirm-form
-                                                                        :action="route('admin.enrollments.cancel', $enrollment)"
-                                                                        label="Cancel"
-                                                                        title="Cancel this enrollment?"
-                                                                        :message="$cancelMessage"
-                                                                        class="text-xs font-medium text-red-600 hover:text-red-500"
-                                                                    />
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
+                                        @php
+                                            // A course purchase unlocks every track (unit) inside it, so group
+                                            // enrollments by their course rather than listing tracks as if
+                                            // each were a separate, independently-bought item.
+                                            $enrollmentsByCourse = $student->enrollments->groupBy(fn ($e) => $e->track->course_id);
+                                        @endphp
+                                        <div class="mt-4 space-y-4">
+                                            @foreach ($enrollmentsByCourse as $courseEnrollments)
+                                                @php
+                                                    $course = $courseEnrollments->first()->track->course;
+                                                    $totalUnits = $course->tracks->count();
+                                                @endphp
+                                                <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                                    <div class="flex items-center justify-between gap-2 bg-blue-50 px-3 py-2 dark:bg-blue-900/20">
+                                                        <span class="text-xs font-bold text-gray-900 dark:text-white">{{ $course->name }}</span>
+                                                        <span class="text-[11px] text-gray-500 dark:text-gray-400">{{ $courseEnrollments->count() }} of {{ $totalUnits }} units enrolled</span>
+                                                    </div>
+                                                    <div class="overflow-x-auto">
+                                                        <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
+                                                            <thead>
+                                                                <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
+                                                                    <th class="py-2 pr-4 pl-3">Unit</th>
+                                                                    <th class="py-2 pr-4">Enrolled</th>
+                                                                    <th class="py-2 pr-4">Expires</th>
+                                                                    <th class="py-2 pr-4">Status</th>
+                                                                    <th class="py-2"></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
+                                                                @foreach ($courseEnrollments as $enrollment)
+                                                                    @php
+                                                                        $cancelMessage = "This revokes {$student->name}'s access to {$enrollment->track->track_code}. Their payment record is kept — this does not refund them.";
+                                                                    @endphp
+                                                                    <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
+                                                                        <td class="py-2 pr-4 pl-3 font-medium text-gray-900 dark:text-white">{{ $enrollment->track->track_code }} — {{ $enrollment->track->name }}</td>
+                                                                        <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $enrollment->enrolled_at->format('M d, Y') }}</td>
+                                                                        <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $enrollment->subscription?->expires_at?->format('M d, Y') ?? '—' }}</td>
+                                                                        <td class="py-2 pr-4"><x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($enrollment->status) }}</x-badge></td>
+                                                                        <td class="py-2 pr-2 text-right">
+                                                                            @if ($enrollment->status === 'active')
+                                                                                <x-double-confirm-form
+                                                                                    :action="route('admin.enrollments.cancel', $enrollment)"
+                                                                                    label="Cancel"
+                                                                                    title="Cancel this enrollment?"
+                                                                                    :message="$cancelMessage"
+                                                                                    class="text-xs font-medium text-red-600 hover:text-red-500"
+                                                                                />
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     @endif
                                 </div>
