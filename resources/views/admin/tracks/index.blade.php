@@ -63,6 +63,23 @@
                         <div class="flex items-center gap-2">
                             <a x-show="editingTrack === null" href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">+ Add Unit</a>
                             <a x-show="editingTrack === null" href="{{ route('admin.courses.edit', $course) }}" class="rounded-md border border-orange-600 bg-orange-500 px-3 py-1 text-xs font-semibold text-white hover:bg-orange-400">Edit Course &rarr;</a>
+                            @foreach ($course->tracks as $track)
+                                @php
+                                    $headerTrackDeleteMessage = $track->students_count > 0
+                                        ? "This track has {$track->students_count} enrolled student(s). Deleting it removes its entire curriculum (all levels, sections and lessons) and cannot be undone."
+                                        : 'This removes its entire curriculum (all levels, sections and lessons) and cannot be undone.';
+                                @endphp
+                                <a x-show="editingTrack === {{ $track->id }}" x-cloak href="{{ route('admin.tracks.levels.index', $track) }}" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">Manage Levels</a>
+                                <span x-show="editingTrack === {{ $track->id }}" x-cloak class="inline-block">
+                                    <x-confirm-delete-form
+                                        :action="route('admin.tracks.destroy', $track)"
+                                        label="Delete Track"
+                                        :title="'Delete track '.$track->track_code.'?'"
+                                        :message="$headerTrackDeleteMessage"
+                                        class="rounded-md border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400"
+                                    />
+                                </span>
+                            @endforeach
                         </div>
                     </div>
 
@@ -116,25 +133,7 @@
 
                     @foreach ($course->tracks as $track)
                         <div x-show="editingTrack === {{ $track->id }}" x-cloak class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                            @php
-                                $trackEnrolledCount = $track->students_count;
-                                $trackDeleteMessage = $trackEnrolledCount > 0
-                                    ? "This track has {$trackEnrolledCount} enrolled student(s). Deleting it removes its entire curriculum (all levels, sections and lessons) and cannot be undone."
-                                    : 'This removes its entire curriculum (all levels, sections and lessons) and cannot be undone.';
-                            @endphp
-                            <div class="flex flex-wrap items-center justify-between gap-3">
-                                <h3 class="font-semibold text-gray-900 dark:text-white">Editing: {{ $track->track_code }} &middot; {{ $track->name }}</h3>
-                                <div class="flex items-center gap-2">
-                                    <a href="{{ route('admin.tracks.levels.index', $track) }}" class="rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">Manage Levels</a>
-                                    <x-confirm-delete-form
-                                        :action="route('admin.tracks.destroy', $track)"
-                                        label="Delete Track"
-                                        :title="'Delete track '.$track->track_code.'?'"
-                                        :message="$trackDeleteMessage"
-                                        class="rounded border border-red-600 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-600 hover:text-white dark:border-red-500 dark:text-red-400"
-                                    />
-                                </div>
-                            </div>
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Editing: {{ $track->track_code }} &middot; {{ $track->name }}</h3>
 
                             <form method="POST" action="{{ route('admin.tracks.update', $track) }}" enctype="multipart/form-data" class="mt-4 max-w-3xl">
                                 @csrf
