@@ -73,12 +73,12 @@
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                             <div class="flex items-center gap-3">
                                 <h2 class="text-sm font-bold text-white">Editing: {{ $testimonial->name }}</h2>
-                                <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ $testimonial->is_published ? 'bg-green-500' : 'bg-gray-400' }}">{{ $testimonial->is_published ? 'Published' : 'Unpublished' }}</span>
+                                <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ $testimonial->is_published ? 'bg-green-500' : 'bg-orange-500' }}">{{ $testimonial->is_published ? 'Published' : 'Unpublished' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <form method="POST" action="{{ route('admin.testimonials.toggle-publish', $testimonial) }}">
                                     @csrf
-                                    <button type="submit" class="rounded-full px-3 py-1 text-xs font-medium text-white {{ $testimonial->is_published ? 'border border-white/40 hover:bg-white/10' : 'border border-orange-600 bg-orange-500 hover:bg-orange-400' }}">{{ $testimonial->is_published ? 'Unpublish' : 'Publish' }}</button>
+                                    <button type="submit" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">{{ $testimonial->is_published ? 'Unpublish' : 'Publish' }}</button>
                                 </form>
                                 <form method="POST" action="{{ route('admin.testimonials.destroy', $testimonial) }}" onsubmit="return confirm('Delete this testimonial?');">
                                     @csrf
