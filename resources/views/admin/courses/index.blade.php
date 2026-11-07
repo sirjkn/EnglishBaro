@@ -215,9 +215,11 @@
                                                                 </td>
                                                                 <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ $track->levels_count }}</td>
                                                                 <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ ucfirst($track->status) }}</td>
-                                                                <td class="px-4 py-2 text-right">
-                                                                    <a href="{{ route('admin.tracks.levels.index', $track) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Levels</a>
-                                                                    <button type="button" @click="editingTrack = {{ $track->id }}" class="ml-3 text-xs font-medium text-indigo-600 hover:text-indigo-500">Edit</button>
+                                                                <td class="px-2 py-2">
+                                                                    <div class="flex flex-col items-end gap-1">
+                                                                        <a href="{{ route('admin.tracks.levels.index', $track) }}" class="w-full rounded border border-gray-300 px-1.5 py-0.5 text-center text-[11px] font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">Levels</a>
+                                                                        <button type="button" @click="editingTrack = {{ $track->id }}" class="w-full rounded border border-indigo-600 px-1.5 py-0.5 text-center text-[11px] font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">Edit</button>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         @empty
