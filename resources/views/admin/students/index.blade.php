@@ -110,10 +110,10 @@
                         </div>
 
                         <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                            <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
+                            <div class="grid grid-cols-1 gap-6">
                                 {{-- Bio data --}}
                                 <div x-data="{ editingBio: false }">
-                                    <div class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
+                                    <div class="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 dark:border-gray-700 dark:bg-gray-900/40">
                                         <div class="flex items-center gap-4 text-sm">
                                             <div class="flex items-center gap-2">
                                                 <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
@@ -143,18 +143,17 @@
                                             </button>
                                         </div>
 
-                                        <div class="mt-3 flex items-center gap-3">
-                                            <x-student-avatar :profile="$student->studentProfile" size="h-14 w-14" />
+                                        <div class="mt-2 flex items-start gap-4">
+                                            <x-student-avatar :profile="$student->studentProfile" size="h-12 w-12" class="shrink-0" />
+                                            <dl class="grid flex-1 grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
+                                                <div><dt class="text-xs text-gray-400">Full Names</dt><dd class="text-gray-900 dark:text-white">{{ $student->name }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Gender</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->gender ? ucfirst($student->studentProfile->gender) : '—' }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->email }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Phone</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->phone ?? '—' }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Country</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->country ?? '—' }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Referral Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->referral_email ?? '—' }}</dd></div>
+                                            </dl>
                                         </div>
-
-                                        <dl class="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
-                                            <div><dt class="text-xs text-gray-400">Full Names</dt><dd class="text-gray-900 dark:text-white">{{ $student->name }}</dd></div>
-                                            <div><dt class="text-xs text-gray-400">Gender</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->gender ? ucfirst($student->studentProfile->gender) : '—' }}</dd></div>
-                                            <div><dt class="text-xs text-gray-400">Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->email }}</dd></div>
-                                            <div><dt class="text-xs text-gray-400">Phone</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->phone ?? '—' }}</dd></div>
-                                            <div><dt class="text-xs text-gray-400">Country</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->country ?? '—' }}</dd></div>
-                                            <div><dt class="text-xs text-gray-400">Referral Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->referral_email ?? '—' }}</dd></div>
-                                        </dl>
                                     </div>
 
                                     {{-- Edit view: opt in via the Edit button, with Save/Cancel --}}
