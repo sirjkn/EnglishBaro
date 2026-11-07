@@ -251,7 +251,7 @@
                                                                         <td class="py-2 pr-4"><x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($enrollment->status) }}</x-badge></td>
                                                                         <td class="py-2 pr-4">
                                                                             @if ($isCurrentTrack)
-                                                                                <x-badge color="green">Current</x-badge>
+                                                                                <span class="rounded-full border border-green-600 bg-green-500 px-2.5 py-0.5 text-xs font-medium text-white">Current</span>
                                                                             @elseif ($enrollment->status === 'active')
                                                                                 <form method="POST" action="{{ route('admin.students.switch-track', $student) }}" onsubmit="return confirm('Switch {{ $student->name }}\'s active track to {{ $enrollment->track->track_code }}? They\'ll be notified of the change.');">
                                                                                     @csrf
