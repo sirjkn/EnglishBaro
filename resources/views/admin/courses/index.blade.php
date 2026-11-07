@@ -7,7 +7,7 @@
     --}}
     <div
         class="grid grid-cols-1 gap-6 lg:grid-cols-4"
-        x-data="{ selected: {{ $openCourseId ?? 'null' }}, mode: '{{ $openCourseId ? 'edit' : 'create' }}' }"
+        x-data="{ selected: {{ $openCourseId ?? 'null' }}, mode: '{{ $openCourseId ? 'edit' : 'create' }}', lastSelected: {{ $openCourseId ?? 'null' }} }"
     >
         {{-- 1/4: course list --}}
         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 lg:col-span-1">
@@ -34,7 +34,7 @@
                             <td class="p-0" colspan="2">
                                 <button
                                     type="button"
-                                    @click="mode = 'edit'; selected = {{ $course->id }}"
+                                    @click="mode = 'edit'; selected = {{ $course->id }}; lastSelected = {{ $course->id }}"
                                     class="grid w-full grid-cols-[1fr_auto] items-center gap-2 px-3 py-2.5 text-left"
                                 >
                                     <span class="min-w-0">
@@ -75,7 +75,10 @@
                         <form method="POST" action="{{ route('admin.courses.store') }}" enctype="multipart/form-data">
                             @csrf
                             @include('admin.courses._form', ['course' => new \App\Models\Course(['price' => 0, 'currency' => 'USD', 'subscription_days' => 120, 'status' => 'draft']), 'creating' => true])
-                            <button type="submit" class="mt-6 rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">Create Course</button>
+                            <div class="mt-6 flex items-center gap-2">
+                                <button type="submit" class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">Create Course</button>
+                                <button type="button" @click="mode = lastSelected !== null ? 'edit' : 'create'; selected = lastSelected" class="rounded-md border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                            </div>
                         </form>
                     </div>
                 </div>
