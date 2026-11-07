@@ -225,8 +225,8 @@
                                                     <h3 class="text-sm font-bold text-white">Tracks in this Course</h3>
                                                     <p class="mt-0.5 text-[11px] text-indigo-100">Students who buy {{ $course->name }} get every track below. The placement test decides which one they start on.</p>
                                                 </div>
-                                                <button type="button" x-show="editingTrack === null" @click="addingUnit = ! addingUnit" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
-                                                    <span x-text="addingUnit ? 'Cancel' : '+ Add Track'"></span>
+                                                <button type="button" x-show="editingTrack === null && ! addingUnit" @click="addingUnit = true" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
+                                                    + Add Track
                                                 </button>
                                                 <button type="button" x-show="editingTrack !== null" x-cloak @click="editingTrack = null" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
                                                     Cancel
@@ -238,7 +238,10 @@
                                                     @csrf
                                                     @include('admin.tracks._form', ['track' => new \App\Models\Track(['status' => 'draft', 'course_id' => $course->id]), 'creating' => true, 'hideCourseField' => true])
                                                     <input type="hidden" name="redirect" value="{{ route('admin.courses.index', ['open' => $course->id], false) }}">
-                                                    <button type="submit" class="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Track</button>
+                                                    <div class="mt-4 flex items-center gap-2">
+                                                        <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Track</button>
+                                                        <button type="button" @click="addingUnit = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                                                    </div>
                                                 </form>
                                             </div>
 
