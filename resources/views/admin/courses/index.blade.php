@@ -88,7 +88,16 @@
                         @endphp
 
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
-                            <h2 class="text-sm font-bold text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
+                            <div class="flex flex-wrap items-center gap-4">
+                                <h2 class="text-sm font-bold text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
+                                <div class="flex items-center gap-3 text-xs text-indigo-100">
+                                    <span>{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
+                                    <span class="text-indigo-300">&middot;</span>
+                                    <span>{{ $enrolledCount }} enrolled</span>
+                                    <span class="text-indigo-300">&middot;</span>
+                                    <span>{{ $course->subscription_days }} days</span>
+                                </div>
+                            </div>
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('courses.show', $course) }}" target="_blank" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">View Live</a>
                                 <x-confirm-delete-form
@@ -102,16 +111,8 @@
                         </div>
 
                         <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                                <div class="grid grid-cols-3 gap-3">
-                                    <x-stat-card label="Units (Tracks)" :value="$course->tracks->count()" compact class="p-3" />
-                                    <x-stat-card label="Enrolled Students" :value="$enrolledCount" compact class="p-3" />
-                                    <x-stat-card label="Subscription" :value="$course->subscription_days.' days'" compact class="p-3" />
-                                </div>
-
-                                <div>
-                                    @include('admin.courses._thumbnail-field', ['course' => $course, 'standalone' => true])
-                                </div>
+                            <div class="max-w-sm">
+                                @include('admin.courses._thumbnail-field', ['course' => $course, 'standalone' => true])
                             </div>
 
                             <div class="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
