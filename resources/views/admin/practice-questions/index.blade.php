@@ -1,26 +1,28 @@
 <x-layouts.admin :title="'More Practice'">
     <div x-data="{ addOpen: {{ $errors->any() ? 'true' : 'false' }} }">
-    <div class="flex flex-wrap items-start justify-between gap-3">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">More Practice</h1>
-            <p class="mt-1 max-w-2xl text-sm text-gray-600 dark:text-gray-400">
-                Multiple-choice questions students see on the More Practice page. Pick a track to restrict a question
-                to that level, or leave it blank to show it to every student.
-            </p>
+    <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+        <div class="flex flex-wrap items-start justify-between gap-3 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
+            <div>
+                <h1 class="text-sm font-bold text-white">More Practice</h1>
+                <p class="mt-1 max-w-2xl text-xs text-indigo-100">
+                    Multiple-choice questions students see on the More Practice page. Pick a track to restrict a question
+                    to that level, or leave it blank to show it to every student.
+                </p>
+            </div>
+            <button type="button" @click="addOpen = true; $nextTick(() => $refs.addQuestionForm.scrollIntoView({ behavior: 'smooth' }))"
+                    class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
+                + Add Question
+            </button>
         </div>
-        <button type="button" @click="addOpen = true; $nextTick(() => $refs.addQuestionForm.scrollIntoView({ behavior: 'smooth' }))"
-                class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
-            + Add Question
-        </button>
-    </div>
 
-    <div class="mt-5 flex flex-wrap gap-2 border-b border-gray-200 pb-3 dark:border-gray-700">
-        @foreach ($categories as $slug => $meta)
-            <a href="{{ route('admin.practice-questions.index', ['category' => $slug]) }}"
-               class="rounded-full px-3 py-1.5 text-xs font-semibold {{ $category === $slug ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700' }}">
-                {{ $meta['title'] }}
-            </a>
-        @endforeach
+        <div class="flex flex-wrap gap-2 border-t border-gray-200 p-3 dark:border-gray-700">
+            @foreach ($categories as $slug => $meta)
+                <a href="{{ route('admin.practice-questions.index', ['category' => $slug]) }}"
+                   class="rounded-full px-3 py-1.5 text-xs font-semibold {{ $category === $slug ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    {{ $meta['title'] }}
+                </a>
+            @endforeach
+        </div>
     </div>
 
     <div class="mt-6 space-y-4">
