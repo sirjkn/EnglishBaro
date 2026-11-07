@@ -105,7 +105,7 @@
                                 @else
                                     <form method="POST" action="{{ route('admin.students.verify-email', $student) }}" onsubmit="return confirm('Mark {{ $student->name }}\'s email as verified? Use this if their verification email never arrived or the link isn\'t working.');">
                                         @csrf
-                                        <button type="submit" class="rounded-full border border-red-300 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400">Not Verified — Click to Verify</button>
+                                        <button type="submit" class="rounded-full border border-amber-400 bg-amber-500 px-3 py-1 text-xs font-semibold text-white hover:bg-amber-400">Not Verified — Click to Verify</button>
                                     </form>
                                 @endif
                                 <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
@@ -115,7 +115,7 @@
                                 <form method="POST" action="{{ route('admin.students.destroy', $student) }}" onsubmit="return confirm('Remove this student? This cannot be undone.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="rounded-full border border-red-200/60 px-3 py-1 text-xs font-medium text-red-100 hover:bg-white/10">Delete</button>
+                                    <button type="submit" class="rounded-full border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400">Delete</button>
                                 </form>
                             </div>
                         </div>
