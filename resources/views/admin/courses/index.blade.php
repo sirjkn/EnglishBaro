@@ -100,7 +100,7 @@
                             <div class="flex flex-wrap items-center gap-4">
                                 <h2 class="text-sm font-bold text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="rounded-md border border-yellow-300 bg-yellow-400 px-3 py-1 text-xs font-bold text-yellow-950">{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
+                                    <span class="rounded-md border border-yellow-300 bg-yellow-400 px-3 py-1 text-xs font-bold text-yellow-950">{{ $course->tracks->count() }} track{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
                                     <span class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-bold text-white">{{ $enrolledCount }} enrolled</span>
                                     <span class="rounded-md border border-orange-600 bg-orange-500 px-3 py-1 text-xs font-bold text-white">{{ $course->subscription_days }} days</span>
                                 </div>
@@ -142,7 +142,7 @@
                                                     <p class="mt-0.5 text-[11px] text-indigo-100">Students who buy {{ $course->name }} get every unit below. The placement test decides which one they start on.</p>
                                                 </div>
                                                 <button type="button" x-show="editingTrack === null" @click="addingUnit = ! addingUnit" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
-                                                    <span x-text="addingUnit ? 'Cancel' : '+ Add Unit'"></span>
+                                                    <span x-text="addingUnit ? 'Cancel' : '+ Add Track'"></span>
                                                 </button>
                                                 <button type="button" x-show="editingTrack !== null" x-cloak @click="editingTrack = null" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
                                                     Cancel
@@ -189,7 +189,7 @@
                                                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                                     <thead>
                                                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                                                            <th class="px-4 py-2">Unit</th>
+                                                            <th class="px-4 py-2">Track</th>
                                                             <th class="px-4 py-2">Levels</th>
                                                             <th class="px-4 py-2">Status</th>
                                                             <th class="px-4 py-2"></th>
