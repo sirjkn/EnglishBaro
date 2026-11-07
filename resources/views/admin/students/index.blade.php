@@ -105,7 +105,7 @@
                                 @else
                                     <form method="POST" action="{{ route('admin.students.verify-email', $student) }}" onsubmit="return confirm('Mark {{ $student->name }}\'s email as verified? Use this if their verification email never arrived or the link isn\'t working.');">
                                         @csrf
-                                        <button type="submit" class="rounded-full border border-amber-200 bg-amber-500 px-3 py-1 text-xs font-semibold text-white hover:bg-amber-400">Not Verified — Click to Verify</button>
+                                        <button type="submit" class="rounded-full border border-red-300 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400">Not Verified — Click to Verify</button>
                                     </form>
                                 @endif
                                 <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
