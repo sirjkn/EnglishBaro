@@ -123,36 +123,47 @@
                                 </form>
 
                                 <div>
-                                    <div class="flex items-center justify-between">
-                                        <h3 class="font-semibold text-gray-900 dark:text-white">Units in this Course</h3>
-                                        <a href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
-                                            + Add Unit
-                                        </a>
-                                    </div>
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                        Students who buy {{ $course->name }} get every unit below. The placement test decides which one they start on.
-                                    </p>
+                                    <div x-data="{ addingUnit: false }">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="font-semibold text-gray-900 dark:text-white">Units in this Course</h3>
+                                            <button type="button" @click="addingUnit = ! addingUnit" class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
+                                                <span x-text="addingUnit ? 'Cancel' : '+ Add Unit'"></span>
+                                            </button>
+                                        </div>
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            Students who buy {{ $course->name }} get every unit below. The placement test decides which one they start on.
+                                        </p>
 
-                                    <div class="mt-3 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 dark:divide-gray-700 dark:border-gray-700">
-                                        @forelse ($course->tracks as $track)
-                                            <div class="flex items-center justify-between gap-3 bg-white px-4 py-3 dark:bg-gray-800">
-                                                <div class="min-w-0">
-                                                    <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                                                        {{ $track->track_code }} &middot; {{ $track->name }}
-                                                        @if ($track->is_default)
-                                                            <span class="ml-1 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-300">Entry unit</span>
-                                                        @endif
-                                                    </p>
-                                                    <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ $track->levels_count }} levels &middot; {{ ucfirst($track->status) }}</p>
+                                        <div x-show="addingUnit" x-cloak class="mt-3 rounded-xl border border-gray-200 p-4 dark:border-gray-700">
+                                            <form method="POST" action="{{ route('admin.tracks.store') }}" enctype="multipart/form-data">
+                                                @csrf
+                                                @include('admin.tracks._form', ['track' => new \App\Models\Track(['status' => 'draft', 'course_id' => $course->id]), 'creating' => true, 'hideCourseField' => true])
+                                                <input type="hidden" name="redirect" value="{{ route('admin.courses.index', ['open' => $course->id], false) }}">
+                                                <button type="submit" class="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Create Unit</button>
+                                            </form>
+                                        </div>
+
+                                        <div x-show="! addingUnit" class="mt-3 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 dark:divide-gray-700 dark:border-gray-700">
+                                            @forelse ($course->tracks as $track)
+                                                <div class="flex items-center justify-between gap-3 bg-white px-4 py-3 dark:bg-gray-800">
+                                                    <div class="min-w-0">
+                                                        <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                                                            {{ $track->track_code }} &middot; {{ $track->name }}
+                                                            @if ($track->is_default)
+                                                                <span class="ml-1 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-gray-500 dark:bg-gray-700 dark:text-gray-300">Entry unit</span>
+                                                            @endif
+                                                        </p>
+                                                        <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ $track->levels_count }} levels &middot; {{ ucfirst($track->status) }}</p>
+                                                    </div>
+                                                    <div class="flex flex-none items-center gap-2">
+                                                        <a href="{{ route('admin.tracks.levels.index', $track) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Levels</a>
+                                                        <a href="{{ route('admin.tracks.edit', $track) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">Edit</a>
+                                                    </div>
                                                 </div>
-                                                <div class="flex flex-none items-center gap-2">
-                                                    <a href="{{ route('admin.tracks.levels.index', $track) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Levels</a>
-                                                    <a href="{{ route('admin.tracks.edit', $track) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">Edit</a>
-                                                </div>
-                                            </div>
-                                        @empty
-                                            <p class="bg-white px-4 py-6 text-center text-sm text-gray-400 dark:bg-gray-800">No units yet — add one to get started.</p>
-                                        @endforelse
+                                            @empty
+                                                <p class="bg-white px-4 py-6 text-center text-sm text-gray-400 dark:bg-gray-800">No units yet — add one to get started.</p>
+                                            @endforelse
+                                        </div>
                                     </div>
                                 </div>
                             </div>

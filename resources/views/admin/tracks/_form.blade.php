@@ -1,15 +1,19 @@
 <div class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course</label>
-        <select name="course_id" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            <option value="">Select a course&hellip;</option>
-            @foreach ($courses as $courseOption)
-                <option value="{{ $courseOption->id }}" @selected((int) old('course_id', $track->course_id) === $courseOption->id)>{{ $courseOption->name }} ({{ $courseOption->course_code }})</option>
-            @endforeach
-        </select>
-        <p class="mt-1 text-xs text-gray-400">This unit is unlocked whenever a student buys this course — it isn't sold on its own.</p>
-        @error('course_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-    </div>
+    @if ($hideCourseField ?? false)
+        <input type="hidden" name="course_id" value="{{ $track->course_id }}">
+    @else
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course</label>
+            <select name="course_id" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                <option value="">Select a course&hellip;</option>
+                @foreach ($courses as $courseOption)
+                    <option value="{{ $courseOption->id }}" @selected((int) old('course_id', $track->course_id) === $courseOption->id)>{{ $courseOption->name }} ({{ $courseOption->course_code }})</option>
+                @endforeach
+            </select>
+            <p class="mt-1 text-xs text-gray-400">This unit is unlocked whenever a student buys this course — it isn't sold on its own.</p>
+            @error('course_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+        </div>
+    @endif
 
     <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Track Code</label>

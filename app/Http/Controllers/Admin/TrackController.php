@@ -77,8 +77,12 @@ class TrackController extends Controller
 
         AuditLogger::log('admin.track.created', $track, [], $validated);
 
-        return redirect()->route('admin.tracks.edit', $track)
-            ->with('status', "Track {$track->track_code} created with 100 levels.");
+        $redirectTo = \App\Support\SafeRedirect::resolve(
+            $request->input('redirect'),
+            route('admin.tracks.edit', $track)
+        );
+
+        return redirect($redirectTo)->with('status', "Track {$track->track_code} created with 100 levels.");
     }
 
     public function destroy(Track $track): RedirectResponse
