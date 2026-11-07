@@ -47,7 +47,7 @@
                                         <td class="px-2.5 py-1.5 text-gray-700 dark:text-gray-300">{{ $track->levels_count ?? $track->levels()->count() }}</td>
                                         <td class="px-2.5 py-1.5 text-gray-700 dark:text-gray-300">{{ $track->enrollments_count }}</td>
                                         <td class="px-2.5 py-1.5 text-right">
-                                            <button type="button" class="text-[11px] font-medium text-indigo-600 hover:text-indigo-500">
+                                            <button type="button" class="rounded border border-indigo-600 px-2 py-1 text-[11px] font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">
                                                 View
                                             </button>
                                         </td>
