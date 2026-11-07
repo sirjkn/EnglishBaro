@@ -99,14 +99,15 @@
                                                     ? "This track has {$track->students_count} enrolled student(s). Deleting it removes its entire curriculum (all levels, sections and lessons) and cannot be undone."
                                                     : 'This removes its entire curriculum (all levels, sections and lessons) and cannot be undone.';
                                             @endphp
-                                            <a href="{{ route('tracks.show', $track) }}" target="_blank" class="text-sm font-medium text-gray-500 hover:text-gray-700">View</a>
-                                            <a href="{{ route('admin.tracks.levels.index', $track) }}" class="ml-3 text-sm font-medium text-gray-500 hover:text-gray-700">Levels</a>
-                                            <a href="{{ route('admin.tracks.edit', $track) }}" class="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">Edit</a>
-                                            <span class="ml-3 inline-block">
+                                            <a href="{{ route('tracks.show', $track) }}" target="_blank" class="rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">View</a>
+                                            <a href="{{ route('admin.tracks.levels.index', $track) }}" class="ml-2 rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">Levels</a>
+                                            <a href="{{ route('admin.tracks.edit', $track) }}" class="ml-2 rounded border border-indigo-600 px-2 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">Edit</a>
+                                            <span class="ml-2 inline-block">
                                                 <x-confirm-delete-form
                                                     :action="route('admin.tracks.destroy', $track)"
                                                     :title="'Delete track '.$track->track_code.'?'"
                                                     :message="$deleteMessage"
+                                                    class="rounded border border-red-600 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-600 hover:text-white dark:border-red-500 dark:text-red-400"
                                                 />
                                             </span>
                                         </td>
