@@ -66,8 +66,8 @@
                             <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
                         </div>
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">+ Add Unit</a>
-                            <a href="{{ route('admin.courses.edit', $course) }}" class="rounded-md border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Edit Course &rarr;</a>
+                            <a href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">+ Add Unit</a>
+                            <a href="{{ route('admin.courses.edit', $course) }}" class="rounded-md border border-orange-600 bg-orange-500 px-3 py-1 text-xs font-semibold text-white hover:bg-orange-400">Edit Course &rarr;</a>
                         </div>
                     </div>
 
