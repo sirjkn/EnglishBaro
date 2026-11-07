@@ -138,52 +138,56 @@
                                             </button>
                                         </div>
 
-                                        <div class="divide-y divide-gray-100 dark:divide-gray-700">
-                                            <div class="flex items-start gap-4 p-4">
+                                        @php
+                                            $fieldBox = 'rounded-lg border border-gray-200 p-3 dark:border-gray-700';
+                                            $fieldLabel = 'text-xs font-medium uppercase tracking-wide text-gray-400';
+                                        @endphp
+                                        <div class="divide-y divide-gray-100 p-4 dark:divide-gray-700">
+                                            <div class="flex items-start gap-4 pb-4">
                                                 @if ($course->thumbnail)
-                                                    <img src="{{ $course->thumbnail->resolved_url }}" class="h-20 w-20 flex-none rounded-lg object-cover">
+                                                    <img src="{{ $course->thumbnail->resolved_url }}" class="h-20 w-20 flex-none rounded-lg border border-gray-200 object-cover dark:border-gray-700">
                                                 @else
-                                                    <div class="flex h-20 w-20 flex-none items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-gray-800">
+                                                    <div class="flex h-20 w-20 flex-none items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-gray-400 dark:border-gray-700 dark:bg-gray-800">
                                                         <x-icons.photo class="h-7 w-7" />
                                                     </div>
                                                 @endif
 
-                                                <dl class="grid flex-1 grid-cols-2 gap-x-6 gap-y-3 text-sm">
-                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Course Code</dt><dd class="mt-0.5 font-mono text-gray-900 dark:text-white">{{ $course->course_code }}</dd></div>
-                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Name</dt><dd class="mt-0.5 text-gray-900 dark:text-white">{{ $course->name }}</dd></div>
-                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Status</dt><dd class="mt-1"><x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge></dd></div>
-                                                    <div><dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Featured</dt><dd class="mt-1"><x-badge :color="$course->is_featured ? 'indigo' : 'gray'">{{ $course->is_featured ? 'Yes' : 'No' }}</x-badge></dd></div>
-                                                </dl>
-                                            </div>
-
-                                            <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
-                                                <div>
-                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Description</dt>
-                                                    <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ $course->description ?: '—' }}</dd>
-                                                </div>
-                                                <div>
-                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Learning Outcomes</dt>
-                                                    <dd class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ $course->learning_outcomes ?: '—' }}</dd>
+                                                <div class="grid flex-1 grid-cols-2 gap-3 text-sm">
+                                                    <div class="{{ $fieldBox }}"><div class="{{ $fieldLabel }}">Course Code</div><div class="mt-0.5 font-mono text-gray-900 dark:text-white">{{ $course->course_code }}</div></div>
+                                                    <div class="{{ $fieldBox }}"><div class="{{ $fieldLabel }}">Name</div><div class="mt-0.5 text-gray-900 dark:text-white">{{ $course->name }}</div></div>
+                                                    <div class="{{ $fieldBox }}"><div class="{{ $fieldLabel }}">Status</div><div class="mt-1"><x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge></div></div>
+                                                    <div class="{{ $fieldBox }}"><div class="{{ $fieldLabel }}">Featured</div><div class="mt-1"><x-badge :color="$course->is_featured ? 'indigo' : 'gray'">{{ $course->is_featured ? 'Yes' : 'No' }}</x-badge></div></div>
                                                 </div>
                                             </div>
 
-                                            <div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
-                                                <div>
-                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Price</dt>
-                                                    <dd class="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">{{ $course->currency }} {{ number_format($course->price, 2) }}</dd>
+                                            <div class="grid grid-cols-1 gap-3 py-4 sm:grid-cols-2">
+                                                <div class="{{ $fieldBox }}">
+                                                    <div class="{{ $fieldLabel }}">Description</div>
+                                                    <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ $course->description ?: '—' }}</div>
                                                 </div>
-                                                <div>
-                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Subscription Days</dt>
-                                                    <dd class="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">{{ $course->subscription_days }}</dd>
+                                                <div class="{{ $fieldBox }}">
+                                                    <div class="{{ $fieldLabel }}">Learning Outcomes</div>
+                                                    <div class="mt-1 text-sm text-gray-700 dark:text-gray-300">{{ $course->learning_outcomes ?: '—' }}</div>
                                                 </div>
-                                                <div class="sm:col-span-2">
-                                                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-400">Regional Pricing</dt>
-                                                    <dd class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-700 dark:text-gray-300">
-                                                        <span>Africa: {{ $course->price_africa !== null ? number_format($course->price_africa, 2) : '—' }}</span>
-                                                        <span>Europe: {{ $course->price_europe !== null ? number_format($course->price_europe, 2) : '—' }}</span>
-                                                        <span>N. America: {{ $course->price_north_america !== null ? number_format($course->price_north_america, 2) : '—' }}</span>
-                                                        <span>Asia: {{ $course->price_asia !== null ? number_format($course->price_asia, 2) : '—' }}</span>
-                                                    </dd>
+                                            </div>
+
+                                            <div class="grid grid-cols-2 gap-3 pt-4">
+                                                <div class="{{ $fieldBox }}">
+                                                    <div class="{{ $fieldLabel }}">Price</div>
+                                                    <div class="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">{{ $course->currency }} {{ number_format($course->price, 2) }}</div>
+                                                </div>
+                                                <div class="{{ $fieldBox }}">
+                                                    <div class="{{ $fieldLabel }}">Subscription Days</div>
+                                                    <div class="mt-0.5 text-sm font-semibold text-gray-900 dark:text-white">{{ $course->subscription_days }}</div>
+                                                </div>
+                                                <div class="col-span-2">
+                                                    <div class="{{ $fieldLabel }} mb-2">Regional Pricing</div>
+                                                    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                                        <div class="{{ $fieldBox }}"><div class="text-[11px] text-gray-400">Africa</div><div class="mt-0.5 font-medium text-gray-900 dark:text-white">{{ $course->price_africa !== null ? number_format($course->price_africa, 2) : '—' }}</div></div>
+                                                        <div class="{{ $fieldBox }}"><div class="text-[11px] text-gray-400">Europe</div><div class="mt-0.5 font-medium text-gray-900 dark:text-white">{{ $course->price_europe !== null ? number_format($course->price_europe, 2) : '—' }}</div></div>
+                                                        <div class="{{ $fieldBox }}"><div class="text-[11px] text-gray-400">N. America</div><div class="mt-0.5 font-medium text-gray-900 dark:text-white">{{ $course->price_north_america !== null ? number_format($course->price_north_america, 2) : '—' }}</div></div>
+                                                        <div class="{{ $fieldBox }}"><div class="text-[11px] text-gray-400">Asia</div><div class="mt-0.5 font-medium text-gray-900 dark:text-white">{{ $course->price_asia !== null ? number_format($course->price_asia, 2) : '—' }}</div></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
