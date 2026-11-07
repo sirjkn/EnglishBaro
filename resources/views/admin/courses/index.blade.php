@@ -69,16 +69,16 @@
                                 : 'This removes the course. Units (tracks) must be removed or reassigned first.';
                         @endphp
 
-                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl border border-b-0 border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
-                            <h2 class="text-sm font-bold text-gray-900 dark:text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
-                            <div class="flex items-center gap-3">
-                                <a href="{{ route('courses.show', $course) }}" target="_blank" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">View Live</a>
+                        <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
+                            <h2 class="text-sm font-bold text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('courses.show', $course) }}" target="_blank" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">View Live</a>
                                 <x-confirm-delete-form
                                     :action="route('admin.courses.destroy', $course)"
                                     label="Delete Course"
                                     :title="'Delete course '.$course->course_code.'?'"
                                     :message="$deleteMessage"
-                                    class="text-xs font-medium text-red-600 hover:text-red-500"
+                                    class="rounded-full border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400"
                                 />
                             </div>
                         </div>
