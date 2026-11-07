@@ -114,9 +114,15 @@
                                 {{-- Bio data --}}
                                 <div x-data="{ editingBio: false }">
                                     <div class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
-                                        <div class="flex items-center gap-2 text-sm">
-                                            <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
-                                            <x-badge :color="$student->hasVerifiedEmail() ? 'green' : 'red'" dot>{{ $student->hasVerifiedEmail() ? 'Verified' : 'Not Verified' }}</x-badge>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
+                                                <x-badge :color="$student->hasVerifiedEmail() ? 'green' : 'red'" dot>{{ $student->hasVerifiedEmail() ? 'Verified' : 'Not Verified' }}</x-badge>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-gray-500 dark:text-gray-400">Status:</span>
+                                                <x-badge :color="$student->is_active ? 'green' : 'gray'" dot>{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge>
+                                            </div>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             @unless ($student->hasVerifiedEmail())
@@ -148,8 +154,6 @@
                                             <div><dt class="text-xs text-gray-400">Phone</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->phone ?? '—' }}</dd></div>
                                             <div><dt class="text-xs text-gray-400">Country</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->country ?? '—' }}</dd></div>
                                             <div><dt class="text-xs text-gray-400">Referral Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->referral_email ?? '—' }}</dd></div>
-                                            <div><dt class="text-xs text-gray-400">Track</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->track?->track_code ?? '—' }}</dd></div>
-                                            <div><dt class="text-xs text-gray-400">Status</dt><dd><x-badge :color="$student->is_active ? 'green' : 'gray'" dot>{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge></dd></div>
                                         </dl>
                                     </div>
 

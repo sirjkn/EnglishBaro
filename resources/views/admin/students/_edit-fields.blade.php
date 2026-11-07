@@ -52,16 +52,6 @@
         <input type="email" name="referral_email" value="{{ old('referral_email', $student->studentProfile?->referral_email) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
     </div>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Track</label>
-        <select name="track_id" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-            <option value="">Not set</option>
-            @foreach ($tracks as $track)
-                <option value="{{ $track->id }}" @selected(old('track_id', $student->studentProfile?->track_id) == $track->id)>{{ $track->track_code }} — {{ $track->name }}</option>
-            @endforeach
-        </select>
-    </div>
-
     <div class="flex items-end gap-2 pb-2">
         <input type="checkbox" name="is_active" value="1" id="is_active_{{ $student->id }}" @checked(old('is_active', $student->is_active)) class="rounded border-gray-300 text-indigo-600">
         <label for="is_active_{{ $student->id }}" class="text-sm text-gray-700 dark:text-gray-300">Active</label>
