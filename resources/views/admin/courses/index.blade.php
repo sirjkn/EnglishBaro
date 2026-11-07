@@ -1,6 +1,4 @@
 <x-layouts.admin :title="'Courses'">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Courses</h1>
-
     @if (session('error'))
         <div class="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
             {{ session('error') }}
