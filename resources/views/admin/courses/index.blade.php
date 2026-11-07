@@ -109,18 +109,20 @@
                         </div>
 
                         <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                            <div class="max-w-sm">
-                                @include('admin.courses._thumbnail-field', ['course' => $course, 'standalone' => true])
-                            </div>
+                            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                                <div>
+                                    <div class="mb-5">
+                                        @include('admin.courses._thumbnail-field', ['course' => $course, 'standalone' => true])
+                                    </div>
 
-                            <div class="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                                <form id="course-form-{{ $course->id }}" method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    @include('admin.courses._form', ['course' => $course, 'includeThumbnail' => false])
+                                    <form id="course-form-{{ $course->id }}" method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        @include('admin.courses._form', ['course' => $course, 'includeThumbnail' => false])
 
-                                    <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
-                                </form>
+                                        <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                    </form>
+                                </div>
 
                                 <div>
                                     <div x-data="{ addingUnit: false }">
