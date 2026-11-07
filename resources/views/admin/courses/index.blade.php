@@ -1,17 +1,12 @@
 <x-layouts.admin :title="'Courses'">
-    @if (session('error'))
-        <div class="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300">
-            {{ session('error') }}
-        </div>
-    @endif
-    @if (session('status'))
-        <div class="mt-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/30 dark:text-green-300">
-            {{ session('status') }}
-        </div>
-    @endif
-
+    {{--
+        Status/error flashes are intentionally not shown here — every action on
+        this page (course/track create, update, delete) is already recorded in
+        the Audit Logs, so admins can see what happened and when without a
+        banner eating space on every page load.
+    --}}
     <div
-        class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-4"
+        class="grid grid-cols-1 gap-6 lg:grid-cols-4"
         x-data="{ selected: {{ $openCourseId ?? 'null' }}, mode: '{{ $openCourseId ? 'edit' : 'create' }}' }"
     >
         {{-- 1/4: course list --}}
