@@ -29,7 +29,7 @@
                     <li>
                         <button
                             type="button"
-                            @click="selected = {{ $course->id }}"
+                            @click="selected = {{ $course->id }}; editingTrack = null"
                             class="w-full px-3 py-2.5 text-left transition"
                             :class="selected === {{ $course->id }} ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700'"
                         >
@@ -61,7 +61,7 @@
                             <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
                         </div>
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">+ Add Unit</a>
+                            <a x-show="editingTrack === null" href="{{ route('admin.tracks.create', ['course_id' => $course->id]) }}" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">+ Add Unit</a>
                             <a href="{{ route('admin.courses.edit', $course) }}" class="rounded-md border border-orange-600 bg-orange-500 px-3 py-1 text-xs font-semibold text-white hover:bg-orange-400">Edit Course &rarr;</a>
                         </div>
                     </div>
