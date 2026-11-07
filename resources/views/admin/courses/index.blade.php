@@ -23,7 +23,7 @@
                 <button
                     type="button"
                     @click="mode = 'create'; selected = null"
-                    class="rounded-full border border-white/40 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/10"
+                    class="rounded-md border border-white/40 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/10"
                 >
                     + Add Course
                 </button>
@@ -91,19 +91,19 @@
                             <div class="flex flex-wrap items-center gap-4">
                                 <h2 class="text-sm font-bold text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="rounded-full border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
-                                    <span class="rounded-full border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $enrolledCount }} enrolled</span>
-                                    <span class="rounded-full border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->subscription_days }} days</span>
+                                    <span class="rounded-md border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
+                                    <span class="rounded-md border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $enrolledCount }} enrolled</span>
+                                    <span class="rounded-md border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->subscription_days }} days</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('courses.show', $course) }}" target="_blank" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">View Live</a>
+                                <a href="{{ route('courses.show', $course) }}" target="_blank" class="rounded-md border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">View Live</a>
                                 <x-confirm-delete-form
                                     :action="route('admin.courses.destroy', $course)"
                                     label="Delete Course"
                                     :title="'Delete course '.$course->course_code.'?'"
                                     :message="$deleteMessage"
-                                    class="rounded-full border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400"
+                                    class="rounded-md border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400"
                                 />
                             </div>
                         </div>
