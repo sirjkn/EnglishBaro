@@ -33,9 +33,11 @@
             </a>
         </div>
 
-    <div x-show="tab === 'company'" x-cloak class="mt-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
-        <h2 class="font-semibold text-gray-900 dark:text-white">Company Settings</h2>
-        <form method="POST" action="{{ route('admin.settings.company') }}" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div x-show="tab === 'company'" x-cloak class="mt-6 overflow-hidden rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+        <div class="bg-indigo-600 px-6 py-3 dark:bg-indigo-800">
+            <h2 class="text-sm font-bold text-white">Company Settings</h2>
+        </div>
+        <form method="POST" action="{{ route('admin.settings.company') }}" class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
             <input type="hidden" name="_tab" value="company">
             @csrf
             @method('PUT')
@@ -63,9 +65,12 @@
 
     </div>
 
-    <div x-show="tab === 'payment'" x-cloak class="mt-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
-        <h2 class="font-semibold text-gray-900 dark:text-white">Payment Gateways</h2>
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Credentials are encrypted at rest and never exposed to the frontend.</p>
+    <div x-show="tab === 'payment'" x-cloak class="mt-6 overflow-hidden rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+        <div class="bg-indigo-600 px-6 py-3 dark:bg-indigo-800">
+            <h2 class="text-sm font-bold text-white">Payment Gateways</h2>
+        </div>
+        <div class="p-6">
+        <p class="text-xs text-gray-500 dark:text-gray-400">Credentials are encrypted at rest and never exposed to the frontend.</p>
 
         <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
             @foreach ($gateways as $gateway)
@@ -100,12 +105,16 @@
                 </form>
             @endforeach
         </div>
+        </div>
     </div>
 
-    <div x-show="tab === 'system'" x-cloak class="mt-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
-        <h2 class="font-semibold text-gray-900 dark:text-white">System Settings</h2>
+    <div x-show="tab === 'system'" x-cloak class="mt-6 overflow-hidden rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+        <div class="bg-indigo-600 px-6 py-3 dark:bg-indigo-800">
+            <h2 class="text-sm font-bold text-white">System Settings</h2>
+        </div>
+        <div class="p-6">
 
-        <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="mt-4 flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+        <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700">
             <div>
                 <p class="text-sm font-medium text-gray-900 dark:text-white">Dark Mode</p>
                 <p class="text-xs text-gray-500 dark:text-gray-400">Off by default. This only affects your own browser.</p>
@@ -150,6 +159,7 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save System Settings</button>
             </div>
         </form>
+        </div>
     </div>
 
     <div x-show="tab === 'backup'" x-cloak class="mt-6 space-y-6">
