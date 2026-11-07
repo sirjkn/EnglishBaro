@@ -60,9 +60,7 @@
 
         {{-- 3/4: filters + inline create/edit panel --}}
         <div class="lg:col-span-3">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Students</h1>
-
-            <form method="GET" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-4">
+            <form method="GET" class="grid grid-cols-1 gap-3 sm:grid-cols-4">
                 <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                 <select name="track" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                     <option value="">All Tracks</option>
