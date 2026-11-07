@@ -18,7 +18,7 @@ use Illuminate\View\View;
 
 class TrackController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', Track::class);
 
@@ -26,15 +26,22 @@ class TrackController extends Controller
         // Spanish, ...) are never shown mixed in one flat list — easy to
         // mistake for one another otherwise, since they can share codes
         // like "A1" across courses.
+        //
+        // Each track's edit form is rendered inline on this page (in a
+        // hidden panel each, toggled by Alpine) rather than on a separate
+        // page per track, so its thumbnail needs loading up front here.
         $courses = Course::query()
-            ->with(['tracks' => fn ($query) => $query->withCount(['levels', 'enrollments', 'students'])->orderBy('order')])
+            ->with(['tracks' => fn ($query) => $query->withCount(['levels', 'enrollments', 'students'])->with('thumbnail')->orderBy('order')])
             ->orderBy('order')
             ->get();
 
         $tracks = $courses->flatMap->tracks;
 
+        $openCourseId = $request->integer('open') ?: $courses->first()?->id;
+
         return view('admin.tracks.index', [
             'courses' => $courses,
+            'openCourseId' => $openCourseId,
             'overview' => [
                 'total' => $tracks->count(),
                 'published' => $tracks->where('status', 'published')->count(),
@@ -139,7 +146,12 @@ class TrackController extends Controller
 
         AuditLogger::log('admin.track.updated', $track, $previous, $validated);
 
-        return redirect()->route('admin.tracks.edit', $track)->with('status', 'Track updated.');
+        $redirectTo = \App\Support\SafeRedirect::resolve(
+            $request->input('redirect'),
+            route('admin.tracks.edit', $track)
+        );
+
+        return redirect($redirectTo)->with('status', 'Track updated.');
     }
 
     private function handleThumbnail(Request $request, MediaService $mediaService): ?int

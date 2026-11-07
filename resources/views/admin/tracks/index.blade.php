@@ -23,7 +23,7 @@
         <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" />
     </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4" x-data="{ selected: {{ $courses->first()?->id ?? 'null' }} }">
+    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4" x-data="{ selected: {{ $openCourseId ?? 'null' }}, editingTrack: null }">
         {{-- 1/4: courses, stacked in one column --}}
         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 lg:col-span-1">
             <div class="bg-indigo-600 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white dark:bg-indigo-800">
@@ -71,7 +71,7 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto rounded-b-xl border border-gray-200 dark:border-gray-700">
+                    <div x-show="editingTrack === null" class="overflow-x-auto rounded-b-xl border border-gray-200 dark:border-gray-700">
                         <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                             <thead>
                                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
@@ -101,7 +101,7 @@
                                             @endphp
                                             <a href="{{ route('tracks.show', $track) }}" target="_blank" class="rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">View</a>
                                             <a href="{{ route('admin.tracks.levels.index', $track) }}" class="ml-2 rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">Levels</a>
-                                            <a href="{{ route('admin.tracks.edit', $track) }}" class="ml-2 rounded border border-indigo-600 px-2 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">Edit</a>
+                                            <button type="button" @click="editingTrack = {{ $track->id }}" class="ml-2 rounded border border-indigo-600 px-2 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">Edit</button>
                                             <span class="ml-2 inline-block">
                                                 <x-confirm-delete-form
                                                     :action="route('admin.tracks.destroy', $track)"
@@ -118,6 +118,41 @@
                             </tbody>
                         </table>
                     </div>
+
+                    @foreach ($course->tracks as $track)
+                        <div x-show="editingTrack === {{ $track->id }}" x-cloak class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
+                            @php
+                                $trackEnrolledCount = $track->students_count;
+                                $trackDeleteMessage = $trackEnrolledCount > 0
+                                    ? "This track has {$trackEnrolledCount} enrolled student(s). Deleting it removes its entire curriculum (all levels, sections and lessons) and cannot be undone."
+                                    : 'This removes its entire curriculum (all levels, sections and lessons) and cannot be undone.';
+                            @endphp
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Editing: {{ $track->track_code }} &middot; {{ $track->name }}</h3>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('admin.tracks.levels.index', $track) }}" class="rounded border border-gray-300 px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">Manage Levels</a>
+                                    <x-confirm-delete-form
+                                        :action="route('admin.tracks.destroy', $track)"
+                                        label="Delete Track"
+                                        :title="'Delete track '.$track->track_code.'?'"
+                                        :message="$trackDeleteMessage"
+                                        class="rounded border border-red-600 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-600 hover:text-white dark:border-red-500 dark:text-red-400"
+                                    />
+                                </div>
+                            </div>
+
+                            <form method="POST" action="{{ route('admin.tracks.update', $track) }}" enctype="multipart/form-data" class="mt-4 max-w-3xl">
+                                @csrf
+                                @method('PUT')
+                                @include('admin.tracks._form', ['track' => $track, 'hideCourseField' => true])
+                                <input type="hidden" name="redirect" value="{{ route('admin.tracks.index', ['open' => $course->id], false) }}">
+                                <div class="mt-6 flex items-center gap-2">
+                                    <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                    <button type="button" @click="editingTrack = null" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    @endforeach
                 </div>
             @empty
                 <div class="flex h-full items-center justify-center rounded-xl border border-dashed border-gray-300 p-12 text-center text-sm text-gray-400 dark:border-gray-600">
