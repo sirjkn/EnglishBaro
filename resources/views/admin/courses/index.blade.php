@@ -134,7 +134,16 @@
                                 </div>
 
                                 <div>
-                                    <div x-data="{ addingUnit: false, editingTrack: null }">
+                                    @php
+                                        // If a track create/edit on this course just failed validation, the
+                                        // redirect lands back here with no indication of which panel to
+                                        // reopen unless we work it out from the old input ourselves — otherwise
+                                        // the error is flashed but the panel showing it stays collapsed.
+                                        $reopenTrackError = $errors->any() && (int) old('course_id') === $course->id;
+                                        $reopenAddingUnit = $reopenTrackError && old('track_code') !== null;
+                                        $reopenEditingTrackId = $reopenTrackError && old('_editing_track_id') !== null ? (int) old('_editing_track_id') : null;
+                                    @endphp
+                                    <div x-data="{ addingUnit: {{ $reopenAddingUnit ? 'true' : 'false' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }} }">
                                         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
                                             <div class="flex items-center justify-between gap-2 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                                                 <div>

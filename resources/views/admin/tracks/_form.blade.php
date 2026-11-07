@@ -1,6 +1,10 @@
 <div class="space-y-4">
     @if ($hideCourseField ?? false)
         <input type="hidden" name="course_id" value="{{ $track->course_id }}">
+        @unless ($creating ?? false)
+            {{-- Lets the page reopen this exact track's edit panel if the save below fails validation. --}}
+            <input type="hidden" name="_editing_track_id" value="{{ $track->id }}">
+        @endunless
     @else
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course</label>
