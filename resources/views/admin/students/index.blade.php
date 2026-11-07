@@ -97,25 +97,25 @@
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                             <div class="flex items-center gap-3">
                                 <h2 class="text-sm font-bold text-white">Editing: {{ $student->name }}</h2>
-                                <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ $student->is_active ? 'bg-green-500' : 'bg-red-500' }}">{{ $student->is_active ? 'Active' : 'Inactive' }}</span>
+                                <span class="rounded-md px-3 py-1 text-xs font-semibold text-white {{ $student->is_active ? 'bg-green-500' : 'bg-red-500' }}">{{ $student->is_active ? 'Active' : 'Inactive' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 @if ($student->hasVerifiedEmail())
-                                    <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-semibold text-white">Email Verified</span>
+                                    <span class="rounded-md bg-emerald-500 px-3 py-1 text-xs font-semibold text-white">Email Verified</span>
                                 @else
                                     <form method="POST" action="{{ route('admin.students.verify-email', $student) }}" onsubmit="return confirm('Mark {{ $student->name }}\'s email as verified? Use this if their verification email never arrived or the link isn\'t working.');">
                                         @csrf
-                                        <button type="submit" class="rounded-full border border-amber-400 bg-amber-500 px-3 py-1 text-xs font-semibold text-white hover:bg-amber-400">Not Verified — Click to Verify</button>
+                                        <button type="submit" class="rounded-md border border-amber-400 bg-amber-500 px-3 py-1 text-xs font-semibold text-white hover:bg-amber-400">Not Verified — Click to Verify</button>
                                     </form>
                                 @endif
                                 <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
                                     @csrf
-                                    <button type="submit" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Reset Password</button>
+                                    <button type="submit" class="rounded-md border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Reset Password</button>
                                 </form>
                                 <form method="POST" action="{{ route('admin.students.destroy', $student) }}" onsubmit="return confirm('Remove this student? This cannot be undone.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="rounded-full border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400">Delete</button>
+                                    <button type="submit" class="rounded-md border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400">Delete</button>
                                 </form>
                             </div>
                         </div>
