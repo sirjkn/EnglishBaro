@@ -83,7 +83,7 @@
                                 <form method="POST" action="{{ route('admin.testimonials.destroy', $testimonial) }}" onsubmit="return confirm('Delete this testimonial?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="rounded-full border border-red-200/60 px-3 py-1 text-xs font-medium text-red-100 hover:bg-white/10">Delete</button>
+                                    <button type="submit" class="rounded-full border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400">Delete</button>
                                 </form>
                             </div>
                         </div>
