@@ -25,7 +25,7 @@ class CourseController extends Controller
         // up front here.
         $courses = Course::query()
             ->withCount('tracks')
-            ->with(['thumbnail', 'tracks' => fn ($query) => $query->withCount('levels')->orderBy('order')])
+            ->with(['thumbnail', 'tracks' => fn ($query) => $query->withCount(['levels', 'students'])->with('thumbnail')->orderBy('order')])
             ->orderBy('order')
             ->get();
 

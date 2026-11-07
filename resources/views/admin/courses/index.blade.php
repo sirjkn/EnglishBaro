@@ -134,15 +134,18 @@
                                 </div>
 
                                 <div>
-                                    <div x-data="{ addingUnit: false }">
+                                    <div x-data="{ addingUnit: false, editingTrack: null }">
                                         <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
                                             <div class="flex items-center justify-between gap-2 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                                                 <div>
                                                     <h3 class="text-sm font-bold text-white">Units in this Course</h3>
                                                     <p class="mt-0.5 text-[11px] text-indigo-100">Students who buy {{ $course->name }} get every unit below. The placement test decides which one they start on.</p>
                                                 </div>
-                                                <button type="button" @click="addingUnit = ! addingUnit" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
+                                                <button type="button" x-show="editingTrack === null" @click="addingUnit = ! addingUnit" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
                                                     <span x-text="addingUnit ? 'Cancel' : '+ Add Unit'"></span>
+                                                </button>
+                                                <button type="button" x-show="editingTrack !== null" x-cloak @click="editingTrack = null" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
+                                                    Cancel
                                                 </button>
                                             </div>
 
@@ -155,7 +158,34 @@
                                                 </form>
                                             </div>
 
-                                            <div x-show="! addingUnit" class="overflow-x-auto">
+                                            @foreach ($course->tracks as $track)
+                                                @php
+                                                    $courseTrackDeleteMessage = $track->students_count > 0
+                                                        ? "This track has {$track->students_count} enrolled student(s). Deleting it removes its entire curriculum (all levels, sections and lessons) and cannot be undone."
+                                                        : 'This removes its entire curriculum (all levels, sections and lessons) and cannot be undone.';
+                                                @endphp
+                                                <div x-show="editingTrack === {{ $track->id }}" x-cloak class="border-t border-gray-200 p-4 dark:border-gray-700">
+                                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Editing: {{ $track->track_code }} &middot; {{ $track->name }}</h4>
+                                                        <x-confirm-delete-form
+                                                            :action="route('admin.tracks.destroy', $track)"
+                                                            label="Delete Track"
+                                                            :title="'Delete track '.$track->track_code.'?'"
+                                                            :message="$courseTrackDeleteMessage"
+                                                            class="rounded-md border border-red-300 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/30"
+                                                        />
+                                                    </div>
+                                                    <form method="POST" action="{{ route('admin.tracks.update', $track) }}" enctype="multipart/form-data" class="mt-3">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        @include('admin.tracks._form', ['track' => $track, 'hideCourseField' => true])
+                                                        <input type="hidden" name="redirect" value="{{ route('admin.courses.index', ['open' => $course->id], false) }}">
+                                                        <button type="submit" class="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                                    </form>
+                                                </div>
+                                            @endforeach
+
+                                            <div x-show="! addingUnit && editingTrack === null" class="overflow-x-auto">
                                                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                                     <thead>
                                                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
@@ -178,7 +208,7 @@
                                                                 <td class="px-4 py-2 text-gray-700 dark:text-gray-300">{{ ucfirst($track->status) }}</td>
                                                                 <td class="px-4 py-2 text-right">
                                                                     <a href="{{ route('admin.tracks.levels.index', $track) }}" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">Levels</a>
-                                                                    <a href="{{ route('admin.tracks.edit', $track) }}" class="ml-3 text-xs font-medium text-indigo-600 hover:text-indigo-500">Edit</a>
+                                                                    <button type="button" @click="editingTrack = {{ $track->id }}" class="ml-3 text-xs font-medium text-indigo-600 hover:text-indigo-500">Edit</button>
                                                                 </td>
                                                             </tr>
                                                         @empty
