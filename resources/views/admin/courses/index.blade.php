@@ -110,7 +110,7 @@
                                 </div>
 
                                 <div>
-                                    @include('admin.courses._thumbnail-field', ['course' => $course])
+                                    @include('admin.courses._thumbnail-field', ['course' => $course, 'standalone' => true])
                                 </div>
                             </div>
 

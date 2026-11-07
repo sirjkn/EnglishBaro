@@ -49,7 +49,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, MediaService $mediaService): RedirectResponse
     {
         $this->authorize('create', Course::class);
 
@@ -58,6 +58,10 @@ class CourseController extends Controller
         $validated['slug'] = Str::slug($validated['course_code'].'-'.$validated['name']);
         $validated['order'] = (int) Course::query()->max('order') + 1;
         $validated['is_active'] = true;
+
+        if ($thumbnailId = $this->handleThumbnail($request, $mediaService)) {
+            $validated['thumbnail_id'] = $thumbnailId;
+        }
 
         $course = Course::query()->create($validated);
 
