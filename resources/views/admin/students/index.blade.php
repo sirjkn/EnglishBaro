@@ -100,6 +100,14 @@
                                 <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ $student->is_active ? 'bg-green-500' : 'bg-red-500' }}">{{ $student->is_active ? 'Active' : 'Inactive' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
+                                @if ($student->hasVerifiedEmail())
+                                    <span class="rounded-full bg-emerald-500 px-3 py-1 text-xs font-semibold text-white">Email Verified</span>
+                                @else
+                                    <form method="POST" action="{{ route('admin.students.verify-email', $student) }}" onsubmit="return confirm('Mark {{ $student->name }}\'s email as verified? Use this if their verification email never arrived or the link isn\'t working.');">
+                                        @csrf
+                                        <button type="submit" class="rounded-full border border-amber-200 bg-amber-500 px-3 py-1 text-xs font-semibold text-white hover:bg-amber-400">Not Verified — Click to Verify</button>
+                                    </form>
+                                @endif
                                 <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
                                     @csrf
                                     <button type="submit" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Reset Password</button>
@@ -116,21 +124,6 @@
                             <div class="grid grid-cols-1 gap-6">
                                 {{-- Bio data --}}
                                 <div x-data="{ editingBio: false }">
-                                    <div class="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 dark:border-gray-700 dark:bg-gray-900/40">
-                                        <div class="flex items-center gap-2 text-sm">
-                                            <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
-                                            <x-badge :color="$student->hasVerifiedEmail() ? 'green' : 'red'" dot>{{ $student->hasVerifiedEmail() ? 'Verified' : 'Not Verified' }}</x-badge>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            @unless ($student->hasVerifiedEmail())
-                                                <form method="POST" action="{{ route('admin.students.verify-email', $student) }}" onsubmit="return confirm('Mark {{ $student->name }}\'s email as verified? Use this if their verification email never arrived or the link isn\'t working.');">
-                                                    @csrf
-                                                    <button type="submit" class="rounded-md border border-emerald-300 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-900/30">Verify Email</button>
-                                                </form>
-                                            @endunless
-                                        </div>
-                                    </div>
-
                                     {{-- Read-only view: shown by default, prefilled from the student's current data --}}
                                     <div x-show="! editingBio">
                                         <div class="flex items-center justify-between">
