@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -35,10 +36,16 @@ class PaymentController extends Controller
             $query->where('transaction_id', 'like', "%{$transactionId}%");
         }
 
-        $payments = $query->latest()->paginate(15)->withQueryString();
+        // Each payment's detail panel is rendered inline on this page (in a
+        // hidden block each, toggled by Alpine) rather than on a separate
+        // page per payment, so its transactions need loading up front here.
+        $payments = $query->with('transactions')->latest()->paginate(15)->withQueryString();
+
+        $openPaymentId = $request->integer('open') ?: null;
 
         return view('admin.payments.index', [
             'payments' => $payments,
+            'openPaymentId' => $openPaymentId,
             'overview' => [
                 'total_revenue' => (float) Payment::query()->where('status', 'successful')->sum('amount'),
                 'successful' => Payment::query()->where('status', 'successful')->count(),
@@ -48,12 +55,12 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function show(Payment $payment): View
+    public function show(Payment $payment): RedirectResponse
     {
         $this->authorize('view', $payment);
 
-        $payment->load(['user', 'track', 'transactions']);
-
-        return view('admin.payments.show', ['payment' => $payment]);
+        // The standalone payment page was retired in favor of the inline
+        // detail panel on the payments list.
+        return redirect()->route('admin.payments.index', ['open' => $payment->id]);
     }
 }
