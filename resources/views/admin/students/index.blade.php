@@ -116,7 +116,7 @@
                         <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
                             <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
                                 {{-- Bio data --}}
-                                <div>
+                                <div x-data="{ editingBio: false }">
                                     <div class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
                                         <div class="flex items-center gap-2 text-sm">
                                             <span class="text-gray-500 dark:text-gray-400">Email Verified:</span>
@@ -136,13 +136,44 @@
                                         </div>
                                     </div>
 
-                                    <form method="POST" action="{{ route('admin.students.update', $student) }}" enctype="multipart/form-data">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="redirect" value="{{ request()->fullUrlWithQuery(['open' => $student->id]) }}">
-                                        @include('admin.students._edit-fields', ['student' => $student, 'tracks' => $tracks, 'countries' => $countries])
-                                        <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
-                                    </form>
+                                    {{-- Read-only view: shown by default, prefilled from the student's current data --}}
+                                    <div x-show="! editingBio">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Bio Data</h3>
+                                            <button type="button" @click="editingBio = true" class="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                                                <x-icons.pencil class="h-3.5 w-3.5" /> Edit
+                                            </button>
+                                        </div>
+
+                                        <div class="mt-3 flex items-center gap-3">
+                                            <x-student-avatar :profile="$student->studentProfile" size="h-14 w-14" />
+                                        </div>
+
+                                        <dl class="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
+                                            <div><dt class="text-xs text-gray-400">Full Names</dt><dd class="text-gray-900 dark:text-white">{{ $student->name }}</dd></div>
+                                            <div><dt class="text-xs text-gray-400">Gender</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->gender ? ucfirst($student->studentProfile->gender) : '—' }}</dd></div>
+                                            <div><dt class="text-xs text-gray-400">Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->email }}</dd></div>
+                                            <div><dt class="text-xs text-gray-400">Phone</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->phone ?? '—' }}</dd></div>
+                                            <div><dt class="text-xs text-gray-400">Country</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->country ?? '—' }}</dd></div>
+                                            <div><dt class="text-xs text-gray-400">Referral Email</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->referral_email ?? '—' }}</dd></div>
+                                            <div><dt class="text-xs text-gray-400">Track</dt><dd class="text-gray-900 dark:text-white">{{ $student->studentProfile?->track?->track_code ?? '—' }}</dd></div>
+                                            <div><dt class="text-xs text-gray-400">Status</dt><dd><x-badge :color="$student->is_active ? 'green' : 'gray'" dot>{{ $student->is_active ? 'Active' : 'Inactive' }}</x-badge></dd></div>
+                                        </dl>
+                                    </div>
+
+                                    {{-- Edit view: opt in via the Edit button, with Save/Cancel --}}
+                                    <div x-show="editingBio" x-cloak>
+                                        <form method="POST" action="{{ route('admin.students.update', $student) }}" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="redirect" value="{{ request()->fullUrlWithQuery(['open' => $student->id]) }}">
+                                            @include('admin.students._edit-fields', ['student' => $student, 'tracks' => $tracks, 'countries' => $countries])
+                                            <div class="mt-6 flex items-center gap-2">
+                                                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                                <button type="button" @click="editingBio = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
 
                                 {{-- Track --}}
