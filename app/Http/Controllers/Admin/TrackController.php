@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Level;
+use App\Models\Subscription;
 use App\Models\Track;
 use App\Services\AuditLogger;
 use App\Services\MediaService;
@@ -82,6 +83,8 @@ class TrackController extends Controller
 
         $curriculumGenerator->generate($track);
 
+        $this->grantExistingCourseOwnersAccess($track);
+
         AuditLogger::log('admin.track.created', $track, [], $validated);
 
         $redirectTo = \App\Support\SafeRedirect::resolve(
@@ -90,6 +93,45 @@ class TrackController extends Controller
         );
 
         return redirect($redirectTo)->with('status', "Track {$track->track_code} created with 100 levels.");
+    }
+
+    /**
+     * Buying a course is meant to unlock every track inside it, including
+     * ones added later — without this, a track created after a student
+     * already paid for the course would be invisible to them, since access
+     * is checked per-track Enrollment/Subscription rows (see TrackPolicy).
+     * So every user who already owns a sibling track in this course gets
+     * the same enrollment + subscription backfilled for the new one,
+     * mirroring their existing access to it exactly: a currently active
+     * subscriber gets active access to the new track too, while an expired
+     * or cancelled one doesn't get access they didn't actually pay for.
+     */
+    private function grantExistingCourseOwnersAccess(Track $track): void
+    {
+        $siblingSubscriptions = Subscription::query()
+            ->whereHas('track', fn ($query) => $query->where('course_id', $track->course_id)->where('id', '!=', $track->id))
+            ->orderByDesc('starts_at')
+            ->get()
+            ->unique('user_id');
+
+        foreach ($siblingSubscriptions as $subscription) {
+            $enrollment = Enrollment::query()->updateOrCreate(
+                ['user_id' => $subscription->user_id, 'track_id' => $track->id],
+                ['status' => $subscription->status, 'enrolled_at' => now()]
+            );
+
+            Subscription::query()->updateOrCreate(
+                ['user_id' => $subscription->user_id, 'track_id' => $track->id, 'enrollment_id' => $enrollment->id],
+                [
+                    'payment_id' => $subscription->payment_id,
+                    'starts_at' => $subscription->starts_at,
+                    'expires_at' => $subscription->expires_at,
+                    'duration_days' => $subscription->duration_days,
+                    'status' => $subscription->status,
+                    'region' => $subscription->region,
+                ]
+            );
+        }
     }
 
     public function destroy(Track $track): RedirectResponse
