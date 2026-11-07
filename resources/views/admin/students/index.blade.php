@@ -103,12 +103,16 @@
                     <div x-show="mode === 'edit' && selected === {{ $student->id }}" x-cloak>
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                             <h2 class="text-sm font-bold text-white">Editing: {{ $student->name }}</h2>
-                            <div class="flex items-center gap-3">
-                                <a href="{{ route('admin.students.show', $student) }}" class="text-xs font-medium text-indigo-100 hover:text-white">Full Profile</a>
-                                <form method="POST" action="{{ route('admin.students.destroy', $student) }}" class="inline" onsubmit="return confirm('Remove this student? This cannot be undone.');">
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('admin.students.show', $student) }}" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Full Profile</a>
+                                <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
+                                    @csrf
+                                    <button type="submit" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Reset Password</button>
+                                </form>
+                                <form method="POST" action="{{ route('admin.students.destroy', $student) }}" onsubmit="return confirm('Remove this student? This cannot be undone.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-xs font-medium text-red-200 hover:text-white">Delete</button>
+                                    <button type="submit" class="rounded-full border border-red-200/60 px-3 py-1 text-xs font-medium text-red-100 hover:bg-white/10">Delete</button>
                                 </form>
                             </div>
                         </div>
@@ -129,10 +133,6 @@
                                                     <button type="submit" class="rounded-md border border-emerald-300 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-900/30">Verify Email</button>
                                                 </form>
                                             @endunless
-                                            <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
-                                                @csrf
-                                                <button type="submit" class="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Reset Password</button>
-                                            </form>
                                         </div>
                                     </div>
 
