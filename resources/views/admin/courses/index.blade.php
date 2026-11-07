@@ -119,18 +119,73 @@
 
                         <div class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
                             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                                <div>
-                                    <div class="mb-5">
-                                        @include('admin.courses._thumbnail-field', ['course' => $course, 'standalone' => true])
+                                @php
+                                    // A validation error here only ever belongs to this course's own
+                                    // edit form, not the separate "Add a new course" form — that one
+                                    // always submits course_code (this one never does, since the field
+                                    // is disabled once a course exists), so its presence tells the two
+                                    // apart without needing a hidden marker field.
+                                    $reopenCourseDetails = $errors->any() && old('course_code') === null;
+                                @endphp
+                                <div x-data="{ editingCourse: {{ $reopenCourseDetails ? 'true' : 'false' }} }">
+                                    {{-- Read-only view: shown by default so a stray click or keystroke
+                                         can't change a price or other figure by accident. --}}
+                                    <div x-show="! editingCourse">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Course Details</h3>
+                                            <button type="button" @click="editingCourse = true" class="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                                                <x-icons.pencil class="h-3.5 w-3.5" /> Edit
+                                            </button>
+                                        </div>
+
+                                        <div class="mt-3 flex items-start gap-4">
+                                            @if ($course->thumbnail)
+                                                <img src="{{ $course->thumbnail->resolved_url }}" class="h-20 w-20 flex-none rounded-lg object-cover">
+                                            @else
+                                                <div class="flex h-20 w-20 flex-none items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-gray-800">
+                                                    <x-icons.photo class="h-7 w-7" />
+                                                </div>
+                                            @endif
+
+                                            <dl class="grid flex-1 grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                                                <div><dt class="text-xs text-gray-400">Course Code</dt><dd class="font-mono text-gray-900 dark:text-white">{{ $course->course_code }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Name</dt><dd class="text-gray-900 dark:text-white">{{ $course->name }}</dd></div>
+                                                <div class="col-span-2"><dt class="text-xs text-gray-400">Description</dt><dd class="text-gray-900 dark:text-white">{{ $course->description ?: '—' }}</dd></div>
+                                                <div class="col-span-2"><dt class="text-xs text-gray-400">Learning Outcomes</dt><dd class="text-gray-900 dark:text-white">{{ $course->learning_outcomes ?: '—' }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Price</dt><dd class="text-gray-900 dark:text-white">{{ $course->currency }} {{ number_format($course->price, 2) }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Subscription Days</dt><dd class="text-gray-900 dark:text-white">{{ $course->subscription_days }}</dd></div>
+                                                <div class="col-span-2">
+                                                    <dt class="text-xs text-gray-400">Regional Pricing</dt>
+                                                    <dd class="text-gray-900 dark:text-white">
+                                                        Africa {{ $course->price_africa !== null ? number_format($course->price_africa, 2) : '—' }}
+                                                        &middot; Europe {{ $course->price_europe !== null ? number_format($course->price_europe, 2) : '—' }}
+                                                        &middot; N. America {{ $course->price_north_america !== null ? number_format($course->price_north_america, 2) : '—' }}
+                                                        &middot; Asia {{ $course->price_asia !== null ? number_format($course->price_asia, 2) : '—' }}
+                                                    </dd>
+                                                </div>
+                                                <div><dt class="text-xs text-gray-400">Status</dt><dd class="text-gray-900 dark:text-white">{{ ucfirst($course->status) }}</dd></div>
+                                                <div><dt class="text-xs text-gray-400">Featured</dt><dd class="text-gray-900 dark:text-white">{{ $course->is_featured ? 'Yes' : 'No' }}</dd></div>
+                                            </dl>
+                                        </div>
                                     </div>
 
-                                    <form id="course-form-{{ $course->id }}" method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
-                                        @csrf
-                                        @method('PUT')
-                                        @include('admin.courses._form', ['course' => $course, 'includeThumbnail' => false])
+                                    {{-- Edit view: opt in via the Edit button, with Save/Cancel --}}
+                                    <div x-show="editingCourse" x-cloak>
+                                        <div class="mb-5">
+                                            @include('admin.courses._thumbnail-field', ['course' => $course, 'standalone' => true])
+                                        </div>
 
-                                        <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
-                                    </form>
+                                        <form id="course-form-{{ $course->id }}" method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+                                            @include('admin.courses._form', ['course' => $course, 'includeThumbnail' => false])
+
+                                            <div class="mt-6 flex items-center gap-2">
+                                                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                                <button type="button" @click="editingCourse = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
 
                                 <div>
