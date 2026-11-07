@@ -60,15 +60,6 @@
                 </div>
             </div>
 
-            @if ($creating ?? false)
-                <div class="min-w-0">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Number of Levels</label>
-                    <input type="number" name="level_count" min="1" max="500" value="{{ old('level_count', 100) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    <p class="mt-1 text-xs text-gray-400">How many levels to generate for this track. Can't be changed here afterward — add or remove levels individually from the Levels editor instead.</p>
-                    @error('level_count') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                </div>
-            @endif
-
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                 <select name="status" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
@@ -89,6 +80,15 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Learning Outcomes</label>
                 <textarea name="learning_outcomes" rows="3" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">{{ old('learning_outcomes', $track->learning_outcomes) }}</textarea>
             </div>
+
+            @if ($creating ?? false)
+                <div class="min-w-0">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Number of Levels</label>
+                    <input type="number" name="level_count" min="1" max="500" value="{{ old('level_count', 100) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    <p class="mt-1 text-xs text-gray-400">How many levels to generate for this track. Can't be changed here afterward — add or remove levels individually from the Levels editor instead.</p>
+                    @error('level_count') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                </div>
+            @endif
         </div>
     </div>
 </div>
