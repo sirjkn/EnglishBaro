@@ -36,8 +36,9 @@
         </div>
     </div>
 
+    @php $fieldSuffix = $testimonial?->id ?? 'new'; @endphp
     <div class="flex items-center gap-2">
-        <input type="checkbox" name="is_published" value="1" id="is_published" @checked(old('is_published', $testimonial?->is_published)) class="rounded border-gray-300 text-indigo-600">
-        <label for="is_published" class="text-sm text-gray-700 dark:text-gray-300">Published</label>
+        <input type="checkbox" name="is_published" value="1" id="is_published_{{ $fieldSuffix }}" @checked(old('is_published', $testimonial?->is_published)) class="rounded border-gray-300 text-indigo-600">
+        <label for="is_published_{{ $fieldSuffix }}" class="text-sm text-gray-700 dark:text-gray-300">Published</label>
     </div>
 </div>

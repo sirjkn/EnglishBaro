@@ -12,11 +12,11 @@ use Illuminate\View\View;
 
 class TestimonialController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', \App\Models\User::class);
 
-        $testimonials = Testimonial::query()->with('user')->orderBy('order')->paginate(20);
+        $testimonials = Testimonial::query()->with(['user', 'avatar'])->orderBy('order')->paginate(20);
 
         $overview = [
             'total' => Testimonial::query()->count(),
@@ -25,12 +25,9 @@ class TestimonialController extends Controller
             'unpublished' => Testimonial::query()->where('is_published', false)->count(),
         ];
 
-        return view('admin.testimonials.index', ['testimonials' => $testimonials, 'overview' => $overview]);
-    }
+        $openId = $request->integer('open') ?: $testimonials->first()?->id;
 
-    public function create(): View
-    {
-        return view('admin.testimonials.create');
+        return view('admin.testimonials.index', ['testimonials' => $testimonials, 'overview' => $overview, 'openId' => $openId]);
     }
 
     public function store(Request $request, MediaService $mediaService): RedirectResponse
@@ -42,12 +39,7 @@ class TestimonialController extends Controller
 
         AuditLogger::log('admin.testimonial.created', $testimonial, [], $validated);
 
-        return redirect()->route('admin.testimonials.index')->with('status', 'Testimonial created.');
-    }
-
-    public function edit(Testimonial $testimonial): View
-    {
-        return view('admin.testimonials.edit', ['testimonial' => $testimonial]);
+        return redirect()->route('admin.testimonials.index', ['open' => $testimonial->id])->with('status', 'Testimonial created.');
     }
 
     public function update(Request $request, Testimonial $testimonial, MediaService $mediaService): RedirectResponse
@@ -63,7 +55,7 @@ class TestimonialController extends Controller
 
         AuditLogger::log('admin.testimonial.updated', $testimonial, [], $validated);
 
-        return redirect()->route('admin.testimonials.index')->with('status', 'Testimonial updated.');
+        return redirect()->route('admin.testimonials.index', ['open' => $testimonial->id])->with('status', 'Testimonial updated.');
     }
 
     public function destroy(Testimonial $testimonial): RedirectResponse
@@ -72,7 +64,7 @@ class TestimonialController extends Controller
 
         $testimonial->delete();
 
-        return back()->with('status', 'Testimonial deleted.');
+        return redirect()->route('admin.testimonials.index')->with('status', 'Testimonial deleted.');
     }
 
     public function togglePublish(Testimonial $testimonial): RedirectResponse

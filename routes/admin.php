@@ -132,7 +132,7 @@ Route::middleware(['auth', 'verified', 'admin'])
         });
 
         Route::middleware('module:testimonials')->group(function () {
-            Route::resource('testimonials', TestimonialController::class)->except(['show']);
+            Route::resource('testimonials', TestimonialController::class)->except(['show', 'create', 'edit']);
             Route::post('testimonials/{testimonial}/toggle-publish', [TestimonialController::class, 'togglePublish'])->name('testimonials.toggle-publish');
         });
 
