@@ -1,4 +1,10 @@
 <x-layouts.admin :title="'Users'">
+    @if (session('status'))
+        <div class="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/30 dark:text-green-300">
+            {{ session('status') }}
+        </div>
+    @endif
+
     <div x-data="{ mode: '{{ $openUserId ? 'edit' : 'list' }}', selected: {{ $openUserId ?? 'null' }} }">
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
