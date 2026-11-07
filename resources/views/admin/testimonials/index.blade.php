@@ -76,10 +76,15 @@
                                 <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ $testimonial->is_published ? 'bg-green-500' : 'bg-orange-500' }}">{{ $testimonial->is_published ? 'Published' : 'Unpublished' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <form method="POST" action="{{ route('admin.testimonials.toggle-publish', $testimonial) }}">
-                                    @csrf
-                                    <button type="submit" class="rounded-full px-3 py-1 text-xs font-medium text-white {{ $testimonial->is_published ? 'border border-gray-500 bg-gray-400 hover:bg-gray-500' : 'border border-white/40 hover:bg-white/10' }}">{{ $testimonial->is_published ? 'Unpublish' : 'Publish' }}</button>
-                                </form>
+                                <x-confirm-action-form
+                                    :action="route('admin.testimonials.toggle-publish', $testimonial)"
+                                    :label="$testimonial->is_published ? 'Unpublish' : 'Publish'"
+                                    :title="($testimonial->is_published ? 'Unpublish' : 'Publish').' '.$testimonial->name.'\'s testimonial?'"
+                                    message="Any unsaved changes you've made to the fields below will be lost. Save your changes first if you want them included, then come back to publish or unpublish."
+                                    :confirmLabel="$testimonial->is_published ? 'Yes, Unpublish' : 'Yes, Publish'"
+                                    :class="'rounded-full px-3 py-1 text-xs font-medium text-white '.($testimonial->is_published ? 'border border-gray-500 bg-gray-400 hover:bg-gray-500' : 'border border-white/40 hover:bg-white/10')"
+                                    :confirmClass="$testimonial->is_published ? 'rounded-md bg-gray-500 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600' : 'rounded-md bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-400'"
+                                />
                                 <form method="POST" action="{{ route('admin.testimonials.destroy', $testimonial) }}" onsubmit="return confirm('Delete this testimonial?');">
                                     @csrf
                                     @method('DELETE')
