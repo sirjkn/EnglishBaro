@@ -271,7 +271,8 @@
                                                 </div>
                                             @endforeach
 
-                                            <div x-show="! addingUnit && editingTrack === null" class="max-h-[420px] overflow-y-auto overflow-x-auto">
+                                            <div x-show="! addingUnit && editingTrack === null" class="border-t border-gray-200 dark:border-gray-700">
+                                            <div class="max-h-[420px] overflow-y-auto overflow-x-auto">
                                                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                                     <thead class="sticky top-0 z-10">
                                                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
@@ -304,6 +305,7 @@
                                                         @endforelse
                                                     </tbody>
                                                 </table>
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
