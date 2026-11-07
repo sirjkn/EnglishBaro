@@ -18,7 +18,7 @@
         <div class="flex flex-wrap gap-2 border-t border-gray-200 p-3 dark:border-gray-700">
             @foreach ($categories as $slug => $meta)
                 <a href="{{ route('admin.practice-questions.index', ['category' => $slug]) }}"
-                   class="rounded-full px-3 py-1.5 text-xs font-semibold {{ $category === $slug ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                   class="rounded-md border px-3 py-1.5 text-xs font-semibold {{ $category === $slug ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-gray-300 bg-gray-100 text-gray-600 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700' }}">
                     {{ $meta['title'] }}
                 </a>
             @endforeach
