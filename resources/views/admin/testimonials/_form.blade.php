@@ -1,12 +1,14 @@
 <div class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-        <input type="text" name="name" value="{{ old('name', $testimonial?->name) }}" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+            <input type="text" name="name" value="{{ old('name', $testimonial?->name) }}" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+        </div>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Role Label</label>
-        <input type="text" name="role_label" value="{{ old('role_label', $testimonial?->role_label) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Role Label</label>
+            <input type="text" name="role_label" value="{{ old('role_label', $testimonial?->role_label) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+        </div>
     </div>
 
     <div>
