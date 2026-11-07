@@ -23,7 +23,7 @@
                 <button
                     type="button"
                     @click="mode = 'create'; selected = null"
-                    class="rounded-md border border-white/40 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-white/10"
+                    class="rounded-md border border-green-600 bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-green-400"
                 >
                     + Add Course
                 </button>
