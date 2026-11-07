@@ -31,7 +31,7 @@
                 <div class="bg-indigo-600 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white dark:bg-indigo-800">
                     Students
                 </div>
-                <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+                <ul class="max-h-[60vh] divide-y divide-gray-100 overflow-y-auto dark:divide-gray-700">
                     @forelse ($students as $student)
                         <li>
                             <button
