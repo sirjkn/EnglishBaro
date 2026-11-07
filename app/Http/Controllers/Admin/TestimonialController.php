@@ -45,6 +45,11 @@ class TestimonialController extends Controller
     public function update(Request $request, Testimonial $testimonial, MediaService $mediaService): RedirectResponse
     {
         $validated = $this->validated($request);
+        // Publish status is managed solely by togglePublish() now — the edit
+        // form no longer has a checkbox for it, so don't let its absence
+        // (which $request->boolean() reads as false) silently unpublish the
+        // testimonial on every save.
+        unset($validated['is_published']);
         $avatarId = $this->handleAvatar($request, $mediaService);
 
         if ($avatarId) {

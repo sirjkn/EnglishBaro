@@ -43,9 +43,12 @@
         <textarea name="content" rows="4" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">{{ old('content', $testimonial?->content) }}</textarea>
     </div>
 
-    @php $fieldSuffix = $testimonial?->id ?? 'new'; @endphp
-    <div class="flex items-center gap-2">
-        <input type="checkbox" name="is_published" value="1" id="is_published_{{ $fieldSuffix }}" @checked(old('is_published', $testimonial?->is_published)) class="rounded border-gray-300 text-indigo-600">
-        <label for="is_published_{{ $fieldSuffix }}" class="text-sm text-gray-700 dark:text-gray-300">Published</label>
-    </div>
+    @unless ($testimonial)
+        {{-- Only shown when creating: an existing testimonial's publish status
+             is managed solely by the Publish/Unpublish button above, not here. --}}
+        <div class="flex items-center gap-2">
+            <input type="checkbox" name="is_published" value="1" id="is_published_new" @checked(old('is_published')) class="rounded border-gray-300 text-indigo-600">
+            <label for="is_published_new" class="text-sm text-gray-700 dark:text-gray-300">Published</label>
+        </div>
+    @endunless
 </div>
