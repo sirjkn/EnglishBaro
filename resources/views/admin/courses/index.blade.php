@@ -90,12 +90,10 @@
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                             <div class="flex flex-wrap items-center gap-4">
                                 <h2 class="text-sm font-bold text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
-                                <div class="flex items-center gap-3 text-xs text-indigo-100">
-                                    <span>{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
-                                    <span class="text-indigo-300">&middot;</span>
-                                    <span>{{ $enrolledCount }} enrolled</span>
-                                    <span class="text-indigo-300">&middot;</span>
-                                    <span>{{ $course->subscription_days }} days</span>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="rounded-full border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
+                                    <span class="rounded-full border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $enrolledCount }} enrolled</span>
+                                    <span class="rounded-full border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->subscription_days }} days</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
