@@ -27,6 +27,7 @@ class StudentController extends Controller
         // list rather than on a separate profile page.
         $query = User::query()->where('user_type', 'student')->with([
             'studentProfile.track',
+            'studentProfile.profileImage',
             'enrollments.track',
             'enrollments.subscription',
             'userSessions',
@@ -53,7 +54,9 @@ class StudentController extends Controller
             $query->where('is_active', $status === 'active');
         }
 
-        $students = $query->withCount('enrollments')->latest()->paginate(15)->withQueryString();
+        // Oldest first, so a newly created student appears at the bottom of
+        // the list rather than bumping everyone else down.
+        $students = $query->withCount('enrollments')->oldest()->paginate(15)->withQueryString();
 
         // Edit forms for every student on this page are rendered inline in a
         // hidden panel each (toggled by Alpine) rather than on a separate
@@ -112,7 +115,9 @@ class StudentController extends Controller
 
         AuditLogger::log('admin.student.created', $user, [], ['email' => $user->email]);
 
-        return redirect()->route('admin.students.show', $user)->with('status', 'Student created.');
+        // Back to the list with the new student open in the inline panel,
+        // instead of navigating to a separate full-page profile.
+        return redirect()->route('admin.students.index', ['open' => $user->id])->with('status', 'Student created.');
     }
 
     public function show(User $student): View
