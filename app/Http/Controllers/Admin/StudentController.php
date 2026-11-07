@@ -120,20 +120,15 @@ class StudentController extends Controller
         return redirect()->route('admin.students.index', ['open' => $user->id])->with('status', 'Student created.');
     }
 
-    public function show(User $student): View
+    public function show(User $student): RedirectResponse
     {
         abort_unless($student->user_type === 'student', 404);
         $this->authorize('view', $student);
 
-        $student->load(['studentProfile.track', 'enrollments.track', 'enrollments.subscription', 'userSessions', 'payments.track']);
-
-        $sessionQuota = app(\App\Services\SessionQuotaService::class);
-
-        return view('admin.students.show', [
-            'student' => $student,
-            'sessionsThisMonth' => $sessionQuota->countThisMonth($student),
-            'sessionMonthlyLimit' => \App\Services\SessionQuotaService::MONTHLY_LIMIT,
-        ]);
+        // The standalone profile page was retired in favor of the inline
+        // edit panel on the students list — links elsewhere in the admin
+        // still point here, so keep this route alive as a redirect.
+        return redirect()->route('admin.students.index', ['open' => $student->id]);
     }
 
     public function resetSessionQuota(User $student): RedirectResponse

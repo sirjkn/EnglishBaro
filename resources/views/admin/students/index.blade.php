@@ -97,7 +97,6 @@
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                             <h2 class="text-sm font-bold text-white">Editing: {{ $student->name }}</h2>
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.students.show', $student) }}" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Full Profile</a>
                                 <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Reset {{ $student->name }}\'s password? A new one will be generated and shown once.');">
                                     @csrf
                                     <button type="submit" class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">Reset Password</button>
