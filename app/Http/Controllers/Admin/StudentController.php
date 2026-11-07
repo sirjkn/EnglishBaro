@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\Auth\RegisterUserAction;
 use App\Http\Controllers\Controller;
+use App\Models\AppNotification;
 use App\Models\Track;
 use App\Models\User;
 use App\Services\AuditLogger;
@@ -230,6 +231,44 @@ class StudentController extends Controller
         );
 
         return redirect($redirectTo)->with('status', 'Student updated.');
+    }
+
+    public function switchTrack(Request $request, User $student): RedirectResponse
+    {
+        abort_unless($student->user_type === 'student', 404);
+        $this->authorize('update', $student);
+
+        $validated = $request->validate([
+            'track_id' => ['required', 'exists:tracks,id'],
+        ]);
+
+        $track = Track::findOrFail($validated['track_id']);
+
+        abort_unless(
+            $student->enrollments()->where('track_id', $track->id)->where('status', 'active')->exists(),
+            422,
+            "{$student->name} doesn't have an active enrollment in that track."
+        );
+
+        $previousTrackId = $student->studentProfile?->track_id;
+
+        if ($previousTrackId === $track->id) {
+            return redirect()->route('admin.students.index', ['open' => $student->id]);
+        }
+
+        $student->studentProfile()->update(['track_id' => $track->id]);
+
+        AuditLogger::log('admin.student.track_switched', $student, ['track_id' => $previousTrackId], ['track_id' => $track->id]);
+
+        AppNotification::create([
+            'user_id' => $student->id,
+            'type' => 'track_switched',
+            'title' => "Your active track was switched to {$track->track_code} — {$track->name}",
+            'body' => 'An administrator changed which track you\'re currently learning.',
+            'data' => ['url' => route('student.tracks.show', $track)],
+        ]);
+
+        return redirect()->route('admin.students.index', ['open' => $student->id]);
     }
 
     public function destroy(User $student): RedirectResponse

@@ -114,6 +114,7 @@ Route::middleware(['auth', 'verified', 'admin'])
             Route::post('students/{student}/reset-session-quota', [StudentController::class, 'resetSessionQuota'])->name('students.reset-session-quota');
             Route::post('students/{student}/reset-password', [StudentController::class, 'resetPassword'])->name('students.reset-password');
             Route::post('students/{student}/verify-email', [StudentController::class, 'verifyEmail'])->name('students.verify-email');
+            Route::post('students/{student}/switch-track', [StudentController::class, 'switchTrack'])->name('students.switch-track');
         });
 
         Route::middleware('module:payments')->group(function () {

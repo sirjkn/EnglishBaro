@@ -210,6 +210,7 @@
                                                                     <th class="py-2 pr-4">Expires</th>
                                                                     <th class="py-2 pr-4">Progress</th>
                                                                     <th class="py-2 pr-4">Status</th>
+                                                                    <th class="py-2 pr-4">Current</th>
                                                                     <th class="py-2"></th>
                                                                 </tr>
                                                             </thead>
@@ -218,6 +219,7 @@
                                                                     @php
                                                                         $cancelMessage = "This revokes {$student->name}'s access to {$enrollment->track->track_code}. Their payment record is kept — this does not refund them.";
                                                                         $percent = (int) round($enrollment->progress?->percent_complete ?? 0);
+                                                                        $isCurrentTrack = $student->studentProfile?->track_id === $enrollment->track_id;
                                                                     @endphp
                                                                     <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
                                                                         <td class="py-2 pr-4 pl-3 font-medium text-gray-900 dark:text-white">{{ $enrollment->track->track_code }} — {{ $enrollment->track->name }}</td>
@@ -232,6 +234,17 @@
                                                                             </div>
                                                                         </td>
                                                                         <td class="py-2 pr-4"><x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($enrollment->status) }}</x-badge></td>
+                                                                        <td class="py-2 pr-4">
+                                                                            @if ($isCurrentTrack)
+                                                                                <x-badge color="indigo">Current</x-badge>
+                                                                            @elseif ($enrollment->status === 'active')
+                                                                                <form method="POST" action="{{ route('admin.students.switch-track', $student) }}" onsubmit="return confirm('Switch {{ $student->name }}\'s active track to {{ $enrollment->track->track_code }}? They\'ll be notified of the change.');">
+                                                                                    @csrf
+                                                                                    <input type="hidden" name="track_id" value="{{ $enrollment->track_id }}">
+                                                                                    <button type="submit" class="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">Set as Current</button>
+                                                                                </form>
+                                                                            @endif
+                                                                        </td>
                                                                         <td class="py-2 pr-2 text-right">
                                                                             @if ($enrollment->status === 'active')
                                                                                 <x-double-confirm-form
