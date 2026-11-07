@@ -91,9 +91,9 @@
                             <div class="flex flex-wrap items-center gap-4">
                                 <h2 class="text-sm font-bold text-white">Editing: {{ $course->name }} ({{ $course->course_code }})</h2>
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="rounded-md border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
-                                    <span class="rounded-md border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $enrolledCount }} enrolled</span>
-                                    <span class="rounded-md border border-white/50 px-3 py-1 text-xs font-bold text-white">{{ $course->subscription_days }} days</span>
+                                    <span class="rounded-md border border-yellow-300 bg-yellow-400 px-3 py-1 text-xs font-bold text-yellow-950">{{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}</span>
+                                    <span class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-bold text-white">{{ $enrolledCount }} enrolled</span>
+                                    <span class="rounded-md border border-orange-600 bg-orange-500 px-3 py-1 text-xs font-bold text-white">{{ $course->subscription_days }} days</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
