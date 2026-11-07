@@ -1,4 +1,15 @@
 <div class="space-y-4">
+    <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Avatar</label>
+        @if ($testimonial?->avatar)
+            <img src="{{ $testimonial->avatar->resolved_url }}" class="mt-2 h-16 w-16 rounded-full object-cover">
+        @endif
+        <div class="mt-1 grid grid-cols-2 gap-3">
+            <input type="file" name="avatar_file" accept="image/*" class="text-sm text-gray-600 dark:text-gray-300">
+            <input type="url" name="avatar_url" placeholder="https://i.imgur.com/..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+        </div>
+    </div>
+
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
@@ -24,17 +35,6 @@
     <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Content</label>
         <textarea name="content" rows="4" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">{{ old('content', $testimonial?->content) }}</textarea>
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Avatar</label>
-        @if ($testimonial?->avatar)
-            <img src="{{ $testimonial->avatar->resolved_url }}" class="mt-2 h-16 w-16 rounded-full object-cover">
-        @endif
-        <div class="mt-1 grid grid-cols-2 gap-3">
-            <input type="file" name="avatar_file" accept="image/*" class="text-sm text-gray-600 dark:text-gray-300">
-            <input type="url" name="avatar_url" placeholder="https://i.imgur.com/..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-        </div>
     </div>
 
     @php $fieldSuffix = $testimonial?->id ?? 'new'; @endphp
