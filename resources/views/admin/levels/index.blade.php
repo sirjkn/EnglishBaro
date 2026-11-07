@@ -28,7 +28,7 @@
                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700" x-show="! addingLevel">
                     <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
                         @forelse ($levels as $level)
-                            <tr class="{{ $openLevel?->id === $level->id ? 'bg-indigo-100 dark:bg-indigo-900/40' : 'odd:bg-white even:bg-indigo-50 hover:bg-indigo-100 dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:hover:bg-gray-700' }}">
+                            <tr class="{{ $openLevel?->id === $level->id ? 'bg-yellow-100 dark:bg-yellow-900/40' : 'odd:bg-white even:bg-indigo-50 hover:bg-yellow-100 dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:hover:bg-yellow-900/30' }}">
                                 <td colspan="2" class="p-0">
                                     <a
                                         href="{{ route('admin.tracks.levels.index', [$track, 'open' => $level->id]) }}"
