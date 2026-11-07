@@ -1,20 +1,7 @@
 <x-layouts.admin :title="'Placement Test'">
     <div x-data="{ addOpen: {{ $errors->any() ? 'true' : 'false' }} }">
-    <div class="flex flex-wrap items-start justify-between gap-3">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Placement Test</h1>
-            <p class="mt-1 max-w-2xl text-sm text-gray-600 dark:text-gray-400">
-                New students answer these questions before their first enrollment. Whichever track's answers they pick
-                most often becomes their placement. Each question needs one answer per track, ordered from easiest to hardest.
-            </p>
-        </div>
-        <button type="button" @click="addOpen = true; $nextTick(() => $refs.addQuestionForm.scrollIntoView({ behavior: 'smooth' }))"
-                class="rounded-md bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400">
-            + Add Question
-        </button>
-    </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800 lg:grid-cols-2">
+    <div class="grid grid-cols-1 gap-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800 lg:grid-cols-2">
         <div>
             <h3 class="font-semibold text-gray-900 dark:text-white">Homepage Intro Video</h3>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Shown as the single hero slide on the homepage. The player is always visible there; upload a video to fill it, replace it any time, or remove it to show an empty player.</p>
@@ -106,7 +93,15 @@
         </div>
     </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
+        <h2 class="text-sm font-bold text-white">Placement Questions</h2>
+        <button type="button" @click="addOpen = true; $nextTick(() => $refs.addQuestionForm.scrollIntoView({ behavior: 'smooth' }))"
+                class="rounded-full border border-white/40 px-3 py-1 text-xs font-medium text-white hover:bg-white/10">
+            + Add Question
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 rounded-b-xl border border-t-0 border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/40 xl:grid-cols-2">
         @forelse ($questions as $question)
             <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
                 <form method="POST" action="{{ route('admin.placement-test.update', $question) }}" class="space-y-3">
