@@ -1,12 +1,18 @@
 <div class="space-y-4">
     <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Avatar</label>
-        @if ($testimonial?->avatar)
-            <img src="{{ $testimonial->avatar->resolved_url }}" class="mt-2 h-16 w-16 rounded-full object-cover">
-        @endif
-        <div class="mt-1 grid grid-cols-2 gap-3">
-            <input type="file" name="avatar_file" accept="image/*" class="text-sm text-gray-600 dark:text-gray-300">
-            <input type="url" name="avatar_url" placeholder="https://i.imgur.com/..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+        <div class="mt-2 flex items-center gap-4">
+            @if ($testimonial?->avatar)
+                <img src="{{ $testimonial->avatar->resolved_url }}" class="h-24 w-24 rounded-lg object-cover">
+            @else
+                <div class="flex h-24 w-24 items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-gray-800">
+                    <x-icons.photo class="h-8 w-8" />
+                </div>
+            @endif
+            <div class="flex-1 space-y-2">
+                <input type="file" name="avatar_file" accept="image/*" class="text-sm text-gray-600 dark:text-gray-300">
+                <input type="url" name="avatar_url" placeholder="https://i.imgur.com/..." class="block w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+            </div>
         </div>
     </div>
 
