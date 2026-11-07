@@ -10,7 +10,7 @@
                 </p>
             </div>
             <button type="button" @click="addOpen = true; $nextTick(() => $refs.addQuestionForm.scrollIntoView({ behavior: 'smooth' }))"
-                    class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
+                    class="flex-none rounded-md border border-green-600 bg-green-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-400">
                 + Add Question
             </button>
         </div>
