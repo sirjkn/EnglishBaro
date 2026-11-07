@@ -256,6 +256,7 @@
                                                             label="Delete Track"
                                                             :title="'Delete track '.$track->track_code.'?'"
                                                             :message="$courseTrackDeleteMessage"
+                                                            :redirect="route('admin.courses.index', ['open' => $course->id], false)"
                                                             class="rounded-md border border-red-300 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/30"
                                                         />
                                                     </div>

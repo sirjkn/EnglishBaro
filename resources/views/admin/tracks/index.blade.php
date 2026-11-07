@@ -85,6 +85,7 @@
                                         label="Delete Track"
                                         :title="'Delete track '.$track->track_code.'?'"
                                         :message="$headerTrackDeleteMessage"
+                                        :redirect="route('admin.tracks.index', ['open' => $course->id], false)"
                                         class="rounded-md border border-red-600 bg-red-500 px-3 py-1 text-xs font-semibold text-white hover:bg-red-400"
                                     />
                                 </span>
@@ -128,6 +129,7 @@
                                                     :action="route('admin.tracks.destroy', $track)"
                                                     :title="'Delete track '.$track->track_code.'?'"
                                                     :message="$deleteMessage"
+                                                    :redirect="route('admin.tracks.index', ['open' => $course->id], false)"
                                                     class="rounded border border-red-600 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-600 hover:text-white dark:border-red-500 dark:text-red-400"
                                                 />
                                             </span>

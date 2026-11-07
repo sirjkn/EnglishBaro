@@ -156,16 +156,28 @@ class TrackController extends Controller
 
         $code = $track->track_code;
 
+        // Deleting a track can be triggered from either this page or the
+        // Courses page's own "Tracks in this Course" panel. Neither page
+        // changes the URL when switching which course is open (it's all
+        // client-side Alpine state), so back()/Referer can't tell us where
+        // to return to — the delete form on each page carries an explicit
+        // redirect field for that instead, falling back to this page with
+        // the track's own course open if neither form set one.
+        $redirectTo = \App\Support\SafeRedirect::resolve(
+            request('redirect'),
+            route('admin.tracks.index', ['open' => $track->course_id])
+        );
+
         try {
             $track->delete();
         } catch (QueryException $e) {
-            return redirect()->route('admin.tracks.index')
+            return redirect($redirectTo)
                 ->with('error', "Can't delete track {$code}: it still has linked students, payments, or placement test data. Archive it instead.");
         }
 
         AuditLogger::log('admin.track.deleted', null, ['track_code' => $code], []);
 
-        return redirect()->route('admin.tracks.index')->with('status', "Track {$code} deleted.");
+        return redirect($redirectTo)->with('status', "Track {$code} deleted.");
     }
 
     public function edit(Track $track): View

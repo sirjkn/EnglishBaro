@@ -1,4 +1,4 @@
-@props(['action', 'label' => 'Delete', 'title' => 'Delete this?', 'message' => 'This action cannot be undone.', 'class' => 'text-sm font-medium text-red-600 hover:text-red-500'])
+@props(['action', 'label' => 'Delete', 'title' => 'Delete this?', 'message' => 'This action cannot be undone.', 'class' => 'text-sm font-medium text-red-600 hover:text-red-500', 'redirect' => null])
 
 <div x-data="{ open: false }" class="inline">
     <button type="button" @click="open = true" {{ $attributes->merge(['class' => $class]) }}>{{ $label }}</button>
@@ -21,6 +21,9 @@
                     <form method="POST" action="{{ $action }}">
                         @csrf
                         @method('DELETE')
+                        @if ($redirect)
+                            <input type="hidden" name="redirect" value="{{ $redirect }}">
+                        @endif
                         <button type="submit" class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500">
                             Yes, Delete
                         </button>
