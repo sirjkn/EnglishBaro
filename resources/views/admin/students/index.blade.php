@@ -183,7 +183,9 @@
                                             // A course purchase unlocks every track (unit) inside it, so group
                                             // enrollments by their course rather than listing tracks as if
                                             // each were a separate, independently-bought item.
-                                            $enrollmentsByCourse = $student->enrollments->groupBy(fn ($e) => $e->track->course_id);
+                                            $enrollmentsByCourse = $student->enrollments
+                                                ->sortBy(fn ($e) => $e->track->order)
+                                                ->groupBy(fn ($e) => $e->track->course_id);
                                         @endphp
                                         <div class="mt-4 space-y-4">
                                             @foreach ($enrollmentsByCourse as $courseEnrollments)
