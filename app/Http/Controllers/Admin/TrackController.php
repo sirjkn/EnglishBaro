@@ -73,6 +73,13 @@ class TrackController extends Controller
             'learning_outcomes' => ['nullable', 'string'],
             'status' => ['required', 'in:draft,published,archived'],
             'level_count' => ['nullable', 'integer', 'min:1', 'max:500'],
+        ], [
+            // Track codes double as the URL identifier for every track-scoped
+            // page (edit, levels, student pages), so they must stay unique
+            // across every course, not just the one being edited here — the
+            // default "already been taken" message reads like a same-course
+            // collision, which is what prompted this clarification.
+            'track_code.unique' => 'That track code is already used by a track in another course. Track codes must be unique across every course on the site — pick a different one for this track.',
         ]);
 
         $levelCount = $validated['level_count'] ?? TrackCurriculumGenerator::DEFAULT_LEVELS_PER_TRACK;

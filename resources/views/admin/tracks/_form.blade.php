@@ -45,7 +45,7 @@
                     @if ($creating ?? false)
                         <input type="text" name="track_code" value="{{ old('track_code') }}" placeholder="e.g. C1" maxlength="10"
                                class="mt-1 w-full rounded-md border-gray-300 font-mono text-sm uppercase dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                        <p class="mt-1 text-xs text-gray-400">A short unique code (letters/numbers/dashes only), e.g. C1, C2.</p>
+                        <p class="mt-1 text-xs text-gray-400">A short code (letters/numbers/dashes only), e.g. C1, C2. Must be unique across <strong>every</strong> course, not just this one — another course's track can't already use it.</p>
                         @error('track_code') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     @else
                         <input type="text" value="{{ $track->track_code }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 font-mono text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
