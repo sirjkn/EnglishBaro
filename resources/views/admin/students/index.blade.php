@@ -161,7 +161,7 @@
                                         <form method="POST" action="{{ route('admin.students.update', $student) }}" enctype="multipart/form-data">
                                             @csrf
                                             @method('PUT')
-                                            <input type="hidden" name="redirect" value="{{ request()->fullUrlWithQuery(['open' => $student->id]) }}">
+                                            <input type="hidden" name="redirect" value="{{ route('admin.students.index', ['open' => $student->id], false) }}">
                                             @include('admin.students._edit-fields', ['student' => $student, 'tracks' => $tracks, 'countries' => $countries])
                                             <div class="mt-6 flex items-center gap-2">
                                                 <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>

@@ -186,21 +186,6 @@ class StudentController extends Controller
         return back()->with('status', 'Email marked as verified.');
     }
 
-    public function edit(Request $request, User $student): View
-    {
-        abort_unless($student->user_type === 'student', 404);
-        $this->authorize('update', $student);
-
-        $student->load('studentProfile');
-
-        return view('admin.students.edit', [
-            'student' => $student,
-            'tracks' => Track::query()->orderBy('order')->get(),
-            'countries' => Countries::all(),
-            'redirectTo' => $request->query('redirect'),
-        ]);
-    }
-
     public function update(Request $request, User $student, MediaService $mediaService): RedirectResponse
     {
         abort_unless($student->user_type === 'student', 404);

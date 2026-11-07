@@ -41,7 +41,7 @@
                     </div>
                 </div>
             </div>
-            <a href="{{ route('admin.students.edit', ['student' => $student, 'redirect' => request()->getRequestUri()]) }}" class="absolute right-0 top-0 flex shrink-0 items-center gap-1.5 rounded-md border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700 sm:static">
+            <a href="{{ route('admin.students.index', ['open' => $student->id]) }}" class="absolute right-0 top-0 flex shrink-0 items-center gap-1.5 rounded-md border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700 sm:static">
                 <x-icons.pencil class="h-4 w-4" /> Edit
             </a>
         </div>
