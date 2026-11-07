@@ -135,7 +135,7 @@
                         <div x-show="editingTrack === {{ $track->id }}" x-cloak class="rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
                             <h3 class="font-semibold text-gray-900 dark:text-white">Editing: {{ $track->track_code }} &middot; {{ $track->name }}</h3>
 
-                            <form method="POST" action="{{ route('admin.tracks.update', $track) }}" enctype="multipart/form-data" class="mt-4 max-w-3xl">
+                            <form method="POST" action="{{ route('admin.tracks.update', $track) }}" enctype="multipart/form-data" class="mt-4">
                                 @csrf
                                 @method('PUT')
                                 @include('admin.tracks._form', ['track' => $track, 'hideCourseField' => true])
