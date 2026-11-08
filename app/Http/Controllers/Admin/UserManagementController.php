@@ -14,6 +14,8 @@ class UserManagementController extends Controller
 {
     public function index(Request $request): View
     {
+        $this->authorize('manageStaff', User::class);
+
         $category = $request->query('category');
 
         $users = User::query()
@@ -40,7 +42,14 @@ class UserManagementController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('manageStaff', User::class);
+
         $validated = $this->validated($request);
+
+        // A staff account granted the "users" module may create other staff,
+        // but creating a new admin account is owner-only — otherwise that
+        // module grant would be a privilege-escalation path to full access.
+        abort_if($validated['user_type'] === 'admin' && ! $request->user()->isAdmin(), 403);
 
         $user = User::query()->create([
             'name' => $validated['name'],
@@ -64,6 +73,7 @@ class UserManagementController extends Controller
 
     public function edit(User $user): RedirectResponse
     {
+        $this->authorize('editStaffAccount', $user);
         abort_unless(in_array($user->user_type, ['admin', 'staff'], true), 404);
 
         // Editing happens inline on the index page now, not on this page's
@@ -73,9 +83,24 @@ class UserManagementController extends Controller
 
     public function update(Request $request, User $user): RedirectResponse
     {
+        $this->authorize('editStaffAccount', $user);
         abort_unless(in_array($user->user_type, ['admin', 'staff'], true), 404);
 
         $validated = $this->validated($request, $user);
+        $actor = $request->user();
+
+        // A non-admin editing their own account (allowed, so staff can fix
+        // their own name/email here) must not be able to change their own
+        // role — only an admin may promote/demote anyone, including via
+        // their own account, which can't happen here since isAdmin() is
+        // already true and this branch is skipped.
+        if (! $actor->isAdmin() && $actor->is($user)) {
+            $validated['user_type'] = $user->user_type;
+        }
+
+        // Promoting anyone to admin, by anyone other than an admin, is the
+        // same escalation path blocked on create — close it here too.
+        abort_if($validated['user_type'] === 'admin' && ! $actor->isAdmin(), 403);
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];
@@ -84,6 +109,12 @@ class UserManagementController extends Controller
             $user->password = $validated['password'];
         }
         $user->save();
+
+        // Same self-escalation guard for module grants: a non-admin editing
+        // their own account keeps whatever permissions they already had.
+        if (! $actor->isAdmin() && $actor->is($user)) {
+            $validated['permissions'] = $user->permissions()->pluck('permissions.id')->all();
+        }
 
         $user->permissions()->sync($validated['user_type'] === 'staff' ? ($validated['permissions'] ?? []) : []);
 
@@ -96,6 +127,7 @@ class UserManagementController extends Controller
 
     public function destroy(Request $request, User $user): RedirectResponse
     {
+        $this->authorize('editStaffAccount', $user);
         abort_unless(in_array($user->user_type, ['admin', 'staff'], true), 404);
         abort_if($user->is($request->user()), 422, "You can't delete your own account.");
 
