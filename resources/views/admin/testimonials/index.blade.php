@@ -69,7 +69,7 @@
 
                 {{-- Edit panels, one per testimonial on this page --}}
                 @foreach ($testimonials as $testimonial)
-                    <div x-show="mode === 'edit' && selected === {{ $testimonial->id }}" x-cloak>
+                    <div x-show="mode === 'edit' && selected === {{ $testimonial->id }}" x-cloak x-data="{ editingDetails: {{ $errors->any() ? 'true' : 'false' }} }">
                         <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                             <div class="flex items-center gap-3">
                                 <h2 class="text-sm font-bold text-white">Editing: {{ $testimonial->name }}</h2>
@@ -93,12 +93,51 @@
                             </div>
                         </div>
                         <div class="max-h-[70vh] overflow-y-auto rounded-b-xl border border-gray-200 p-4 dark:border-gray-700">
-                            <form method="POST" action="{{ route('admin.testimonials.update', $testimonial) }}" enctype="multipart/form-data">
-                                @csrf
-                                @method('PUT')
-                                @include('admin.testimonials._form', ['testimonial' => $testimonial])
-                                <button type="submit" class="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
-                            </form>
+                            {{-- Read-only view: shown by default so a stray click or keystroke
+                                 can't change these fields by accident. --}}
+                            <div x-show="! editingDetails">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Testimonial Details</h3>
+                                    <button type="button" @click="editingDetails = true" class="flex items-center gap-1 rounded-md border border-indigo-600 px-3 py-1 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">
+                                        <x-icons.pencil class="h-3.5 w-3.5" /> Edit
+                                    </button>
+                                </div>
+
+                                <div class="mt-3 flex items-start gap-4">
+                                    @if ($testimonial->avatar)
+                                        <img src="{{ $testimonial->avatar->resolved_url }}" class="h-20 w-20 flex-none rounded-lg object-cover">
+                                    @else
+                                        <div class="flex h-20 w-20 flex-none items-center justify-center rounded-lg bg-gray-100 text-gray-400 dark:bg-gray-800">
+                                            <x-icons.photo class="h-7 w-7" />
+                                        </div>
+                                    @endif
+
+                                    <div class="grid flex-1 grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                                        <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-700"><div class="text-xs font-medium uppercase tracking-wide text-gray-400">Name</div><div class="mt-0.5 text-gray-900 dark:text-white">{{ $testimonial->name }}</div></div>
+                                        <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-700"><div class="text-xs font-medium uppercase tracking-wide text-gray-400">Role Label</div><div class="mt-0.5 text-gray-900 dark:text-white">{{ $testimonial->role_label ?: '—' }}</div></div>
+                                        <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-700"><div class="text-xs font-medium uppercase tracking-wide text-gray-400">Rating</div><div class="mt-0.5 text-gray-900 dark:text-white">{{ $testimonial->rating ?? '—' }}/5</div></div>
+                                        <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-700"><div class="text-xs font-medium uppercase tracking-wide text-gray-400">Order</div><div class="mt-0.5 text-gray-900 dark:text-white">{{ $testimonial->order }}</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 rounded-lg border border-gray-200 p-3 text-sm dark:border-gray-700">
+                                    <div class="text-xs font-medium uppercase tracking-wide text-gray-400">Content</div>
+                                    <div class="mt-0.5 text-gray-700 dark:text-gray-300">{{ $testimonial->content }}</div>
+                                </div>
+                            </div>
+
+                            {{-- Edit view: opt in via the Edit button, with Save/Cancel --}}
+                            <div x-show="editingDetails" x-cloak>
+                                <form method="POST" action="{{ route('admin.testimonials.update', $testimonial) }}" enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    @include('admin.testimonials._form', ['testimonial' => $testimonial])
+                                    <div class="mt-6 flex items-center gap-2">
+                                        <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                        <button type="button" @click="editingDetails = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 @endforeach
