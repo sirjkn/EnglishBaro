@@ -124,7 +124,7 @@
                                     @endif
                                 </span>
                                 <span class="block truncate text-xs text-gray-500 dark:text-gray-400">
-                                    {!! $levelItem->sections->pluck('title')->implode(' &middot; ') !!}
+                                    {{ $levelItem->sections->pluck('title')->implode(' · ') }}
                                 </span>
                             </span>
 

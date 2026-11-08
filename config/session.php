@@ -169,7 +169,13 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    // Defaults to true outside local/dev environments so the session cookie
+    // can never be sent over plain HTTP in production, even if whoever
+    // deploys forgets to set SESSION_SECURE_COOKIE explicitly. Local dev
+    // stays unaffected (still runs over plain http). Uses env('APP_ENV')
+    // directly rather than app()->environment() — config files load before
+    // the container is fully ready to resolve that.
+    'secure' => env('SESSION_SECURE_COOKIE', env('APP_ENV') === 'production'),
 
     /*
     |--------------------------------------------------------------------------
