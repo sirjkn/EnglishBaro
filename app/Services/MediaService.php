@@ -31,7 +31,17 @@ class MediaService
 
         $disk = 'public';
         $directory = "media/{$type}";
-        $path = $file->store($directory, $disk);
+
+        if ($type === 'image') {
+            // Re-encoding (rather than storing the uploaded bytes as-is)
+            // strips EXIF/GPS metadata and anything hidden outside the
+            // actual pixel data, and the resize caps decompression-bomb
+            // sized images.
+            [$path, $mime] = $this->storeReencodedImage($file, $directory, $disk);
+        } else {
+            $path = $file->store($directory, $disk);
+            $mime = $file->getClientMimeType();
+        }
 
         return Media::create([
             'type' => $type,
@@ -39,8 +49,8 @@ class MediaService
             'provider' => 'local',
             'storage_path' => $path,
             'original_filename' => $file->getClientOriginalName(),
-            'mime_type' => $file->getClientMimeType(),
-            'file_size' => $file->getSize(),
+            'mime_type' => $mime,
+            'file_size' => Storage::disk($disk)->size($path),
             'title' => $title,
             'created_by' => Auth::id(),
         ]);
@@ -183,6 +193,121 @@ class MediaService
                 'file' => "File is too large. Maximum size is {$maxKilobytes} KB.",
             ]);
         }
+
+        // The extension is just a label the uploader chose — confirm the
+        // file's actual bytes match what it claims to be, so a disguised or
+        // mismatched file can't pass as an image or document.
+        if ($type === 'image' && ! $this->detectImageSignature($file)) {
+            throw ValidationException::withMessages([
+                'file' => 'That file is not a real JPG, PNG or WEBP image.',
+            ]);
+        }
+
+        if (in_array($type, ['document', 'ebook'], true) && ! $this->documentSignatureMatches($file, $extension)) {
+            throw ValidationException::withMessages([
+                'file' => 'That file does not match its extension.',
+            ]);
+        }
+    }
+
+    /**
+     * Reads the file's real signature bytes rather than trusting its name or
+     * declared MIME type (both client-supplied and trivially spoofed).
+     */
+    private function detectImageSignature(UploadedFile $file): ?string
+    {
+        $bytes = @file_get_contents($file->getRealPath(), false, null, 0, 12);
+
+        if ($bytes === false || strlen($bytes) < 4) {
+            return null;
+        }
+
+        if (substr($bytes, 0, 3) === "\xFF\xD8\xFF") {
+            return 'jpg';
+        }
+
+        if (substr($bytes, 0, 8) === "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A") {
+            return 'png';
+        }
+
+        if (strlen($bytes) >= 12 && substr($bytes, 0, 4) === 'RIFF' && substr($bytes, 8, 4) === 'WEBP') {
+            return 'webp';
+        }
+
+        return null;
+    }
+
+    private function documentSignatureMatches(UploadedFile $file, string $extension): bool
+    {
+        $bytes = @file_get_contents($file->getRealPath(), false, null, 0, 8);
+
+        if ($bytes === false) {
+            return false;
+        }
+
+        return match ($extension) {
+            'pdf' => str_starts_with($bytes, '%PDF-'),
+            // EPUB is a ZIP container; a ZIP signature is the most that can
+            // be confirmed here without unpacking it to read the mimetype
+            // entry inside — a real but narrower check than for images.
+            'epub' => str_starts_with($bytes, "PK\x03\x04"),
+            default => true,
+        };
+    }
+
+    private function storeReencodedImage(UploadedFile $file, string $directory, string $disk): array
+    {
+        $signature = $this->detectImageSignature($file);
+
+        $source = match ($signature) {
+            'jpg' => @imagecreatefromjpeg($file->getRealPath()),
+            'png' => @imagecreatefrompng($file->getRealPath()),
+            'webp' => @imagecreatefromwebp($file->getRealPath()),
+            default => null,
+        };
+
+        if (! $source) {
+            throw ValidationException::withMessages(['file' => 'That image could not be processed.']);
+        }
+
+        $width = imagesx($source);
+        $height = imagesy($source);
+        $maxSide = 2000;
+
+        if (max($width, $height) > $maxSide) {
+            $scale = $maxSide / max($width, $height);
+            $newWidth = max(1, (int) round($width * $scale));
+            $newHeight = max(1, (int) round($height * $scale));
+            $resized = imagecreatetruecolor($newWidth, $newHeight);
+
+            if ($signature !== 'jpg') {
+                imagealphablending($resized, false);
+                imagesavealpha($resized, true);
+            }
+
+            imagecopyresampled($resized, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+            imagedestroy($source);
+            $source = $resized;
+        }
+
+        $mime = ['jpg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp'][$signature];
+        $filename = Str::uuid()->toString().'.'.$signature;
+        $path = "{$directory}/{$filename}";
+        $tmpPath = tempnam(sys_get_temp_dir(), 'img');
+
+        match ($signature) {
+            'jpg' => imagejpeg($source, $tmpPath, 85),
+            'png' => imagepng($source, $tmpPath, 6),
+            'webp' => imagewebp($source, $tmpPath, 85),
+        };
+
+        imagedestroy($source);
+        $contents = file_get_contents($tmpPath);
+        @unlink($tmpPath);
+
+        Storage::disk($disk)->put($path, $contents);
+
+        return [$path, $mime];
     }
 
     public function delete(Media $media): void
