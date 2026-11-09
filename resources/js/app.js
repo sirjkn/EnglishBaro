@@ -6,6 +6,7 @@ window.Alpine = Alpine;
 
 Alpine.data('lessonMediaUploader', (lessonId = null) => ({
     uploads: [],
+    existingResources: [],
     nextKey: 1,
     lightboxUrl: null,
     lessonId,
@@ -193,16 +194,40 @@ Alpine.data('lessonMediaUploader', (lessonId = null) => ({
         this.autoSaveIfReady();
     },
 
-    handleFiles(event, type) {
+    removeExistingResource(resource) {
+        if (resource.removing || ! window.adminLessonResourceDestroyUrl) return;
+
+        resource.removing = true;
+
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const url = window.adminLessonResourceDestroyUrl.replace('__ID__', resource.id);
+
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfMeta?.content || '',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+            .then((r) => {
+                if (! r.ok) throw new Error('Could not remove that file.');
+                this.existingResources = this.existingResources.filter((r) => r.id !== resource.id);
+            })
+            .catch(() => {
+                resource.removing = false;
+            });
+    },
+
+    handleFiles(event, type, destination = null) {
         const input = event.target;
         const files = Array.from(input.files || []);
 
-        files.forEach((file) => this.uploadFile(file, type));
+        files.forEach((file) => this.uploadFile(file, type, destination));
 
         input.value = '';
     },
 
-    uploadFile(file, type) {
+    uploadFile(file, type, destination = null) {
         // Must be wrapped in Alpine.reactive() *before* being captured by the
         // xhr closures below — mutating a plain object after push() bypasses
         // the array proxy's reactivity and silently fails to re-render.
@@ -231,6 +256,9 @@ Alpine.data('lessonMediaUploader', (lessonId = null) => ({
             const formData = new FormData();
             formData.append('file', file);
             formData.append('type', type);
+            if (destination) {
+                formData.append('destination', destination);
+            }
 
             const xhr = new XMLHttpRequest();
             upload.xhr = xhr;

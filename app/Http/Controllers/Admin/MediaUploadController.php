@@ -19,12 +19,14 @@ class MediaUploadController extends Controller
         $validated = $request->validate([
             'type' => ['required', 'string', 'in:'.implode(',', self::ALLOWED_TYPES)],
             'file' => ['required', 'file'],
+            'destination' => ['nullable', 'string', 'in:own_server'],
         ]);
 
         $media = $mediaService->storeUploadedFile(
             $request->file('file'),
             $validated['type'],
-            $request->file('file')->getClientOriginalName()
+            $request->file('file')->getClientOriginalName(),
+            ($validated['destination'] ?? null) === 'own_server'
         );
 
         return response()->json([

@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Concerns\RedirectsWithAnchor;
 use App\Http\Controllers\Controller;
 use App\Models\Lesson;
+use App\Models\LessonResource;
 use App\Models\Level;
 use App\Models\Section;
 use App\Models\Media;
 use App\Models\Track;
 use App\Services\AuditLogger;
 use App\Services\MediaService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -74,6 +76,22 @@ class LessonController extends Controller
         $lesson->delete();
 
         return back()->with('status', 'Lesson deleted.');
+    }
+
+    public function destroyResource(LessonResource $lessonResource, MediaService $mediaService): JsonResponse
+    {
+        $this->authorize('update', $lessonResource->lesson->section->level->track);
+
+        $media = $lessonResource->media;
+        $lessonResource->delete();
+
+        if ($media) {
+            $mediaService->delete($media);
+        }
+
+        AuditLogger::log('admin.lesson.resource_removed', null, ['lesson_resource_id' => $lessonResource->id], []);
+
+        return response()->json(['deleted' => true]);
     }
 
     private function ensureLessonBelongsToLevel(Level $level, Lesson $lesson): void

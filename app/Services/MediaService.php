@@ -21,11 +21,11 @@ class MediaService
 
     public function __construct(private readonly MuxService $muxService) {}
 
-    public function storeUploadedFile(UploadedFile $file, string $type, ?string $title = null): Media
+    public function storeUploadedFile(UploadedFile $file, string $type, ?string $title = null, bool $forceLocal = false): Media
     {
         $this->validateUploadedFile($file, $type);
 
-        if (in_array($type, ['video', 'audio'], true) && $this->muxConfigured()) {
+        if (in_array($type, ['video', 'audio'], true) && ! $forceLocal && $this->muxConfigured()) {
             return $this->storeOnMux($file, $type, $title);
         }
 

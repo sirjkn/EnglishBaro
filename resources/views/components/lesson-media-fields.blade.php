@@ -3,32 +3,40 @@
 <div class="rounded-lg border border-gray-200 dark:border-gray-700">
     <p class="border-b border-gray-200 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:border-gray-700">Media</p>
 
-    @if ($lesson && $lesson->resources->isNotEmpty())
-        <ul class="divide-y divide-gray-100 px-3 dark:divide-gray-700">
-            @foreach ($lesson->resources as $resource)
-                @php $mtype = $resource->media?->type; @endphp
-                <li class="flex items-center justify-between gap-2 py-1.5 text-xs">
-                    <span class="flex min-w-0 items-center gap-1.5 text-gray-600 dark:text-gray-300">
-                        @if ($mtype === 'image' && $resource->media?->resolved_url)
-                            <button type="button" @click="openLightbox('{{ $resource->media->resolved_url }}')" class="flex-none">
-                                <img src="{{ $resource->media->resolved_url }}" alt="{{ $resource->title }}" class="h-7 w-7 rounded object-cover ring-1 ring-black/10 hover:opacity-80 dark:ring-white/10">
-                            </button>
-                        @elseif ($mtype === 'video')
-                            <x-icons.play-circle class="h-3.5 w-3.5 flex-none text-indigo-500" />
-                        @elseif ($mtype === 'audio')
-                            <x-icons.music-note class="h-3.5 w-3.5 flex-none text-indigo-500" />
-                        @else
-                            <x-icons.book-open class="h-3.5 w-3.5 flex-none text-indigo-500" />
-                        @endif
-                        <span class="truncate">{{ $resource->title }}</span>
-                    </span>
-                    <label class="flex flex-none items-center gap-1 text-red-600">
-                        <input type="checkbox" name="remove_resources[]" value="{{ $resource->id }}" class="rounded border-gray-300 text-red-600">
-                        Remove
-                    </label>
-                </li>
-            @endforeach
-        </ul>
+    <ul class="divide-y divide-gray-100 px-3 dark:divide-gray-700" x-show="existingResources.length" x-cloak>
+        <template x-for="resource in existingResources" :key="resource.id">
+            <li class="flex items-center justify-between gap-2 py-1.5 text-xs">
+                <span class="flex min-w-0 items-center gap-1.5 text-gray-600 dark:text-gray-300">
+                    <template x-if="resource.mtype === 'image' && resource.resolvedUrl">
+                        <button type="button" @click="openLightbox(resource.resolvedUrl)" class="flex-none">
+                            <img :src="resource.resolvedUrl" :alt="resource.title" class="h-7 w-7 rounded object-cover ring-1 ring-black/10 hover:opacity-80 dark:ring-white/10">
+                        </button>
+                    </template>
+                    <template x-if="resource.mtype === 'video'">
+                        <x-icons.play-circle class="h-3.5 w-3.5 flex-none text-indigo-500" />
+                    </template>
+                    <template x-if="resource.mtype === 'audio'">
+                        <x-icons.music-note class="h-3.5 w-3.5 flex-none text-indigo-500" />
+                    </template>
+                    <template x-if="!['image', 'video', 'audio'].includes(resource.mtype)">
+                        <x-icons.book-open class="h-3.5 w-3.5 flex-none text-indigo-500" />
+                    </template>
+                    <span class="truncate" x-text="resource.title"></span>
+                </span>
+                <button type="button" @click="removeExistingResource(resource)" :disabled="resource.removing"
+                        class="flex-none text-gray-400 hover:text-red-600 disabled:opacity-40" title="Remove">&times;</button>
+            </li>
+        </template>
+    </ul>
+
+    @if ($lesson)
+        <div x-init="existingResources = @js($lesson->resources->map(fn ($resource) => [
+            'id' => $resource->id,
+            'title' => $resource->title,
+            'mtype' => $resource->media?->type,
+            'resolvedUrl' => $resource->media?->resolved_url,
+            'removing' => false,
+        ]))"></div>
     @endif
 
     <ul class="space-y-1.5 px-3 pt-2" x-show="uploads.length" x-cloak>
@@ -68,6 +76,10 @@
                     Upload
                     <input type="file" accept="video/mp4,video/webm" multiple class="hidden" @change="handleFiles($event, 'video')">
                 </label>
+                <label class="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
+                    Upload to our server
+                    <input type="file" accept="video/mp4,video/webm" multiple class="hidden" @change="handleFiles($event, 'video', 'own_server')">
+                </label>
                 <button type="button" @click="openMuxPicker('video')" class="rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
                     Use existing
                 </button>
@@ -80,6 +92,10 @@
                 <label class="flex cursor-pointer items-center justify-center rounded-full border border-blue-600 bg-blue-600 px-2 py-1 text-[10px] font-medium text-white transition hover:bg-blue-700">
                     Upload
                     <input type="file" accept="audio/mpeg,audio/wav,audio/mp4" multiple class="hidden" @change="handleFiles($event, 'audio')">
+                </label>
+                <label class="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
+                    Upload to our server
+                    <input type="file" accept="audio/mpeg,audio/wav,audio/mp4" multiple class="hidden" @change="handleFiles($event, 'audio', 'own_server')">
                 </label>
                 <button type="button" @click="openMuxPicker('audio')" class="rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
                     Use existing
