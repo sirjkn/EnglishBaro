@@ -14,7 +14,7 @@
         @if ($tickets->isEmpty())
             <x-empty-state message="You haven't submitted any support tickets yet." />
         @else
-            <div class="divide-y divide-gray-100 rounded-xl border border-black/10 bg-white dark:divide-gray-700 dark:border-white/10 dark:bg-gray-800">
+            <div class="divide-y divide-gray-100 rounded-xl border-2 border-indigo-300 bg-white dark:divide-gray-700 dark:border-indigo-700 dark:bg-gray-800">
                 @foreach ($tickets as $ticket)
                     @php
                         $statusColor = match ($ticket->status) {

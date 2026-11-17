@@ -131,12 +131,12 @@
                     [
                         'label' => null,
                         'items' => [
-                            ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
                             ['route' => 'home', 'label' => 'My Course', 'icon' => 'home'],
                             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
+                            ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
+                            ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
                             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
-                            ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
                         ],
                     ],
                 ];

@@ -44,11 +44,11 @@
                         <p class="mt-1 text-xs text-gray-400">Pricing shown for your region: {{ $pricingRegion }}</p>
                     @endif
                     <dl class="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                        <div class="flex justify-between"><dt>Units</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $course->tracks->count() }}</dd></div>
+                        <div class="flex justify-between"><dt>Tracks</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $course->tracks->count() }}</dd></div>
                         <div class="flex justify-between"><dt>Subscription</dt><dd class="font-medium text-gray-900 dark:text-white">{{ $course->subscription_days }} days</dd></div>
                     </dl>
                     <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                        One payment unlocks every unit in {{ $course->name }}. The placement test decides which unit you start on — you then progress through every unit above it automatically as you complete each one.
+                        One payment unlocks every track in {{ $course->name }}. The placement test decides which track you start on — you then progress through every track above it automatically as you complete each one.
                     </p>
 
                     <div class="mt-6 space-y-2">
@@ -69,7 +69,7 @@
                                     Take Placement Test to Enroll
                                 </a>
                                 <p class="text-center text-xs text-gray-500 dark:text-gray-400">
-                                    New students take a quick placement test first so we can enroll you into the right unit.
+                                    New students take a quick placement test first so we can enroll you into the right track.
                                 </p>
                             @elseif (auth()->user()->can('enroll', $course))
                                 <x-payment-method-modal :course="$course" label="Enroll" class="block w-full rounded-md bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-500" />
@@ -89,15 +89,15 @@
         </div>
     </div>
 
-    {{-- Units --}}
+    {{-- Tracks --}}
     <div class="mx-auto max-w-7xl border-t border-gray-200 px-4 py-12 dark:border-gray-800 sm:px-6 lg:px-8">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Units in this Course</h2>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Tracks in this Course</h2>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-            Every unit has 100 levels of Grammar, Listening, Speaking and Reading. Buying {{ $course->name }} unlocks all of them — the placement test decides which one you start on.
+            Every track has 100 levels of Grammar, Listening, Speaking and Reading. Buying {{ $course->name }} unlocks all of them — the placement test decides which one you start on.
         </p>
 
         @if ($course->tracks->isEmpty())
-            <x-empty-state class="mt-8" message="No units published yet." />
+            <x-empty-state class="mt-8" message="No tracks published yet." />
         @else
             <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($course->tracks as $track)

@@ -28,7 +28,7 @@
                 <button type="submit" class="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200">Filter</button>
             </form>
 
-            <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+            <div class="mt-4 overflow-x-auto rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                     <thead>
                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">

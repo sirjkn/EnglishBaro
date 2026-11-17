@@ -1,9 +1,14 @@
 <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
     <div class="sm:col-span-2 lg:col-span-3">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
-        <div class="mt-1 flex items-center gap-4">
-            <x-student-avatar size="h-16 w-16" />
-            <input type="file" name="avatar" accept="image/*" class="text-sm text-gray-700 dark:text-gray-300">
+        <div x-data="{ preview: null }" class="flex items-center gap-8">
+            <div class="relative h-28 w-28 flex-none overflow-hidden rounded-lg border-2 border-indigo-200 dark:border-indigo-800">
+                <x-student-avatar size="h-28 w-28" class="!rounded-lg" />
+                <img x-show="preview" x-cloak :src="preview" alt="Selected photo" class="absolute inset-0 h-full w-full object-cover">
+            </div>
+            <label class="cursor-pointer rounded-md border border-indigo-500 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-indigo-900/30">
+                Choose File
+                <input type="file" name="avatar" accept="image/*" class="sr-only" @change="preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null">
+            </label>
         </div>
         @error('avatar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
     </div>

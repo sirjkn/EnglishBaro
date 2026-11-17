@@ -4,7 +4,7 @@
             &larr; Back to More Practice
         </a>
 
-        <div class="mt-4 rounded-xl border border-gray-200 bg-white p-8 text-center dark:border-gray-700 dark:bg-gray-800">
+        <div class="mt-4 rounded-xl border-2 border-indigo-300 bg-white p-8 text-center dark:border-indigo-700 dark:bg-gray-800">
             <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                 <x-dynamic-component :component="'icons.'.$meta['icon']" class="h-6 w-6" />
             </span>
@@ -25,7 +25,7 @@
         @if ($questions->isNotEmpty())
             <div x-data="{ answers: {}, checked: false }" class="mt-4 space-y-4">
                 @foreach ($questions as $question)
-                    <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+                    <div class="rounded-xl border-2 border-indigo-300 bg-white p-5 dark:border-indigo-700 dark:bg-gray-800">
                         <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $loop->iteration }}. {{ $question->question }}</p>
                         <div class="mt-3 space-y-2">
                             @foreach ($question->options as $option)
@@ -41,7 +41,7 @@
                     </div>
                 @endforeach
 
-                <div class="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                <div class="flex items-center justify-between rounded-xl border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
                     <button type="button" @click="checked = true" x-show="!checked"
                             class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
                         Check my answers

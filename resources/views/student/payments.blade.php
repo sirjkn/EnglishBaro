@@ -26,7 +26,7 @@
             @if (! $upcomingTrack)
                 <x-empty-state class="mt-4" message="No upcoming payments." />
             @else
-                <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                <div class="mt-4 overflow-x-auto rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
                     <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                         <thead>
                             <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
@@ -57,7 +57,7 @@
             <x-empty-state class="mt-4" message="No payments yet." />
         @else
             <div x-data="{ receiptUrl: '{{ route('student.payments.receipt', $payments->first()) }}', receiptId: {{ $payments->first()->id }} }" class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
-                <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                <div class="overflow-x-auto rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
                     <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                         <thead>
                             <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
@@ -104,7 +104,7 @@
                     <div class="px-4 py-3">{{ $payments->links() }}</div>
                 </div>
 
-                <div class="sticky top-20 hidden overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 lg:block">
+                <div class="sticky top-20 hidden overflow-hidden rounded-xl border-2 border-indigo-300 bg-white dark:border-indigo-700 dark:bg-gray-800 lg:block">
                     <iframe :src="receiptUrl" class="h-[80vh] w-full" title="Receipt preview"></iframe>
                 </div>
             </div>

@@ -38,7 +38,7 @@
             {{ $track->name }}
         </h3>
         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Unit {{ $track->track_code }} &middot; {{ $track->levels_count ?? $track->levels()->count() }} levels
+            Track {{ $track->track_code }} &middot; {{ $track->levels_count ?? $track->levels()->count() }} levels
         </p>
 
         @if ($progress)

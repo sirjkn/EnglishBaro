@@ -1,4 +1,4 @@
-<div class="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+<div class="rounded-lg border-2 border-indigo-300 p-4 dark:border-indigo-700">
     <p class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $label }}</p>
 
     @if ($current)

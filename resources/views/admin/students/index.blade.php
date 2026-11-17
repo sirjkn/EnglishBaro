@@ -27,7 +27,7 @@
                 + Add Student
             </button>
 
-            <div class="mt-4 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+            <div class="mt-4 overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
                 <div class="bg-indigo-600 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white dark:bg-indigo-800">
                     Students
                 </div>
@@ -179,10 +179,10 @@
                                     @endphp
                                     <div class="mt-4 space-y-4">
                                         @if ($enrollmentsByCourse->isEmpty())
-                                            <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                            <div class="overflow-hidden rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
                                                 <div class="flex items-center justify-between gap-2 bg-blue-50 px-3 py-2 dark:bg-blue-900/20">
                                                     <span class="text-xs font-bold text-gray-900 dark:text-white">No course</span>
-                                                    <span class="text-[11px] text-gray-500 dark:text-gray-400">0 of 0 units enrolled</span>
+                                                    <span class="text-[11px] text-gray-500 dark:text-gray-400">0 of 0 tracks enrolled</span>
                                                 </div>
                                                 <div class="overflow-x-auto">
                                                     <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
@@ -211,10 +211,10 @@
                                                     $course = $courseEnrollments->first()->track->course;
                                                     $totalUnits = $course->tracks->count();
                                                 @endphp
-                                                <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                                <div class="overflow-hidden rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
                                                     <div class="flex items-center justify-between gap-2 bg-blue-50 px-3 py-2 dark:bg-blue-900/20">
                                                         <span class="text-xs font-bold text-gray-900 dark:text-white">{{ $course->name }}</span>
-                                                        <span class="text-[11px] text-gray-500 dark:text-gray-400">{{ $courseEnrollments->count() }} of {{ $totalUnits }} units enrolled</span>
+                                                        <span class="text-[11px] text-gray-500 dark:text-gray-400">{{ $courseEnrollments->count() }} of {{ $totalUnits }} tracks enrolled</span>
                                                     </div>
                                                     <div class="overflow-x-auto">
                                                         <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
@@ -248,15 +248,15 @@
                                                                                 <span class="text-gray-700 dark:text-gray-300">{{ $percent }}%</span>
                                                                             </div>
                                                                         </td>
-                                                                        <td class="py-2 pr-4"><x-badge :color="$enrollment->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($enrollment->status) }}</x-badge></td>
+                                                                        <td class="py-2 pr-4"><x-badge :pill="false" :color="$enrollment->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($enrollment->status) }}</x-badge></td>
                                                                         <td class="py-2 pr-4">
                                                                             @if ($isCurrentTrack)
-                                                                                <span class="rounded-full border border-green-600 bg-green-500 px-2.5 py-0.5 text-xs font-medium text-white">Current</span>
+                                                                                <span class="inline-block whitespace-nowrap rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white">Current</span>
                                                                             @elseif ($enrollment->status === 'active')
                                                                                 <form method="POST" action="{{ route('admin.students.switch-track', $student) }}" onsubmit="return confirm('Switch {{ $student->name }}\'s active track to {{ $enrollment->track->track_code }}? They\'ll be notified of the change.');">
                                                                                     @csrf
                                                                                     <input type="hidden" name="track_id" value="{{ $enrollment->track_id }}">
-                                                                                    <button type="submit" class="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">Set as Current</button>
+                                                                                    <button type="submit" class="whitespace-nowrap rounded-md border border-indigo-500 bg-white px-3 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-indigo-900/30">Set as Current</button>
                                                                                 </form>
                                                                             @endif
                                                                         </td>
@@ -267,7 +267,7 @@
                                                                                     label="Cancel"
                                                                                     title="Cancel this enrollment?"
                                                                                     :message="$cancelMessage"
-                                                                                    class="text-xs font-medium text-red-600 hover:text-red-500"
+                                                                                    class="rounded-md border border-red-700 bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500"
                                                                                 />
                                                                             @endif
                                                                         </td>
@@ -286,7 +286,7 @@
                                 {{-- Active Sessions --}}
                                 <div>
                                     @php $sessionsThisMonth = $sessionsThisMonthByStudentId[$student->id] ?? 0; @endphp
-                                    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <div class="overflow-hidden rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
                                         <div class="flex flex-wrap items-center justify-between gap-2 bg-blue-50 px-3 py-2 dark:bg-blue-900/20">
                                             <div class="flex flex-wrap items-center gap-3">
                                                 <span class="text-xs font-bold text-gray-900 dark:text-white">Active Sessions</span>
@@ -318,13 +318,13 @@
                                                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->browser }}</td>
                                                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->ip_address }}</td>
                                                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->last_activity_at?->diffForHumans() }}</td>
-                                                            <td class="py-2 pr-4"><x-badge :color="$session->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($session->status) }}</x-badge></td>
+                                                            <td class="py-2 pr-4"><x-badge :pill="false" :color="$session->status === 'active' ? 'green' : 'gray'" dot>{{ ucfirst($session->status) }}</x-badge></td>
                                                             <td class="py-2 pr-2 text-right">
                                                                 @if ($session->status === 'active')
                                                                     <form method="POST" action="{{ route('admin.sessions.destroy', $session) }}" onsubmit="return confirm('Terminate this session?');">
                                                                         @csrf
                                                                         @method('DELETE')
-                                                                        <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Terminate</button>
+                                                                        <button type="submit" class="rounded-md border border-red-700 bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500">Terminate</button>
                                                                     </form>
                                                                 @endif
                                                             </td>
@@ -342,7 +342,7 @@
 
                                 {{-- Payments --}}
                                 <div>
-                                    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <div class="overflow-hidden rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
                                         <div class="bg-blue-50 px-3 py-2 dark:bg-blue-900/20">
                                             <span class="text-xs font-bold text-gray-900 dark:text-white">Payments</span>
                                         </div>

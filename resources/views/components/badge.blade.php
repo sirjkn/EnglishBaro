@@ -1,4 +1,4 @@
-@props(['color' => 'gray', 'dot' => false])
+@props(['color' => 'gray', 'dot' => false, 'pill' => true])
 
 @php
     $colors = [
@@ -20,7 +20,7 @@
     ];
 @endphp
 
-<span {{ $attributes->merge(['class' => 'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium '.($colors[$color] ?? $colors['gray'])]) }}>
+<span {{ $attributes->merge(['class' => 'inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium '.($pill ? 'rounded-full' : 'rounded-md').' '.($colors[$color] ?? $colors['gray'])]) }}>
     @if ($dot)
         <span class="h-1.5 w-1.5 rounded-full {{ $dotColors[$color] ?? $dotColors['gray'] }}"></span>
     @endif

@@ -1,7 +1,7 @@
 <x-layouts.admin :title="'Placement Test'">
     <div x-data="{ addOpen: {{ $errors->any() ? 'true' : 'false' }} }">
 
-    <div class="grid grid-cols-1 gap-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800 lg:grid-cols-2">
+    <div class="grid grid-cols-1 gap-6 rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800 lg:grid-cols-2">
         <div>
             <h3 class="font-semibold text-gray-900 dark:text-white">Homepage Intro Video</h3>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Shown as the single hero slide on the homepage. The player is always visible there; upload a video to fill it, replace it any time, or remove it to show an empty player.</p>
@@ -103,7 +103,7 @@
 
     <div class="grid grid-cols-1 gap-4 rounded-b-xl border border-t-0 border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/40 xl:grid-cols-2">
         @forelse ($questions as $question)
-            <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
+            <div class="rounded-xl border-2 border-indigo-300 bg-white p-5 dark:border-indigo-700 dark:bg-gray-800">
                 <form method="POST" action="{{ route('admin.placement-test.update', $question) }}" class="space-y-3">
                     @csrf
                     @method('PUT')

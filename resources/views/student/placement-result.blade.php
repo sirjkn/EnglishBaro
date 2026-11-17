@@ -30,7 +30,7 @@
 
             <div class="mt-4 space-y-3">
                 @foreach ($attempt->answers as $answer)
-                    <div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                    <div class="rounded-lg border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
                         <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}. {{ $answer->question?->question }}</p>
                         <p class="mt-1 flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300">
                             <x-icons.chevron-right class="h-3.5 w-3.5 flex-none text-gray-400" />

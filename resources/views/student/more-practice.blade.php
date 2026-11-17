@@ -12,7 +12,7 @@
 
         <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
             @foreach ($categories as $key => $category)
-                <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-xl border-2 border-indigo-300 bg-white p-5 dark:border-indigo-700 dark:bg-gray-800">
                     <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                         <x-dynamic-component :component="'icons.'.$category['icon']" class="h-5 w-5" />
                     </span>

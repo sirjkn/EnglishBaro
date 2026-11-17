@@ -47,6 +47,11 @@ class TrackController extends Controller
                 'total' => $tracks->count(),
                 'published' => $tracks->where('status', 'published')->count(),
                 'enrollments' => Enrollment::query()->count(),
+                // Distinct students, not distinct enrollments — buying a
+                // course grants every track under it, so one student can
+                // hold several track enrollments from a single purchase and
+                // must only be counted once here.
+                'students' => Enrollment::query()->distinct('user_id')->count('user_id'),
             ],
         ]);
     }

@@ -24,7 +24,7 @@
     <section id="explore-course" class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Courses</h2>
         <p class="mt-2 text-gray-600 dark:text-gray-300">
-            One payment per course unlocks every unit inside it — the placement test decides where you start.
+            One payment per course unlocks every track inside it — the placement test decides where you start.
         </p>
 
         @if ($featuredCourses->isEmpty())

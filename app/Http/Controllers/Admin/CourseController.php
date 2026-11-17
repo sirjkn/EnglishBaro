@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Payment;
 use App\Services\AuditLogger;
 use App\Services\MediaService;
 use Illuminate\Database\QueryException;
@@ -45,6 +46,7 @@ class CourseController extends Controller
                 'total' => $courses->count(),
                 'published' => $courses->where('status', 'published')->count(),
                 'enrollments' => Enrollment::query()->count(),
+                'revenue' => (float) Payment::query()->where('status', 'successful')->sum('amount'),
             ],
         ]);
     }

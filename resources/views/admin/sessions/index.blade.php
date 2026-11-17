@@ -63,7 +63,7 @@
 
     <div class="mt-4 space-y-2">
         @forelse ($groupedUsers as $group)
-            <details class="overflow-hidden rounded-lg border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+            <details class="overflow-hidden rounded-lg border-2 border-indigo-300 bg-white shadow-sm dark:border-indigo-700 dark:bg-gray-800">
                 <summary class="grid cursor-pointer list-none grid-cols-[1fr_5rem_5rem_9rem] items-center gap-3 bg-indigo-50 px-3 py-1.5 leading-tight text-indigo-900 hover:bg-indigo-100 dark:bg-gray-900 dark:text-indigo-200 dark:hover:bg-gray-700/60">
                     <div class="flex min-w-0 items-center gap-2">
                         <svg class="h-3.5 w-3.5 shrink-0 text-indigo-400 transition-transform [details[open]_&]:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6" /></svg>
@@ -80,7 +80,7 @@
                     </div>
                     <div>
                         @if ($group->activeCount > 0)
-                            <span class="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">{{ $group->activeCount }} active</span>
+                            <span class="rounded-md bg-green-100 px-2 py-0.5 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">{{ $group->activeCount }} active</span>
                         @endif
                     </div>
                     <span class="text-xs text-indigo-500 dark:text-indigo-400">{{ $group->sessions->count() }} session{{ $group->sessions->count() === 1 ? '' : 's' }}</span>
@@ -92,7 +92,7 @@
                         <form method="POST" action="{{ route('admin.sessions.destroy-others', $group->user) }}" onsubmit="return confirm('Terminate all of {{ $group->user->name }}\'s other sessions? The session you\'re currently using (if any) is kept.');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Terminate All Except Current</button>
+                            <button type="submit" class="rounded-md border border-red-700 bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500">Terminate All Except Current</button>
                         </form>
                     </div>
                 @endif
@@ -134,13 +134,13 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-1.5 text-gray-700 dark:text-gray-300">{{ $session->last_activity_at?->diffForHumans() }}</td>
-                                    <td class="px-4 py-1.5"><x-badge :color="$session->status === 'active' ? 'green' : 'gray'">{{ ucfirst($session->status) }}</x-badge></td>
+                                    <td class="px-4 py-1.5"><x-badge :pill="false" :color="$session->status === 'active' ? 'green' : 'gray'">{{ ucfirst($session->status) }}</x-badge></td>
                                     <td class="px-4 py-1.5 text-right">
                                         @if ($session->status === 'active')
                                             <form method="POST" action="{{ route('admin.sessions.destroy', $session) }}" onsubmit="return confirm('Terminate this session?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-500">Terminate</button>
+                                                <button type="submit" class="rounded-md border border-red-700 bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500">Terminate</button>
                                             </form>
                                         @endif
                                     </td>
@@ -151,7 +151,7 @@
                 </div>
             </details>
         @empty
-            <div class="rounded-xl border border-gray-200 px-4 py-8 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">No sessions found.</div>
+            <div class="rounded-xl border-2 border-indigo-300 px-4 py-8 text-center text-gray-500 dark:border-indigo-700 dark:text-gray-400">No sessions found.</div>
         @endforelse
     </div>
 

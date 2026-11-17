@@ -10,7 +10,7 @@
         x-data="{ selected: {{ $openCourseId ?? 'null' }}, mode: '{{ $openCourseId ? 'edit' : 'create' }}', lastSelected: {{ $openCourseId ?? 'null' }} }"
     >
         {{-- 1/4: course list --}}
-        <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 lg:col-span-1">
+        <div class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700 lg:col-span-1">
             <div class="flex items-center justify-between gap-2 bg-indigo-600 px-3 py-2 dark:bg-indigo-800">
                 <span class="text-sm font-bold text-white">Courses</span>
                 <button
@@ -35,18 +35,18 @@
                                 <button
                                     type="button"
                                     @click="mode = 'edit'; selected = {{ $course->id }}; lastSelected = {{ $course->id }}"
-                                    class="grid w-full grid-cols-[1fr_auto] items-center gap-2 px-3 py-2.5 text-left"
+                                    class="flex w-full flex-wrap items-center gap-x-1.5 gap-y-1 px-3 py-2.5 text-left"
                                 >
-                                    <span class="min-w-0">
-                                        <span class="flex items-center gap-1.5">
-                                            <span class="flex-none rounded bg-indigo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">{{ $course->course_code }}</span>
-                                            <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
-                                        </span>
-                                        <span class="mt-1 block text-[11px] text-gray-500 dark:text-gray-400">
+                                    <span class="flex min-w-[64px] flex-1 items-center gap-1.5">
+                                        <span class="flex-none rounded bg-indigo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">{{ $course->course_code }}</span>
+                                        <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
+                                    </span>
+                                    <span class="ml-auto flex flex-none items-center gap-1.5">
+                                        <span class="whitespace-nowrap text-[11px] text-gray-500 dark:text-gray-400">
                                             {{ $course->tracks_count }} track{{ $course->tracks_count === 1 ? '' : 's' }} &middot; {{ $course->currency }} {{ number_format($course->defaultPrice(), 2) }} &middot; {{ $enrollmentCounts[$course->id] ?? 0 }} enrolled
                                         </span>
+                                        <x-badge class="!px-1.5 !text-[10px]" :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
                                     </span>
-                                    <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
                                 </button>
                             </td>
                         </tr>
@@ -59,10 +59,11 @@
 
         {{-- 3/4: toolbar, overview, and inline preview/edit panel --}}
         <div class="lg:col-span-3">
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <x-stat-card label="Total Courses" :value="$overview['total']" compact class="p-3" />
                 <x-stat-card label="Published Courses" :value="$overview['published']" compact class="p-3" />
                 <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" compact class="p-3" />
+                <x-stat-card label="Total Revenue" :value="'$'.number_format($overview['revenue'], 2)" icon="currency-dollar" color="teal" compact class="p-3" />
             </div>
 
             <div class="mt-6">
@@ -126,7 +127,7 @@
                                 <div x-data="{ editingCourse: {{ $reopenCourseDetails ? 'true' : 'false' }} }">
                                     {{-- Read-only view: shown by default so a stray click or keystroke
                                          can't change a price or other figure by accident. --}}
-                                    <div x-show="! editingCourse" class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <div x-show="! editingCourse" class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
                                         <div class="flex items-center justify-between gap-2 bg-gray-50 px-4 py-3 dark:bg-gray-800/60">
                                             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Course Details</h3>
                                             <button type="button" @click="editingCourse = true" class="flex items-center gap-1 rounded-md border border-indigo-600 px-3 py-1 text-sm font-medium text-indigo-600 hover:bg-indigo-600 hover:text-white dark:border-indigo-400 dark:text-indigo-400">
@@ -219,13 +220,13 @@
                                         $reopenEditingTrackId = $reopenTrackError && old('_editing_track_id') !== null ? (int) old('_editing_track_id') : null;
                                     @endphp
                                     <div x-data="{ addingUnit: {{ $reopenAddingUnit ? 'true' : 'false' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }} }">
-                                        <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+                                        <div class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
                                             <div class="flex items-center justify-between gap-2 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                                                 <div>
                                                     <h3 class="text-sm font-bold text-white">Tracks in this Course</h3>
                                                     <p class="mt-0.5 text-[11px] text-indigo-100">Students who buy {{ $course->name }} get every track below. The placement test decides which one they start on.</p>
                                                 </div>
-                                                <button type="button" x-show="editingTrack === null && ! addingUnit" @click="addingUnit = true" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
+                                                <button type="button" x-show="editingTrack === null && ! addingUnit" @click="addingUnit = true" class="flex-none rounded-md border border-green-600 bg-green-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-400">
                                                     + Add Track
                                                 </button>
                                                 <button type="button" x-show="editingTrack !== null" x-cloak @click="editingTrack = null" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">

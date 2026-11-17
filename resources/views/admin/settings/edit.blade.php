@@ -33,7 +33,7 @@
             </a>
         </div>
 
-    <div x-show="tab === 'company'" x-cloak class="mt-6 overflow-hidden rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+    <div x-show="tab === 'company'" x-cloak class="mt-6 overflow-hidden rounded-xl border-2 border-indigo-300 bg-white dark:border-indigo-700 dark:bg-gray-800">
         <div class="bg-indigo-600 px-6 py-3 dark:bg-indigo-800">
             <h2 class="text-sm font-bold text-white">Company Settings</h2>
         </div>
@@ -65,7 +65,7 @@
 
     </div>
 
-    <div x-show="tab === 'payment'" x-cloak class="mt-6 overflow-hidden rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+    <div x-show="tab === 'payment'" x-cloak class="mt-6 overflow-hidden rounded-xl border-2 border-indigo-300 bg-white dark:border-indigo-700 dark:bg-gray-800">
         <div class="bg-indigo-600 px-6 py-3 dark:bg-indigo-800">
             <h2 class="text-sm font-bold text-white">Payment Gateways</h2>
         </div>
@@ -75,7 +75,7 @@
         <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
             @foreach ($gateways as $gateway)
                 @php $setting = $paymentSettings[$gateway] ?? null; @endphp
-                <form method="POST" action="{{ route('admin.settings.payment') }}" class="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+                <form method="POST" action="{{ route('admin.settings.payment') }}" class="rounded-lg border-2 border-indigo-300 p-4 dark:border-indigo-700">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="_tab" value="payment">
@@ -108,13 +108,13 @@
         </div>
     </div>
 
-    <div x-show="tab === 'system'" x-cloak class="mt-6 overflow-hidden rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+    <div x-show="tab === 'system'" x-cloak class="mt-6 overflow-hidden rounded-xl border-2 border-indigo-300 bg-white dark:border-indigo-700 dark:bg-gray-800">
         <div class="bg-indigo-600 px-6 py-3 dark:bg-indigo-800">
             <h2 class="text-sm font-bold text-white">System Settings</h2>
         </div>
         <div class="p-6">
 
-        <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+        <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="flex items-center justify-between rounded-lg border-2 border-indigo-300 p-4 dark:border-indigo-700">
             <div>
                 <p class="text-sm font-medium text-gray-900 dark:text-white">Dark Mode</p>
                 <p class="text-xs text-gray-500 dark:text-gray-400">Off by default. This only affects your own browser.</p>
@@ -163,7 +163,7 @@
     </div>
 
     <div x-show="tab === 'backup'" x-cloak class="mt-6 space-y-6">
-        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
+        <div class="rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800">
             <h2 class="font-semibold text-gray-900 dark:text-white">Backup</h2>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Download a full snapshot of the database, plus every locally-stored image and document, as a single .zip file. Videos and audio already live on Mux and aren't duplicated into the backup.

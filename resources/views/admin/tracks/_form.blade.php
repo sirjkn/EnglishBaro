@@ -14,7 +14,7 @@
                     <option value="{{ $courseOption->id }}" @selected((int) old('course_id', $track->course_id) === $courseOption->id)>{{ $courseOption->name }} ({{ $courseOption->course_code }})</option>
                 @endforeach
             </select>
-            <p class="mt-1 text-xs text-gray-400">This unit is unlocked whenever a student buys this course — it isn't sold on its own.</p>
+            <p class="mt-1 text-xs text-gray-400">This track is unlocked whenever a student buys this course — it isn't sold on its own.</p>
             @error('course_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
         </div>
     @endif

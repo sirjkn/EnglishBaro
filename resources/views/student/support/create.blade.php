@@ -2,7 +2,7 @@
     <a href="{{ route('student.support.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">&larr; Support</a>
     <h1 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">New Support Ticket</h1>
 
-    <form method="POST" action="{{ route('student.support.store') }}" class="mt-6 max-w-xl space-y-4 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
+    <form method="POST" action="{{ route('student.support.store') }}" class="mt-6 max-w-xl space-y-4 rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800">
         @csrf
 
         <div>

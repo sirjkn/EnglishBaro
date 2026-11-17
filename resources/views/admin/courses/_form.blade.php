@@ -43,7 +43,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subscription Days</label>
                 <input type="number" min="1" name="subscription_days" value="{{ old('subscription_days', $course->subscription_days) }}" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
             </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">One payment at this price unlocks every unit (track) in this course for the subscription period above.</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">One payment at this price unlocks every track in this course for the subscription period above.</p>
         </div>
 
         <div>

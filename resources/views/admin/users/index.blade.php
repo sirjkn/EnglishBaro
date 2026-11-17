@@ -21,7 +21,7 @@
 
         <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {{-- Left: user list --}}
-            <div class="overflow-x-auto rounded-xl border border-black/10 bg-white dark:border-white/10 dark:bg-gray-800">
+            <div class="overflow-x-auto rounded-xl border-2 border-indigo-300 bg-white dark:border-indigo-700 dark:bg-gray-800">
                 <table class="w-full min-w-[640px] text-left text-sm">
                     <thead class="bg-gray-50 text-xs uppercase text-gray-500 dark:bg-gray-900 dark:text-gray-400">
                         <tr>

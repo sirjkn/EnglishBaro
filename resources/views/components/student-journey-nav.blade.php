@@ -1,12 +1,12 @@
 @auth
     @php
         $studentJourneyNav = [
-            ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
             ['route' => 'home', 'label' => 'My Course', 'icon' => 'home'],
             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
+            ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
+            ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
-            ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
         ];
     @endphp
 
@@ -14,7 +14,7 @@
         <div class="flex w-full items-center justify-between gap-1.5 overflow-x-auto">
             @foreach ($studentJourneyNav as $item)
                 <a href="{{ route($item['route']) }}"
-                   class="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border px-3 py-1 text-[11px] font-semibold transition {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'border-white bg-white text-blue-700 shadow-sm' : 'border-blue-300 bg-blue-600/40 text-white hover:bg-blue-400' }}">
+                   class="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-3 py-1 text-[11px] font-semibold transition {{ request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*') ? 'border-white bg-white text-blue-700 shadow-sm' : 'border-blue-300 bg-blue-600/40 text-white hover:bg-blue-400' }}">
                     {{ $item['label'] }}
                 </a>
             @endforeach

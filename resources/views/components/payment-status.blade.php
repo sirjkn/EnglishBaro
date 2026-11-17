@@ -10,4 +10,4 @@
     };
 @endphp
 
-<x-badge :color="$color" dot>{{ ucfirst($status) }}</x-badge>
+<x-badge :pill="false" :color="$color" dot>{{ ucfirst($status) }}</x-badge>

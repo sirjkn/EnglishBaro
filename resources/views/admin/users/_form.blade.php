@@ -6,7 +6,7 @@
          to the list rather than reopen the same user automatically. --}}
     <input type="hidden" name="redirect" value="{{ route('admin.users.index', [], false) }}">
 
-    <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
+    <div class="rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div class="mt-6 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800" x-show="userType === 'staff'" x-cloak>
+    <div class="mt-6 rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800" x-show="userType === 'staff'" x-cloak>
         <h2 class="font-semibold text-gray-900 dark:text-white">Module Access</h2>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Tick every menu/module this staff account should be able to open. Everything else stays hidden and blocked.</p>
 

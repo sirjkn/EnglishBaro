@@ -9,7 +9,7 @@
     </div>
 
     <div class="mt-4 grid h-[calc(100vh-18rem)] min-h-[420px] grid-cols-1 grid-rows-4 gap-4 lg:grid-cols-2 lg:grid-rows-2">
-        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+        <div class="flex min-h-0 flex-col rounded-xl border-2 border-indigo-300 bg-white p-4 shadow-sm dark:border-indigo-700 dark:bg-gray-800">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Revenue ({{ $selectedRevenueMonthLabel }})</h2>
                 <div class="flex items-center gap-2">
@@ -32,7 +32,7 @@
                 <canvas id="revenueChart"></canvas>
             </div>
         </div>
-        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+        <div class="flex min-h-0 flex-col rounded-xl border-2 border-indigo-300 bg-white p-4 shadow-sm dark:border-indigo-700 dark:bg-gray-800">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">New Students ({{ $selectedMonthLabel }})</h2>
                 <div class="flex items-center gap-2">
@@ -55,13 +55,13 @@
                 <canvas id="studentsChart"></canvas>
             </div>
         </div>
-        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+        <div class="flex min-h-0 flex-col rounded-xl border-2 border-indigo-300 bg-white p-4 shadow-sm dark:border-indigo-700 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Track Popularity</h2>
             <div class="mt-2 min-h-0 flex-1">
                 <canvas id="trackChart"></canvas>
             </div>
         </div>
-        <div class="flex min-h-0 flex-col rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+        <div class="flex min-h-0 flex-col rounded-xl border-2 border-indigo-300 bg-white p-4 shadow-sm dark:border-indigo-700 dark:bg-gray-800">
             <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Payment Status</h2>
             <div class="mt-2 min-h-0 flex-1">
                 <canvas id="paymentChart"></canvas>

@@ -1,6 +1,6 @@
 @props(['lesson' => null])
 
-<div class="rounded-lg border border-gray-200 dark:border-gray-700">
+<div class="rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
     <p class="border-b border-gray-200 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:border-gray-700">Media</p>
 
     <ul class="divide-y divide-gray-100 px-3 dark:divide-gray-700" x-show="existingResources.length" x-cloak>

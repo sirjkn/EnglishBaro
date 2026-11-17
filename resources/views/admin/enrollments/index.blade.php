@@ -1,9 +1,9 @@
 <x-layouts.admin :title="'Enrollments'">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Enrollments</h1>
     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-        Grouped by course — one payment enrolls a student in every unit (track) under that course at once, so
+        Grouped by course — one payment enrolls a student in every track under that course at once, so
         headcounts are shown per course first. Students still progress through tracks one at a time, so click a
-        unit to see how far each enrolled student has gotten in it.
+        track to see how far each enrolled student has gotten in it.
     </p>
 
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -30,7 +30,7 @@
                         <table class="min-w-full divide-y divide-gray-200 text-[11px] dark:divide-gray-700">
                             <thead>
                                 <tr class="bg-indigo-600 text-left text-[10px] uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                                    <th class="px-2.5 py-1.5">Unit</th>
+                                    <th class="px-2.5 py-1.5">Track</th>
                                     <th class="px-2.5 py-1.5">Levels</th>
                                     <th class="px-2.5 py-1.5">Enrolled</th>
                                     <th class="px-2.5 py-1.5"></th>
@@ -53,14 +53,14 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400 dark:text-gray-500">No units in this course yet.</td></tr>
+                                    <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400 dark:text-gray-500">No tracks in this course yet.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
             @empty
-                <p class="rounded-xl border border-gray-200 px-4 py-8 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">
+                <p class="rounded-xl border-2 border-indigo-300 px-4 py-8 text-center text-gray-500 dark:border-indigo-700 dark:text-gray-400">
                     No courses yet.
                 </p>
             @endforelse
@@ -69,7 +69,7 @@
         {{-- 50%: enrolled students for whichever unit was clicked --}}
         <div class="lg:sticky lg:top-4 lg:self-start">
             <div x-show="open === null" class="flex h-48 items-center justify-center rounded-xl border border-dashed border-gray-300 px-4 text-center text-sm text-gray-400 dark:border-gray-600">
-                Click a unit on the left to see who's enrolled in it and their progress.
+                Click a track on the left to see who's enrolled in it and their progress.
             </div>
 
             @foreach ($courses as $course)
@@ -87,7 +87,7 @@
                                 <div><dt class="inline font-medium">Subscription:</dt> <dd class="inline">{{ $course->subscription_days }} days</dd></div>
                             </dl>
 
-                            <div class="mt-4 max-h-[65vh] overflow-y-auto overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                            <div class="mt-4 max-h-[65vh] overflow-y-auto overflow-x-auto rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
                                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                     <thead>
                                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">

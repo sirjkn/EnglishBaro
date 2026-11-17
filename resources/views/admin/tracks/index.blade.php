@@ -2,7 +2,7 @@
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Course Tracks</h1>
 
     <p class="mt-2 max-w-3xl text-sm text-gray-600 dark:text-gray-400">
-        Units are grouped by the course they belong to — codes like A1 aren't unique across courses, so always check
+        Tracks are grouped by the course they belong to — codes like A1 aren't unique across courses, so always check
         which course's section you're in before editing.
     </p>
 
@@ -12,10 +12,11 @@
         </div>
     @endif
 
-    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-stat-card label="Published Course Tracks" :value="$overview['published']" />
         <x-stat-card label="Total Course Tracks" :value="$overview['total']" />
         <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" />
+        <x-stat-card label="Total Students" :value="$overview['students']" />
     </div>
 
     @php
@@ -28,15 +29,12 @@
     @endphp
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4" x-data="{ selected: {{ $openCourseId ?? 'null' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }}, addingTrack: {{ $reopenAddingTrack ? 'true' : 'false' }} }">
         {{-- 1/4: courses, stacked in one column --}}
-        <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 lg:col-span-1">
-            <div class="bg-indigo-600 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white dark:bg-indigo-800">
-                Courses
-            </div>
+        <div class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700 lg:col-span-1">
             <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                 <thead>
                     <tr class="bg-indigo-600 text-left text-[11px] uppercase text-white dark:bg-indigo-800">
-                        <th class="px-3 py-2">Course</th>
-                        <th class="px-3 py-2">Status</th>
+                        <th class="px-3 py-2 text-sm font-bold normal-case tracking-normal">Courses</th>
+                        <th class="px-3 py-2 text-right">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
@@ -46,18 +44,18 @@
                                 <button
                                     type="button"
                                     @click="selected = {{ $course->id }}; editingTrack = null; addingTrack = false"
-                                    class="grid w-full grid-cols-[1fr_auto] items-center gap-2 px-3 py-2.5 text-left"
+                                    class="flex w-full flex-wrap items-center gap-x-1.5 gap-y-1 px-2.5 py-2.5 text-left"
                                 >
-                                    <span class="min-w-0">
-                                        <span class="flex items-center gap-1.5">
-                                            <span class="flex-none rounded bg-indigo-600 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">{{ $course->course_code }}</span>
-                                            <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
-                                        </span>
-                                        <span class="mt-1 block text-[11px] text-gray-500 dark:text-gray-400">
-                                            {{ $course->tracks->count() }} unit{{ $course->tracks->count() === 1 ? '' : 's' }}
-                                        </span>
+                                    <span class="flex min-w-[64px] flex-1 items-center gap-1.5">
+                                        <span class="flex-none rounded bg-indigo-600 px-1.5 py-1 text-[10px] font-bold uppercase text-white">{{ $course->course_code }}</span>
+                                        <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
                                     </span>
-                                    <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
+                                    <span class="ml-auto flex flex-none items-center gap-1.5">
+                                        <span class="whitespace-nowrap text-xs font-semibold text-gray-700 dark:text-gray-300">
+                                            {{ $course->tracks->count() }} track{{ $course->tracks->count() === 1 ? '' : 's' }}
+                                        </span>
+                                        <x-badge :pill="false" class="flex-none !px-1.5 !text-[10px]" :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
+                                    </span>
                                 </button>
                             </td>
                         </tr>
@@ -75,7 +73,7 @@
                     <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                         <div class="flex flex-wrap items-center gap-3">
                             <h2 class="text-sm font-bold text-white">{{ $course->name }} ({{ $course->course_code }})</h2>
-                            <x-badge :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
+                            <x-badge :pill="false" :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
                         </div>
                         <div class="flex items-center gap-2">
                             <button type="button" x-show="editingTrack === null" @click="addingTrack = ! addingTrack" class="rounded-md border border-green-600 bg-green-500 px-3 py-1 text-xs font-semibold text-white hover:bg-green-400">
@@ -135,7 +133,7 @@
                                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->levels_count }}</td>
                                         <td class="px-4 py-3 text-gray-700 dark:text-gray-300">{{ $track->students_count }}</td>
                                         <td class="px-4 py-3">
-                                            <x-badge :color="$track->status === 'published' ? 'green' : ($track->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($track->status) }}</x-badge>
+                                            <x-badge :pill="false" :color="$track->status === 'published' ? 'green' : ($track->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($track->status) }}</x-badge>
                                         </td>
                                         <td class="px-4 py-3 text-right">
                                             @php
@@ -158,7 +156,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr><td colspan="6" class="px-4 py-6 text-center text-gray-400 dark:text-gray-500">No units in this course yet.</td></tr>
+                                    <tr><td colspan="6" class="px-4 py-6 text-center text-gray-400 dark:text-gray-500">No tracks in this course yet.</td></tr>
                                 @endforelse
                             </tbody>
                         </table>

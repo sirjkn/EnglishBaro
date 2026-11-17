@@ -13,7 +13,7 @@
                 + Add Testimonial
             </button>
 
-            <div class="mt-4 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+            <div class="mt-4 overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
                 <div class="bg-indigo-600 px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-white dark:bg-indigo-800">
                     Testimonials
                 </div>

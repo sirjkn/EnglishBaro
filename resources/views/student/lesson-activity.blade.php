@@ -65,7 +65,7 @@
 
         <div class="mt-6 space-y-5">
             @foreach ($assessment->questions as $question)
-                <div class="rounded-lg border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+                <div class="rounded-lg border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
                     <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}. {{ $question->question }}</p>
 
                     @if (in_array($question->type, ['short_answer', 'fill_blank'], true))

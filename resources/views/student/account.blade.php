@@ -1,7 +1,7 @@
 <x-layouts.student :title="'Account'">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Account</h1>
 
-    <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="mt-6 flex items-center justify-between rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+    <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="mt-6 flex items-center justify-between rounded-xl border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
         <div>
             <p class="text-sm font-medium text-gray-900 dark:text-white">Dark Mode</p>
             <p class="text-xs text-gray-500 dark:text-gray-400">Off by default. This only affects your own browser.</p>
@@ -20,111 +20,157 @@
 
     <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
         {{-- Profile --}}
-        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
-            <h2 class="font-semibold text-gray-900 dark:text-white">Profile</h2>
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Student ID: {{ $studentProfile?->student_id }}</p>
-
-            <form method="POST" action="{{ route('student.account.update') }}" class="mt-4 space-y-4" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
-                    <div class="mt-1 flex items-center gap-4">
-                        <x-student-avatar :profile="$studentProfile" size="h-16 w-16" />
-                        <input type="file" name="avatar" accept="image/*" class="text-sm text-gray-700 dark:text-gray-300">
+        <div class="rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800" x-data="{ editingProfile: {{ $errors->hasAny(['name', 'gender', 'phone', 'country', 'referral_email', 'avatar']) ? 'true' : 'false' }} }">
+            {{-- Read-only view: shown by default, so a profile is never edited by accident --}}
+            <div x-show="! editingProfile">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-semibold text-gray-900 dark:text-white">Profile</h2>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Student ID: {{ $studentProfile?->student_id }}</p>
                     </div>
-                    @error('avatar') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    <button type="button" @click="editingProfile = true" class="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                        <x-icons.pencil class="h-3.5 w-3.5" /> Edit
+                    </button>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Names</label>
-                    <input type="text" name="name" value="{{ old('name', $user->name) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                <div class="mt-4 flex items-start gap-4">
+                    <x-student-avatar :profile="$studentProfile" size="h-16 w-16" class="shrink-0" />
+                    <dl class="grid flex-1 grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                        <div><dt class="text-xs text-gray-400">Full Names</dt><dd class="text-gray-900 dark:text-white">{{ $user->name }}</dd></div>
+                        <div><dt class="text-xs text-gray-400">Gender</dt><dd class="text-gray-900 dark:text-white">{{ $studentProfile?->gender ? ucfirst($studentProfile->gender) : 'Not set' }}</dd></div>
+                        <div><dt class="text-xs text-gray-400">Email</dt><dd class="text-gray-900 dark:text-white">{{ $user->email }}</dd></div>
+                        <div><dt class="text-xs text-gray-400">Phone</dt><dd class="text-gray-900 dark:text-white">{{ $studentProfile?->phone ?? '—' }}</dd></div>
+                        <div><dt class="text-xs text-gray-400">Country</dt><dd class="text-gray-900 dark:text-white">{{ $studentProfile?->country ?? '—' }}</dd></div>
+                        <div><dt class="text-xs text-gray-400">Referral Email</dt><dd class="text-gray-900 dark:text-white">{{ $studentProfile?->referral_email ?? '—' }}</dd></div>
+                        <div><dt class="text-xs text-gray-400">Current Level</dt><dd class="text-gray-900 dark:text-white">{{ $studentProfile?->level?->name ?? 'Not set' }}</dd></div>
+                    </dl>
                 </div>
+            </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Gender</label>
-                    <select name="gender" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                        <option value="">Not set</option>
-                        <option value="male" @selected(old('gender', $studentProfile?->gender) === 'male')>Male</option>
-                        <option value="female" @selected(old('gender', $studentProfile?->gender) === 'female')>Female</option>
-                    </select>
-                    <p class="mt-1 text-xs text-gray-400">Used only to pick a default avatar when you haven't uploaded a photo.</p>
-                </div>
+            {{-- Edit view: opt in via the Edit button, with Save/Cancel --}}
+            <div x-show="editingProfile" x-cloak>
+                <h2 class="font-semibold text-gray-900 dark:text-white">Profile</h2>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Student ID: {{ $studentProfile?->student_id }}</p>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                    <input type="email" value="{{ $user->email }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
-                </div>
+                <form method="POST" action="{{ route('student.account.update') }}" class="mt-4 space-y-4" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
-                    <input type="text" name="phone" value="{{ old('phone', $studentProfile?->phone) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Photo</label>
+                        <div class="mt-1 flex items-center gap-4">
+                            <x-student-avatar :profile="$studentProfile" size="h-16 w-16" />
+                            <input type="file" name="avatar" accept="image/*" class="text-sm text-gray-700 dark:text-gray-300">
+                        </div>
+                        @error('avatar') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
-                    <select name="country" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                        <option value="">Select Country</option>
-                        @foreach ($countries as $countryOption)
-                            <option value="{{ $countryOption }}" @selected(old('country', $studentProfile?->country) === $countryOption)>{{ $countryOption }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Names</label>
+                        <input type="text" name="name" value="{{ old('name', $user->name) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Referral Email</label>
-                    <input type="email" name="referral_email" value="{{ old('referral_email', $studentProfile?->referral_email) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Gender</label>
+                        <select name="gender" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                            <option value="">Not set</option>
+                            <option value="male" @selected(old('gender', $studentProfile?->gender) === 'male')>Male</option>
+                            <option value="female" @selected(old('gender', $studentProfile?->gender) === 'female')>Female</option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-400">Used only to pick a default avatar when you haven't uploaded a photo.</p>
+                    </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Level</label>
-                    <input type="text" value="{{ $studentProfile?->level?->name ?? 'Not set' }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                        <input type="email" value="{{ $user->email }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                    </div>
 
-                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
-            </form>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+                        <input type="text" name="phone" value="{{ old('phone', $studentProfile?->phone) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
+                        <select name="country" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                            <option value="">Select Country</option>
+                            @foreach ($countries as $countryOption)
+                                <option value="{{ $countryOption }}" @selected(old('country', $studentProfile?->country) === $countryOption)>{{ $countryOption }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Referral Email</label>
+                        <input type="email" name="referral_email" value="{{ old('referral_email', $studentProfile?->referral_email) }}" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Level</label>
+                        <input type="text" value="{{ $studentProfile?->level?->name ?? 'Not set' }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                        <button type="button" @click="editingProfile = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         {{-- Password --}}
-        <div class="rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
-            <h2 class="font-semibold text-gray-900 dark:text-white">Change Password</h2>
+        <div class="rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800" x-data="{ editingPassword: {{ $errors->hasAny(['current_password', 'password']) ? 'true' : 'false' }} }">
+            {{-- Read-only view: shown by default, so password fields are never filled in by accident --}}
+            <div x-show="! editingPassword" class="flex items-center justify-between">
+                <h2 class="font-semibold text-gray-900 dark:text-white">Change Password</h2>
+                <button type="button" @click="editingPassword = true" class="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                    <x-icons.pencil class="h-3.5 w-3.5" /> Edit
+                </button>
+            </div>
 
-            <form method="POST" action="{{ route('student.account.password') }}" class="mt-4 space-y-4">
-                @csrf
-                @method('PUT')
+            {{-- Edit view: opt in via the Edit button, with Save/Cancel --}}
+            <div x-show="editingPassword" x-cloak>
+                <h2 class="font-semibold text-gray-900 dark:text-white">Change Password</h2>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
-                    <input type="password" name="current_password" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    @error('current_password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                </div>
+                <form method="POST" action="{{ route('student.account.password') }}" class="mt-4 space-y-4">
+                    @csrf
+                    @method('PUT')
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
-                    <input type="password" name="password" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    @error('password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
+                        <input type="password" name="current_password" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        @error('current_password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm New Password</label>
-                    <input type="password" name="password_confirmation" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
+                        <input type="password" name="password" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        @error('password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
 
-                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Update Password</button>
-            </form>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm New Password</label>
+                        <input type="password" name="password_confirmation" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Update Password</button>
+                        <button type="button" @click="editingPassword = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     {{-- Sessions --}}
-    <div class="mt-8 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
+    <div class="mt-8 rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold text-gray-900 dark:text-white">Sessions</h2>
             <form method="POST" action="{{ route('student.sessions.destroy-others') }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Logout other devices</button>
+                <button type="submit" class="rounded-md border border-red-600 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 dark:bg-gray-800 dark:hover:bg-red-900/30">Logout other devices</button>
             </form>
         </div>
 
@@ -148,14 +194,14 @@
                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->ip_address }}</td>
                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->last_activity_at?->diffForHumans() }}</td>
                             <td class="py-2 pr-4">
-                                <x-badge :color="$session->status === 'active' ? 'green' : 'gray'">{{ ucfirst($session->status) }}</x-badge>
+                                <x-badge :pill="false" :color="$session->status === 'active' ? 'green' : 'gray'">{{ ucfirst($session->status) }}</x-badge>
                             </td>
                             <td class="py-2 text-right">
                                 @if ($session->status === 'active')
                                     <form method="POST" action="{{ route('student.sessions.destroy', $session) }}" onsubmit="return confirm('Terminate this session?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-500">Terminate</button>
+                                        <button type="submit" class="rounded-md border border-red-700 bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500">Terminate</button>
                                     </form>
                                 @endif
                             </td>
@@ -167,7 +213,7 @@
     </div>
 
     {{-- Recent Payments --}}
-    <div class="mt-8 rounded-xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-gray-800">
+    <div class="mt-8 rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800">
         <h2 class="font-semibold text-gray-900 dark:text-white">Recent Payments</h2>
 
         @if ($payments->isEmpty())

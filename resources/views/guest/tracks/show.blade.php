@@ -96,7 +96,7 @@
                 (entries) => entries.forEach((entry) => { if (entry.isIntersecting) { active = entry.target.id; } }),
                 { rootMargin: '-60px 0px -70% 0px', threshold: 0 }
             );
-            ['about', 'levels', 'testimonials', 'subscription'].forEach((id) => {
+            ['about', 'levels', 'credits', 'testimonials', 'subscription'].forEach((id) => {
                 const el = document.getElementById(id);
                 if (el) observer.observe(el);
             });
@@ -105,6 +105,7 @@
         <div class="mx-auto flex max-w-7xl justify-center gap-8 overflow-x-auto px-4 sm:px-6 lg:px-8">
             <a href="#about" :class="active === 'about' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">About</a>
             <a href="#levels" :class="active === 'levels' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Overview</a>
+            <a href="#credits" :class="active === 'credits' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Credits</a>
             <a href="#testimonials" :class="active === 'testimonials' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Testimonials</a>
             <a href="#subscription" :class="active === 'subscription' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-600 dark:text-gray-300'" class="whitespace-nowrap border-b-2 py-3 text-sm font-semibold hover:border-indigo-600 hover:text-indigo-600">Subscription</a>
         </div>
@@ -113,55 +114,14 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {{-- About --}}
         <section id="about" class="scroll-mt-16 border-b border-gray-200 py-12 dark:border-gray-800">
-            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                <div class="lg:col-span-2">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">About this course</h2>
-                    <div class="prose prose-sm dark:prose-invert mt-4 max-w-none">
-                        <p>{{ $track->description }}</p>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">About this course</h2>
+            <div class="prose prose-sm dark:prose-invert mt-4 max-w-none">
+                <p>{{ $track->description }}</p>
 
-                        @if ($track->learning_outcomes)
-                            <h3>What You'll Achieve</h3>
-                            <p>{{ $track->learning_outcomes }}</p>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-gray-800">
-                    {{-- Certificate mockup --}}
-                    <div class="mx-auto w-full max-w-[180px]">
-                        <svg viewBox="0 0 400 280" class="w-full rounded-lg border border-black/10 bg-white shadow-sm dark:border-gray-700" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="0" y="0" width="400" height="280" rx="8" fill="currentColor" class="text-white dark:text-gray-900" />
-                            <rect x="10" y="10" width="380" height="260" rx="4" fill="none" stroke="#6366f1" stroke-width="2" />
-                            <rect x="16" y="16" width="368" height="248" rx="3" fill="none" stroke="#c7d2fe" stroke-width="1" />
-
-                            <circle cx="200" cy="48" r="14" fill="#6366f1" />
-                            <path d="M194 48l4 4 8-8" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-
-                            <text x="200" y="84" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#4338ca" letter-spacing="2">CERTIFICATE OF COMPLETION</text>
-                            <line x1="140" y1="94" x2="260" y2="94" stroke="#c7d2fe" stroke-width="1" />
-
-                            <text x="200" y="118" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#9ca3af">THIS CERTIFIES THAT</text>
-                            <text x="200" y="142" text-anchor="middle" font-family="'Brush Script MT', cursive" font-size="20" fill="#1f2937">Jane Student</text>
-                            <line x1="110" y1="150" x2="290" y2="150" stroke="#e5e7eb" stroke-width="1" />
-
-                            <text x="200" y="172" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#9ca3af">has successfully completed the</text>
-                            <text x="200" y="190" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="bold" fill="#312e81">{{ $track->name }}</text>
-
-                            <line x1="40" y1="232" x2="130" y2="232" stroke="#9ca3af" stroke-width="1" />
-                            <text x="85" y="244" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#9ca3af">Date</text>
-
-                            <line x1="270" y1="232" x2="360" y2="232" stroke="#9ca3af" stroke-width="1" />
-                            <text x="315" y="244" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#9ca3af">EnglishBaro</text>
-                        </svg>
-                    </div>
-
-                    <div class="mt-3 text-center">
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Certificate</h3>
-                        <p class="mt-1 text-xs text-gray-600 dark:text-gray-300">
-                            Complete every level to earn a verifiable EnglishBaro certificate.
-                        </p>
-                    </div>
-                </div>
+                @if ($track->learning_outcomes)
+                    <h3>What You'll Achieve</h3>
+                    <p>{{ $track->learning_outcomes }}</p>
+                @endif
             </div>
         </section>
 
@@ -188,6 +148,51 @@
                         <li>One payment unlocks every level of this track for {{ $track->course->subscription_days }} days from the date of purchase.</li>
                         <li>Your certificate is issued once every level in the track has been completed.</li>
                     </ul>
+                </div>
+            </div>
+        </section>
+
+        {{-- Credits --}}
+        <section id="credits" class="scroll-mt-16 border-b border-gray-200 py-12 dark:border-gray-800">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Credits</h2>
+            <div class="mt-6 grid grid-cols-1 items-center gap-8 lg:grid-cols-5">
+                <div class="flex h-full items-center rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-gray-800 lg:col-span-3">
+                    <div class="mx-auto w-full">
+                        <svg viewBox="0 0 400 280" class="w-full rounded-lg border border-black/10 bg-white shadow-sm dark:border-gray-700" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0" y="0" width="400" height="280" rx="8" fill="currentColor" class="text-white dark:text-gray-900" />
+                            <rect x="10" y="10" width="380" height="260" rx="4" fill="none" stroke="#6366f1" stroke-width="2" />
+                            <rect x="16" y="16" width="368" height="248" rx="3" fill="none" stroke="#c7d2fe" stroke-width="1" />
+
+                            <circle cx="200" cy="48" r="14" fill="#6366f1" />
+                            <path d="M194 48l4 4 8-8" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+
+                            <text x="200" y="84" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#4338ca" letter-spacing="2">CERTIFICATE OF COMPLETION</text>
+                            <line x1="140" y1="94" x2="260" y2="94" stroke="#c7d2fe" stroke-width="1" />
+
+                            <text x="200" y="118" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#9ca3af">THIS CERTIFIES THAT</text>
+                            <text x="200" y="142" text-anchor="middle" font-family="'Brush Script MT', cursive" font-size="20" fill="#1f2937">Jane Student</text>
+                            <line x1="110" y1="150" x2="290" y2="150" stroke="#e5e7eb" stroke-width="1" />
+
+                            <text x="200" y="172" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#9ca3af">has successfully completed the</text>
+                            <text x="200" y="190" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-weight="bold" fill="#312e81">{{ $track->name }}</text>
+
+                            <line x1="40" y1="232" x2="130" y2="232" stroke="#9ca3af" stroke-width="1" />
+                            <text x="85" y="244" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#9ca3af">Date</text>
+
+                            <line x1="270" y1="232" x2="360" y2="232" stroke="#9ca3af" stroke-width="1" />
+                            <text x="315" y="244" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#9ca3af">EnglishBaro</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Certificate of Completion</h3>
+                    <p class="mt-2 max-w-sm text-sm text-gray-600 dark:text-gray-300">
+                        Complete every level in {{ $track->track_code }} — all lessons and Activity Questions —
+                        and you'll earn a verifiable EnglishBaro certificate bearing your name and the track you
+                        completed. It's issued automatically the moment your final level is marked done, and you
+                        can share or download it from your student dashboard at any time afterwards.
+                    </p>
                 </div>
             </div>
         </section>

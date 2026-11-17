@@ -1,6 +1,6 @@
 <x-layouts.admin :title="'More Practice'">
     <div x-data="{ addOpen: {{ $errors->any() ? 'true' : 'false' }} }">
-    <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+    <div class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
         <div class="flex flex-wrap items-start justify-between gap-3 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
             <div>
                 <h1 class="text-sm font-bold text-white">More Practice</h1>
@@ -27,7 +27,7 @@
 
     <div class="mt-6 space-y-4">
         @forelse ($questions as $question)
-            <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
+            <div class="rounded-xl border-2 border-indigo-300 bg-white p-5 dark:border-indigo-700 dark:bg-gray-800">
                 <form method="POST" action="{{ route('admin.practice-questions.update', $question) }}" class="space-y-3">
                     @csrf
                     @method('PUT')

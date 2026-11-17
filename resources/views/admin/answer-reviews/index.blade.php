@@ -13,7 +13,7 @@
 
     <div class="mt-6 space-y-4">
         @forelse ($answers as $answer)
-            <div class="rounded-xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-gray-800">
+            <div class="rounded-xl border-2 border-indigo-300 bg-white p-5 dark:border-indigo-700 dark:bg-gray-800">
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <p class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">

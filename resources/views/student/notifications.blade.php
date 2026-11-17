@@ -10,7 +10,7 @@
     @if ($notifications->isEmpty())
         <x-empty-state class="mt-6" message="No notifications yet." />
     @else
-        <div class="mt-6 divide-y divide-gray-100 rounded-xl border border-black/10 bg-white dark:divide-gray-700 dark:border-white/10 dark:bg-gray-800">
+        <div class="mt-6 divide-y divide-gray-100 rounded-xl border-2 border-indigo-300 bg-white dark:divide-gray-700 dark:border-indigo-700 dark:bg-gray-800">
             @foreach ($notifications as $notification)
                 <div class="flex items-center justify-between p-4">
                     <div>

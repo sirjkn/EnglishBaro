@@ -48,7 +48,7 @@
     </x-chat-doodle-background>
 
     @if (! $ticket->isClosed())
-        <form method="POST" action="{{ route('student.support.reply', $ticket) }}" class="mt-6 rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-gray-800">
+        <form method="POST" action="{{ route('student.support.reply', $ticket) }}" class="mt-6 rounded-xl border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
             @csrf
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Reply</label>
             <textarea name="message" rows="4" required class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"></textarea>

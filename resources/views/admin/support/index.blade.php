@@ -21,7 +21,7 @@
         <a href="{{ route('admin.support.index', ['status' => 'closed']) }}" class="rounded-md px-3 py-1.5 text-sm font-medium {{ ($filters['status'] ?? null) === 'closed' ? 'bg-indigo-600 text-white' : 'border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200' }}">Closed</a>
     </div>
 
-    <div class="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+    <div class="mt-4 overflow-x-auto rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
         <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
             <thead>
                 <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
