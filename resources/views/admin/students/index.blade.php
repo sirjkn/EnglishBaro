@@ -11,13 +11,25 @@
         class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-4"
         x-data="{ selected: {{ $openStudentId ?? 'null' }}, mode: '{{ $openStudentId ? 'edit' : 'create' }}' }"
     >
-        {{-- 1/4: overview, Add Student, student list --}}
+        {{-- 1/4: filters, Add Student, student list --}}
         <div class="lg:col-span-1">
-            <div class="grid grid-cols-3 gap-2">
-                <x-stat-card label="Total Students" :value="$overview['total']" compact class="!p-2" label-size="text-[9px]" />
-                <x-stat-card label="Active Students" :value="$overview['active']" compact class="!p-2" label-size="text-[9px]" />
-                <x-stat-card label="New This Month" :value="$overview['new_this_month']" compact class="!p-2" label-size="text-[9px]" />
-            </div>
+            <form method="GET" class="grid grid-cols-1 gap-2">
+                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                <div class="grid grid-cols-2 gap-2">
+                    <select name="track" class="rounded-md border-gray-300 text-xs dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        <option value="">All Tracks</option>
+                        @foreach ($tracks as $track)
+                            <option value="{{ $track->id }}" @selected(($filters['track'] ?? null) == $track->id)>{{ $track->track_code }} — {{ $track->name }}</option>
+                        @endforeach
+                    </select>
+                    <select name="status" class="rounded-md border-gray-300 text-xs dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        <option value="">All Statuses</option>
+                        <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
+                        <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="rounded-md border border-gray-300 bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">Filter</button>
+            </form>
 
             <button
                 type="button"
@@ -58,23 +70,13 @@
             <div class="mt-3">{{ $students->links() }}</div>
         </div>
 
-        {{-- 3/4: filters + inline create/edit panel --}}
+        {{-- 3/4: overview + inline create/edit panel --}}
         <div class="lg:col-span-3">
-            <form method="GET" class="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, student ID..." class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                <select name="track" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    <option value="">All Tracks</option>
-                    @foreach ($tracks as $track)
-                        <option value="{{ $track->id }}" @selected(($filters['track'] ?? null) == $track->id)>{{ $track->track_code }} — {{ $track->name }}</option>
-                    @endforeach
-                </select>
-                <select name="status" class="rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
-                    <option value="">All Statuses</option>
-                    <option value="active" @selected(($filters['status'] ?? '') === 'active')>Active</option>
-                    <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>Inactive</option>
-                </select>
-                <button type="submit" class="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200">Filter</button>
-            </form>
+            <div class="grid grid-cols-3 gap-2">
+                <x-stat-card label="Total Students" :value="$overview['total']" compact class="!p-2" label-size="text-[9px]" />
+                <x-stat-card label="Active Students" :value="$overview['active']" compact class="!p-2" label-size="text-[9px]" />
+                <x-stat-card label="New This Month" :value="$overview['new_this_month']" compact class="!p-2" label-size="text-[9px]" />
+            </div>
 
             <div class="mt-6">
                 {{-- Create panel --}}
