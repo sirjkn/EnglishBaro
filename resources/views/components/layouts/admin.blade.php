@@ -134,6 +134,8 @@
                                 Log Out
                             </button>
                         </form>
+
+                        <p class="mt-3 px-3 text-xs text-gray-400 dark:text-gray-500">Version {{ config('app.version') }}</p>
                     </div>
                 </nav>
             </aside>

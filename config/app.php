@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // Bumped automatically on every commit by .githooks/pre-commit.
+    'version' => trim((string) @file_get_contents(base_path('VERSION'))) ?: '0.0.0',
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

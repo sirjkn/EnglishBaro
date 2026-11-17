@@ -1,0 +1,14 @@
+#!/bin/sh
+# Bumps VERSION on every commit: 1.5.8 -> 1.5.9 -> 1.6.0 (each part rolls over after 9).
+f="$(git rev-parse --show-toplevel)/VERSION"
+[ -f "$f" ] || exit 0
+
+IFS=. read -r major minor patch < "$f"
+patch=$(echo "$patch" | tr -d '\r ')
+
+patch=$((patch + 1))
+if [ "$patch" -gt 9 ]; then patch=0; minor=$((minor + 1)); fi
+if [ "$minor" -gt 9 ]; then minor=0; major=$((major + 1)); fi
+
+printf '%s.%s.%s\n' "$major" "$minor" "$patch" > "$f"
+git add "$f"
