@@ -22,10 +22,10 @@
     $palette = $colorClasses[$color] ?? $colorClasses['indigo'];
 @endphp
 
-<div {{ $attributes->merge(['class' => 'relative overflow-hidden rounded-2xl border-2 border-indigo-300 bg-white p-4 shadow-sm dark:border-indigo-700 dark:bg-gray-800']) }}>
+<div {{ $attributes->merge(['class' => 'relative overflow-hidden rounded-2xl border-2 border-indigo-300 bg-white p-4 shadow-sm dark:border-indigo-700 dark:bg-gray-800 ' . ($compact ? 'min-h-[6.5rem]' : 'min-h-[9rem]')]) }}>
     <div class="pointer-events-none absolute -bottom-6 -right-6 h-20 w-20 rounded-full {{ $palette['blob'] }}"></div>
 
-    <div class="relative">
+    <div class="relative flex h-full flex-col items-center justify-center text-center">
         @if ($icon)
             <div class="flex items-center justify-center rounded-xl {{ $palette['icon'] }} {{ $compact ? 'h-7 w-7' : 'h-9 w-9' }}">
                 <x-dynamic-component :component="'icons.' . $icon" class="{{ $compact ? 'h-3.5 w-3.5' : 'h-4 w-4' }}" />
