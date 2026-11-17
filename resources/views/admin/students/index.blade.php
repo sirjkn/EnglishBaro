@@ -269,7 +269,7 @@
                                                                                     label="Cancel"
                                                                                     title="Cancel this enrollment?"
                                                                                     :message="$cancelMessage"
-                                                                                    class="rounded-md border border-red-600 bg-white px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50 dark:border-red-500 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-900/30"
+                                                                                    class="rounded-md border border-gray-300 bg-gray-100 px-3 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-600 hover:text-white dark:border-gray-600 dark:bg-gray-700 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white"
                                                                                 />
                                                                             @endif
                                                                         </td>
