@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\StudentProfile;
 use App\Models\User;
 use App\Services\StudentIdGenerator;
+use App\Support\PhoneNumberFormatter;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +37,7 @@ class RegisterUserAction
             StudentProfile::create([
                 'user_id' => $user->id,
                 'student_id' => $studentId,
-                'phone' => $data['phone'],
+                'phone' => PhoneNumberFormatter::normalize($data['phone'], $data['country']),
                 'country' => $data['country'],
                 'gender' => $data['gender'] ?? null,
                 'referral_email' => $data['referral_email'] ?? null,

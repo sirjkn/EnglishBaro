@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\AuditLogger;
 use App\Services\MediaService;
 use App\Support\Countries;
+use App\Support\PhoneNumberFormatter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -210,7 +211,7 @@ class StudentController extends Controller
         ]);
 
         $profileUpdates = [
-            'phone' => $validated['phone'] ?? null,
+            'phone' => PhoneNumberFormatter::normalize($validated['phone'] ?? null, $validated['country'] ?? $student->studentProfile?->country),
             'country' => $validated['country'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'referral_email' => $validated['referral_email'] ?? null,

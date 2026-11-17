@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Services\MediaService;
 use App\Support\Countries;
+use App\Support\PhoneNumberFormatter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +46,7 @@ class AccountController extends Controller
         $user->update(['name' => $validated['name']]);
 
         $profileUpdates = [
-            'phone' => $validated['phone'] ?? null,
+            'phone' => PhoneNumberFormatter::normalize($validated['phone'] ?? null, $validated['country'] ?? $user->studentProfile?->country),
             'country' => $validated['country'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'referral_email' => $validated['referral_email'] ?? null,
