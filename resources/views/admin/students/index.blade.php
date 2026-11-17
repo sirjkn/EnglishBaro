@@ -130,7 +130,7 @@
                                     <div x-show="! editingBio">
                                         <div class="flex items-center justify-between">
                                             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Bio Data</h3>
-                                            <button type="button" @click="editingBio = true" class="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                                            <button type="button" @click="editingBio = true" class="flex items-center gap-1 rounded-md border border-indigo-500 bg-white px-3 py-1 text-sm font-medium text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-indigo-900/30">
                                                 <x-icons.pencil class="h-3.5 w-3.5" /> Edit
                                             </button>
                                         </div>
