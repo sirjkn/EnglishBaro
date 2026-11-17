@@ -71,7 +71,12 @@ class TrackProgressService
             return;
         }
 
-        $nextTrack = Track::query()->where('order', '>', $track->order)->orderBy('order')->first();
+        $nextTrack = Track::query()
+            ->where('course_id', $track->course_id)
+            ->where('status', 'published')
+            ->where('order', '>', $track->order)
+            ->orderBy('order')
+            ->first();
 
         if ($nextTrack) {
             $profile->update(['track_id' => $nextTrack->id]);

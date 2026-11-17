@@ -48,7 +48,7 @@
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $completedLevelsCount }} of {{ $allLevels->count() }} levels complete on this track.</p>
 
         <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]">
-            <div class="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+            <div class="rounded-xl border-2 border-indigo-300 bg-white p-5 dark:border-indigo-700 dark:bg-gray-800">
                 <p class="text-xs font-bold uppercase tracking-wide text-gray-400">Continue Learning</p>
                 <div class="mt-3 flex items-center gap-3">
                     <span class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-indigo-600 text-sm font-bold text-white">{{ $track->track_code }}</span>
@@ -66,11 +66,11 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3 lg:grid-cols-1">
-                <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-xl border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
                     <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $completedLevelsCount }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">Levels completed</p>
                 </div>
-                <div class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+                <div class="rounded-xl border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
                     <p class="text-xl font-bold text-gray-900 dark:text-white">{{ $allLevels->count() - $completedLevelsCount }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">Levels still to go</p>
                 </div>
@@ -89,7 +89,7 @@
                 </div>
             </div>
 
-            <div class="mt-4 divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200 bg-white dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800">
+            <div class="mt-4 divide-y divide-gray-100 overflow-hidden rounded-xl border-2 border-indigo-300 bg-white dark:divide-gray-700 dark:border-indigo-700 dark:bg-gray-800">
                 @foreach ($allLevels as $levelItem)
                     @php
                         $status = $levelStatuses[$levelItem->number];
@@ -335,43 +335,63 @@
         </div>
 
         <div x-show="changeLevelOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,0,0,.4)" @click.self="changeLevelOpen = false">
-            <div x-show="changeLevelOpen" x-transition class="w-full max-w-[19.5rem] rounded-xl bg-white p-3 shadow-xl dark:bg-gray-800">
-                <h2 class="text-xs font-bold text-gray-900 dark:text-white">Change your level</h2>
-                <p class="mt-0.5 text-[10px] leading-tight text-gray-500 dark:text-gray-400">You decide this yourself. Nothing you do in the course or in practice tests changes it automatically.</p>
+            <div x-show="changeLevelOpen" x-transition class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Change your level</h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose where to start inside a track that's open to you.</p>
 
-                <p class="mt-2.5 text-[9px] font-bold uppercase tracking-wide text-gray-400">Track</p>
-                <div class="mt-1 flex flex-wrap items-center gap-0.5">
+                <div class="mt-4 rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-sm leading-relaxed text-indigo-900 dark:border-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-200">
+                    <p class="font-semibold">How tracks unlock</p>
+                    <p class="mt-1">
+                        You're currently on <span class="font-bold">{{ $currentTrack->track_code }}</span>, the track your placement test put you in (or the one you've since moved up to).
+                        Tracks are taken in order ({{ $pickerTracks->pluck('track_code')->implode(' → ') }}), one at a time.
+                    </p>
+                    <ul class="mt-2 list-disc space-y-1 pl-5">
+                        <li>Only your current track, <span class="font-bold">{{ $currentTrack->track_code }}</span>, is open to work in.</li>
+                        <li>The next track unlocks automatically when you finish this one.</li>
+                        <li>Tracks before your placement stay locked, and tracks you've finished stay open for review.</li>
+                    </ul>
+                </div>
+
+                <p class="mt-5 text-xs font-bold uppercase tracking-wide text-gray-400">Track</p>
+                <div class="mt-2 flex flex-wrap items-center gap-2">
                     @foreach ($pickerTracks as $pickerTrack)
-                        <button type="button" @click="selTrack = '{{ $pickerTrack->track_code }}'"
-                                class="rounded-full border px-1.5 py-0.5 text-[10px]"
-                                :class="selTrack === '{{ $pickerTrack->track_code }}' ? 'border-gray-300 bg-white font-bold text-gray-900 dark:border-gray-500 dark:bg-gray-700 dark:text-white' : 'border-transparent font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300'">
-                            {{ $pickerTrack->track_code }}
-                        </button>
+                        @if ($unlockedTrackIds->contains($pickerTrack->id))
+                            <button type="button" @click="selTrack = '{{ $pickerTrack->track_code }}'"
+                                    class="rounded-md border px-3 py-1.5 text-sm"
+                                    :class="selTrack === '{{ $pickerTrack->track_code }}' ? 'border-indigo-500 bg-indigo-50 font-bold text-indigo-700 dark:border-indigo-400 dark:bg-indigo-900/30 dark:text-indigo-200' : 'border-gray-300 font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
+                                {{ $pickerTrack->track_code }}
+                            </button>
+                        @else
+                            <span title="Locked — tracks open in order" class="inline-flex cursor-not-allowed items-center gap-1 rounded-md border border-dashed border-gray-300 bg-gray-50 px-3 py-1.5 text-sm font-medium text-gray-400 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-500">
+                                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                                {{ $pickerTrack->track_code }}
+                            </span>
+                        @endif
                     @endforeach
                 </div>
 
-                <p class="mt-2.5 text-[9px] font-bold uppercase tracking-wide text-gray-400">Starting level</p>
-                <div class="mt-1 grid grid-cols-3 gap-1">
+                <p class="mt-5 text-xs font-bold uppercase tracking-wide text-gray-400">Starting level</p>
+                <div class="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-6">
                     @foreach ([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] as $checkpoint)
                         <button type="button" @click="selLevel = {{ $checkpoint }}"
-                                class="rounded-md border px-1 py-1 text-[10px] font-semibold"
-                                :class="selLevel === {{ $checkpoint }} ? 'border-gray-400 bg-gray-50 text-gray-900 dark:border-gray-400 dark:bg-gray-700 dark:text-white' : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
+                                class="rounded-md border px-2 py-2 text-sm font-semibold"
+                                :class="selLevel === {{ $checkpoint }} ? 'border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-900/30 dark:text-indigo-200' : 'border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'">
                             {{ $checkpoint }}
                         </button>
                     @endforeach
                 </div>
 
-                <div class="mt-2.5 rounded-md bg-amber-50 px-1.5 py-1.5 text-[9px] leading-tight text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+                <div class="mt-5 rounded-md bg-amber-50 px-3 py-2.5 text-sm text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
                     Your finished work is kept. If you come back to a level later, your progress is still there.
                 </div>
 
-                <div class="mt-2.5 flex items-center justify-end gap-1.5">
-                    <button type="button" @click="changeLevelOpen = false" class="rounded-full px-2 py-1 text-[10px] font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
+                <div class="mt-5 flex items-center justify-end gap-2">
+                    <button type="button" @click="changeLevelOpen = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">Cancel</button>
                     <form method="POST" action="{{ route('student.change-level') }}">
                         @csrf
                         <input type="hidden" name="track_code" :value="selTrack">
                         <input type="hidden" name="level_number" :value="selLevel">
-                        <button type="submit" class="rounded-full bg-teal-700 px-2.5 py-1 text-[10px] font-semibold text-white hover:bg-teal-600">
+                        <button type="submit" class="rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-600">
                             Move to <span x-text="selTrack"></span> Level <span x-text="selLevel"></span>
                         </button>
                     </form>

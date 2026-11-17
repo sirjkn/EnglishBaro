@@ -8,6 +8,7 @@ use App\Models\Level;
 use App\Models\Track;
 use App\Services\LevelAccessService;
 use App\Services\RegionPricingService;
+use App\Services\TrackUnlockService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,8 +19,18 @@ class MyTrackController extends Controller
      * into their course material, landing on whichever level they're
      * currently on (or level 1 if they haven't started).
      */
-    public function show(Track $track, LevelAccessService $levelAccess, RegionPricingService $regionPricingService): RedirectResponse
+    public function show(Track $track, LevelAccessService $levelAccess, RegionPricingService $regionPricingService, TrackUnlockService $trackUnlock): RedirectResponse
     {
+        // Links like the course page's "Continue" point at the course's entry
+        // track, which may be locked for a student placed higher — send them
+        // to the track they're actually on instead of a 403.
+        if (! $trackUnlock->isUnlocked(Auth::user(), $track)) {
+            $current = $trackUnlock->currentTrackInCourse(Auth::user(), $track->course_id);
+
+            return redirect()->route('student.tracks.show', $current)
+                ->with('status', "{$track->track_code} is locked. You're currently on {$current->track_code}.");
+        }
+
         $this->authorize('learn', [$track, $regionPricingService->resolveRegion(request())]);
 
         $enrollment = Auth::user()->enrollments()

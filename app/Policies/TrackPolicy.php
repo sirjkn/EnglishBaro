@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Track;
 use App\Models\User;
+use App\Services\TrackUnlockService;
 use Illuminate\Auth\Access\Response;
 
 class TrackPolicy
@@ -51,6 +52,10 @@ class TrackPolicy
     {
         if ($user->isAdmin()) {
             return true;
+        }
+
+        if (! app(TrackUnlockService::class)->isUnlocked($user, $track)) {
+            return Response::deny("{$track->track_code} is locked. Tracks open one at a time, in order — finish your current track to unlock the next one.");
         }
 
         $enrollment = $track->enrollments()

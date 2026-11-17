@@ -39,8 +39,6 @@ class ChangeLevelController extends Controller
             'last_viewed_at' => now(),
         ]);
 
-        Auth::user()->studentProfile?->update(['track_id' => $track->id]);
-
         return redirect()
             ->route('student.tracks.level', [$track, $level])
             ->with('status', "Switched to {$track->track_code} Level {$level->number}.");

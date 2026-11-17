@@ -14,6 +14,7 @@ use App\Services\LevelAccessService;
 use App\Services\LevelSequenceService;
 use App\Services\RegionPricingService;
 use App\Services\TrackProgressService;
+use App\Services\TrackUnlockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -107,11 +108,15 @@ class LearningController extends Controller
             ->orderBy('order')
             ->get();
 
+        $trackUnlock = app(TrackUnlockService::class);
+
         return view('student.level', [
             'track' => $track,
             'level' => $level,
             'allLevels' => $allLevels,
             'pickerTracks' => $pickerTracks,
+            'unlockedTrackIds' => $trackUnlock->unlockedTrackIds(Auth::user(), $pickerTracks),
+            'currentTrack' => $trackUnlock->currentTrackInCourse(Auth::user(), $track->course_id) ?? $track,
             'completedLessonIds' => $completedLessonIds,
             'startedLessonIds' => $startedLessonIds,
             'checkedAssessmentIds' => $checkedAssessmentIds,
