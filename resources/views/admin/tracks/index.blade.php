@@ -150,7 +150,7 @@
                                                     :title="'Delete track '.$track->track_code.'?'"
                                                     :message="$deleteMessage"
                                                     :redirect="route('admin.tracks.index', ['open' => $course->id], false)"
-                                                    class="rounded border border-red-600 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-600 hover:text-white dark:border-red-500 dark:text-red-400"
+                                                    class="rounded border border-gray-300 bg-gray-100 px-2 py-1 text-xs font-semibold text-red-600 hover:border-red-600 hover:bg-red-600 hover:text-white dark:border-gray-600 dark:bg-gray-700 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white"
                                                 />
                                             </span>
                                         </td>
