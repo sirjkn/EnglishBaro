@@ -3,9 +3,9 @@
 <footer {{ $attributes->merge(['class' => 'mt-24 bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white '.$class]) }}>
     <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 gap-8 md:grid-cols-5">
-            <div class="col-span-2 md:col-span-1">
-                <div class="text-lg font-bold text-white">EnglishBaro</div>
-                <p class="mt-2 text-sm text-indigo-200">
+            <div>
+                <h3 class="text-sm font-semibold text-white">EnglishBaro</h3>
+                <p class="mt-3 text-sm text-indigo-200">
                     {{ \App\Models\CompanySetting::get('footer_text', 'Learn English online with video lessons, eBooks, and assessments.') }}
                 </p>
             </div>
