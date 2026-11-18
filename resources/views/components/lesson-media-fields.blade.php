@@ -74,11 +74,11 @@
             <div class="flex w-full flex-col gap-1">
                 <label class="flex cursor-pointer items-center justify-center rounded-full border border-blue-600 bg-blue-600 px-2 py-1 text-[10px] font-medium text-white transition hover:bg-blue-700">
                     Upload
-                    <input type="file" accept="video/mp4,video/webm" multiple class="hidden" @change="handleFiles($event, 'video')">
+                    <input type="file" accept="video/mp4,video/webm" multiple class="hidden" @change="handleFiles($event, 'video', 'own_server')">
                 </label>
                 <label class="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
-                    Upload to our server
-                    <input type="file" accept="video/mp4,video/webm" multiple class="hidden" @change="handleFiles($event, 'video', 'own_server')">
+                    3rd party server
+                    <input type="file" accept="video/mp4,video/webm" multiple class="hidden" @change="handleFiles($event, 'video')">
                 </label>
                 <button type="button" @click="openMuxPicker('video')" class="rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
                     Use existing
@@ -91,11 +91,11 @@
             <div class="flex w-full flex-col gap-1">
                 <label class="flex cursor-pointer items-center justify-center rounded-full border border-blue-600 bg-blue-600 px-2 py-1 text-[10px] font-medium text-white transition hover:bg-blue-700">
                     Upload
-                    <input type="file" accept="audio/mpeg,audio/wav,audio/mp4" multiple class="hidden" @change="handleFiles($event, 'audio')">
+                    <input type="file" accept="audio/mpeg,audio/wav,audio/mp4" multiple class="hidden" @change="handleFiles($event, 'audio', 'own_server')">
                 </label>
                 <label class="flex cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
-                    Upload to our server
-                    <input type="file" accept="audio/mpeg,audio/wav,audio/mp4" multiple class="hidden" @change="handleFiles($event, 'audio', 'own_server')">
+                    3rd party server
+                    <input type="file" accept="audio/mpeg,audio/wav,audio/mp4" multiple class="hidden" @change="handleFiles($event, 'audio')">
                 </label>
                 <button type="button" @click="openMuxPicker('audio')" class="rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black transition hover:bg-gray-100">
                     Use existing
