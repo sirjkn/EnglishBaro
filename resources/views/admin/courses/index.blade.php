@@ -219,9 +219,10 @@
                                         $reopenAddingUnit = $reopenTrackError && old('track_code') !== null;
                                         $reopenEditingTrackId = $reopenTrackError && old('_editing_track_id') !== null ? (int) old('_editing_track_id') : null;
                                     @endphp
-                                    <div x-data="{ addingUnit: {{ $reopenAddingUnit ? 'true' : 'false' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }} }">
-                                        <div class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700">
-                                            <div class="flex items-center justify-between gap-2 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
+                                    <div x-data="{ addingUnit: {{ $reopenAddingUnit ? 'true' : 'false' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }} }" class="lg:relative lg:h-full">
+                                        {{-- On desktop the panel takes the Course Details card's height and scrolls inside, so a long track list can't stretch the page. --}}
+                                        <div class="flex flex-col overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700 lg:absolute lg:inset-0">
+                                            <div class="flex flex-none items-center justify-between gap-2 bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
                                                 <div>
                                                     <h3 class="text-sm font-bold text-white">Tracks in this Course</h3>
                                                     <p class="mt-0.5 text-[11px] text-indigo-100">Students who buy {{ $course->name }} get every track below. The placement test decides which one they start on.</p>
@@ -231,6 +232,7 @@
                                                 </button>
                                             </div>
 
+                                            <div class="max-h-[70vh] min-h-0 flex-1 overflow-auto lg:max-h-none">
                                             <div x-show="addingUnit" x-cloak class="border-t border-gray-200 p-4 dark:border-gray-700">
                                                 <form method="POST" action="{{ route('admin.tracks.store') }}" enctype="multipart/form-data">
                                                     @csrf
@@ -275,7 +277,7 @@
                                             @endforeach
 
                                             <div x-show="! addingUnit && editingTrack === null" class="border-t border-gray-200 dark:border-gray-700">
-                                            <div class="overflow-x-auto">
+                                            <div>
                                                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                                     <thead class="sticky top-0 z-10">
                                                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
@@ -308,6 +310,7 @@
                                                         @endforelse
                                                     </tbody>
                                                 </table>
+                                            </div>
                                             </div>
                                             </div>
                                         </div>
