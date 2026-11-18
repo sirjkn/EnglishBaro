@@ -128,7 +128,7 @@ new #[Layout('layouts.auth-split')] class extends Component
                         el.dispatchEvent(new Event('change', { bubbles: true }));
                     };
                     setVal('email', email);
-                    setVal('password', 'password');
+                    setVal('password', email === 'admin@englishbaro.test' ? 'password254' : 'password255');
                 };
             </script>
         </div>
@@ -146,21 +146,33 @@ new #[Layout('layouts.auth-split')] class extends Component
         <div>
             <x-input-label for="password" :value="__('Password')" class="sr-only" />
 
-            <div x-data="{ show: false }" class="relative">
+            <div class="relative">
                 <x-text-input wire:model="form.password" id="password" class="block w-full pr-11"
                                 type="password"
-                                x-bind:type="show ? 'text' : 'password'"
                                 name="password"
                                 placeholder="Password"
                                 required autocomplete="current-password" />
 
-                <button type="button" @click="show = ! show"
-                        x-bind:aria-label="show ? 'Hide password' : 'Show password'"
-                        x-bind:title="show ? 'Hide password' : 'Show password'"
+                {{-- Plain JS on purpose: wrapping this input in an Alpine x-data
+                     scope stops wire:model from sending the password to Livewire. --}}
+                <button type="button" onclick="window.togglePasswordVisibility(this)"
+                        aria-label="Show password" title="Show password"
                         class="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-md text-gray-400 hover:text-indigo-600 focus:outline-none focus-visible:text-indigo-600 dark:hover:text-indigo-400">
-                    <svg x-show="! show" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-                    <svg x-show="show" x-cloak class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1"/><path d="M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+                    <svg data-eye="open" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg data-eye="closed" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1"/><path d="M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
                 </button>
+                <script>
+                    window.togglePasswordVisibility = function (button) {
+                        const input = document.getElementById('password');
+                        const show = input.type === 'password';
+                        input.type = show ? 'text' : 'password';
+                        button.querySelector('[data-eye=open]').classList.toggle('hidden', show);
+                        button.querySelector('[data-eye=closed]').classList.toggle('hidden', ! show);
+                        const label = show ? 'Hide password' : 'Show password';
+                        button.setAttribute('aria-label', label);
+                        button.setAttribute('title', label);
+                    };
+                </script>
             </div>
 
             <x-input-error :messages="$errors->get('form.password')" class="mt-2" />

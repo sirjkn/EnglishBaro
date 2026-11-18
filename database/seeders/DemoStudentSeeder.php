@@ -19,7 +19,7 @@ class DemoStudentSeeder extends Seeder
             ['email' => 'student@englishbaro.test'],
             [
                 'name' => 'Demo Student',
-                'password' => 'password',
+                'password' => 'password255',
                 'user_type' => 'student',
                 'is_active' => true,
                 'email_verified_at' => now(),

@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@englishbaro.test'],
             [
                 'name' => 'EnglishBaro Admin',
-                'password' => 'password',
+                'password' => 'password254',
                 'user_type' => 'admin',
                 'is_active' => true,
                 'email_verified_at' => now(),
