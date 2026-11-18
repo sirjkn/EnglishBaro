@@ -35,20 +35,14 @@
                 <p class="mx-auto mt-4 max-w-2xl text-base text-gray-600 [text-wrap:pretty] dark:text-gray-300 sm:text-lg">
                     Watch the introduction to see how it works: take a short placement test, start at the right track, and move up level by level.
                 </p>
-                <div class="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+                <div class="mt-7 flex justify-center">
                     @guest
-                        <a href="{{ route('register') }}" class="rounded-md bg-indigo-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-indigo-500">Get Started</a>
+                        <a href="{{ route('register') }}" class="rounded-md bg-indigo-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-indigo-500">Buy Now</a>
                     @endguest
-                    <a href="{{ $isStudent ? route('student.course') : '#explore-course' }}" class="rounded-md border border-indigo-500 bg-white px-6 py-3 text-center text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-indigo-900/30">Explore Courses</a>
                 </div>
             </div>
         </div>
     </section>
-
-    {{-- Logged-in students browse courses on their own Course page instead. --}}
-    @unless ($isStudent)
-        <x-explore-courses :courses="$featuredCourses" :pricing-region="$pricingRegion" class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" />
-    @endunless
 
     {{-- Reviews: only shown to anonymous visitors deciding whether to sign
     up — a logged-in student landing here from the journey nav has already
