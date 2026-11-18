@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Services\MediaService;
-use App\Support\Countries;
 use App\Support\PhoneNumberFormatter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,7 +24,6 @@ class AccountController extends Controller
             'user' => $user,
             'studentProfile' => $user->studentProfile,
             'sessions' => $user->userSessions()->orderByDesc('last_activity_at')->get(),
-            'countries' => Countries::all(),
             'payments' => $payments,
         ]);
     }

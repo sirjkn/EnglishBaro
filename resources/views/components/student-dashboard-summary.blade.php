@@ -25,7 +25,11 @@
             <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                 <x-student-avatar :profile="$studentProfile" size="h-20 w-20" class="border-4 border-white shadow-sm dark:border-gray-700" />
                 <div>
-                    <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $user->name }}</h1>
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ $user->name }}</h1>
+                        <x-student-profile-modal :student-profile="$studentProfile" />
+                        <x-student-password-modal />
+                    </div>
                     <p class="mt-0.5 text-sm font-semibold text-blue-700 dark:text-blue-300">{{ $studentProfile?->student_id ?? '—' }}</p>
                     <p class="mt-1 flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
                         <x-icons.envelope class="h-4 w-4" /> {{ $user->email }}
@@ -40,16 +44,10 @@
 
             <div class="mt-5 flex flex-wrap items-center gap-2 border-t border-blue-200/60 pt-4 dark:border-gray-700">
                 @if ($studentProfile?->track)
-                    <x-badge color="indigo">Current Track: {{ $studentProfile->track->track_code }}</x-badge>
+                    <span class="rounded-md border border-indigo-300 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 dark:border-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">Current Track: {{ $studentProfile->track->track_code }}</span>
                 @endif
-                <span class="text-xs text-gray-400">&middot;</span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>
-                <span class="text-xs text-gray-400">&middot;</span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">Member since {{ $user->created_at->format('M Y') }}</span>
-                <a href="{{ route('student.account') }}" class="ml-auto flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
-                    <x-icons.pencil class="h-3 w-3" /> Edit Profile
-                </a>
-            </div>
+                <span class="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>
+                <span class="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">Member since {{ $user->created_at->format('M Y') }}</span>            </div>
         </div>
 
         <div class="flex flex-col items-end gap-2 lg:pl-6">
