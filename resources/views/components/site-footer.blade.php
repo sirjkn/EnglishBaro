@@ -32,7 +32,7 @@
                 </ul>
             </div>
         </div>
-        <div class="mt-8 flex items-center justify-center border-t border-white/10 pt-6 sm:justify-start">
+        <div class="mt-8 flex items-center justify-center border-t border-white/10 pt-6">
             <p class="text-xs text-indigo-300">
                 {{ \App\Models\CompanySetting::get('copyright', '© '.date('Y').' EnglishBaro. All rights reserved.') }}
             </p>
