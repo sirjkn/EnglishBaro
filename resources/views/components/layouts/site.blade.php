@@ -38,9 +38,11 @@
             </div>
         @endif
 
-        <main>
+        <main class="pb-20 md:pb-0">
             {{ $slot }}
         </main>
+
+        <x-student-mobile-nav />
 
         <footer class="mt-24 bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white">
             <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
