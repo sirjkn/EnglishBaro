@@ -1,7 +1,6 @@
 <div x-data="{ open: {{ $errors->hasAny(['current_password', 'password']) ? 'true' : 'false' }}, show: false }" {{ $attributes }}>
     <button type="button" @click="open = true" class="flex w-full items-center justify-center gap-1.5 rounded-md border border-blue-600 bg-white px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 dark:border-blue-400 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700">
-        <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        Change Password
+        <x-icons.pencil class="h-3 w-3" /> Password
     </button>
 
     <template x-teleport="body">
