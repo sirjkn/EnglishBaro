@@ -87,6 +87,12 @@
                             <label for="profile_level" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Level</label>
                             <input id="profile_level" type="text" value="{{ $studentProfile?->level?->name ?? 'Not set' }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
                         </div>
+
+                        <div>
+                            <label for="profile_member_since" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Member Since</label>
+                            <input id="profile_member_since" type="text" value="{{ $user->created_at->format('j F Y') }}" disabled class="mt-1 w-full rounded-md border-gray-200 bg-gray-100 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                            <p class="mt-1 text-xs text-gray-400">Set when you registered.</p>
+                        </div>
                     </div>
 
                     <div class="mt-6 flex items-center justify-end gap-2 border-t border-gray-100 pt-4 dark:border-gray-700">

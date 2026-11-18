@@ -34,11 +34,14 @@
                     <p class="mt-1 flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
                         <x-icons.envelope class="h-4 w-4" /> {{ $user->email }}
                     </p>
-                    @if ($activeSubscription)
-                        <div class="mt-1.5">
-                            <x-badge color="green" dot>Active</x-badge>
-                        </div>
-                    @endif
+                    <div class="mt-2 flex flex-wrap items-center gap-2">
+                        @if ($activeSubscription)
+                            <span class="inline-flex items-center gap-1.5 rounded-md border border-green-300 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700 dark:border-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Active
+                            </span>
+                        @endif
+                        <span class="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">Member since {{ $user->created_at->format('M Y') }}</span>
+                    </div>
                 </div>
             </div>
 
@@ -46,8 +49,7 @@
                 @if ($studentProfile?->track)
                     <span class="rounded-md border border-indigo-300 bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 dark:border-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">Current Track: {{ $studentProfile->track->track_code }}</span>
                 @endif
-                <span class="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>
-                <span class="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">Member since {{ $user->created_at->format('M Y') }}</span>            </div>
+                <span class="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">{{ $enrollments->count() }} Enrollment{{ $enrollments->count() === 1 ? '' : 's' }}</span>            </div>
         </div>
 
         <div class="flex flex-col items-end gap-2 lg:pl-6">
