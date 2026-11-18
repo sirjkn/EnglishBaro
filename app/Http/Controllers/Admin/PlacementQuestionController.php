@@ -16,7 +16,7 @@ class PlacementQuestionController extends Controller
 {
     public function index(): View
     {
-        $questions = PlacementQuestion::query()->with('options.track')->orderBy('order')->get();
+        $questions = PlacementQuestion::query()->with(['options.track', 'media'])->orderBy('order')->get();
 
         $introVideoId = CompanySetting::get('intro_video_media_id');
         $helpVideoId = CompanySetting::get('help_video_media_id');
@@ -35,12 +35,16 @@ class PlacementQuestionController extends Controller
 
         $validated = $request->validate([
             'question' => ['required', 'string', 'max:1000'],
+            'type' => ['required', 'string', 'in:'.implode(',', PlacementQuestion::TYPES)],
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
             'answers' => ['required', 'array', 'size:'.$tracks->count()],
             'answers.*' => ['required', 'string', 'max:255'],
         ]);
 
         $question = PlacementQuestion::query()->create([
             'question' => $validated['question'],
+            'type' => $validated['type'],
+            'media_id' => $validated['media_id'] ?? null,
             'order' => (int) PlacementQuestion::query()->max('order') + 1,
         ]);
 
@@ -61,13 +65,19 @@ class PlacementQuestionController extends Controller
     {
         $validated = $request->validate([
             'question' => ['required', 'string', 'max:1000'],
+            'type' => ['required', 'string', 'in:'.implode(',', PlacementQuestion::TYPES)],
+            'media_id' => ['nullable', 'integer', 'exists:media,id'],
             'answers' => ['required', 'array'],
             'answers.*' => ['required', 'string', 'max:255'],
         ]);
 
         $previous = ['question' => $placementQuestion->question];
 
-        $placementQuestion->update(['question' => $validated['question']]);
+        $placementQuestion->update([
+            'question' => $validated['question'],
+            'type' => $validated['type'],
+            'media_id' => $validated['media_id'] ?? null,
+        ]);
 
         foreach ($placementQuestion->options as $option) {
             if (array_key_exists($option->track_id, $validated['answers'])) {

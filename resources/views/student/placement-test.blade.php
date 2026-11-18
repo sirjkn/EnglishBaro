@@ -18,10 +18,30 @@
                 <div class="rounded-xl border-2 border-indigo-300 bg-white p-5 dark:border-indigo-700 dark:bg-gray-800">
                     <p class="font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}. {{ $question->question }}</p>
 
+                    @if ($question->media)
+                        <div class="mt-3 overflow-hidden rounded-lg">
+                            @if ($question->media->type === 'video')
+                                <x-video-player :media="$question->media" />
+                            @elseif ($question->media->type === 'audio')
+                                <x-audio-player :media="$question->media" />
+                            @elseif ($question->media->type === 'image')
+                                <img src="{{ $question->media->resolved_url }}" alt="" class="max-h-64 w-full rounded-lg object-contain">
+                            @endif
+                        </div>
+                    @endif
+
+                    @if ($question->isMultipleChoice())
+                        <p class="mt-3 text-xs text-gray-400">Select all that apply.</p>
+                    @endif
+
                     <div class="mt-3 space-y-2">
                         @foreach ($question->options as $option)
                             <label class="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700">
-                                <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}" required class="text-indigo-600">
+                                @if ($question->isMultipleChoice())
+                                    <input type="checkbox" name="answers[{{ $question->id }}][]" value="{{ $option->id }}" class="rounded text-indigo-600">
+                                @else
+                                    <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}" required class="text-indigo-600">
+                                @endif
                                 <span class="text-gray-700 dark:text-gray-200">{{ $option->option_text }}</span>
                             </label>
                         @endforeach

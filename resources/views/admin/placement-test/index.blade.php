@@ -117,6 +117,27 @@
                         </div>
                     </div>
 
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Answer type</label>
+                        <div class="mt-1 flex gap-3">
+                            <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                                <input type="radio" name="type" value="single_choice" @checked(old('type', $question->type) === 'single_choice')>
+                                Single Choice (radio)
+                            </label>
+                            <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                                <input type="radio" name="type" value="multiple_choice" @checked(old('type', $question->type) === 'multiple_choice')>
+                                Multiple Choice (checkboxes)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Question media (optional)</label>
+                        <div class="mt-1">
+                            <x-question-media-field :media="$question->media" />
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         @foreach ($question->options as $option)
                             <div>
@@ -153,6 +174,28 @@
                 <input type="text" name="question" value="{{ old('question') }}" required placeholder="e.g. Choose the correct sentence."
                        class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
                 @error('question') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Answer type</label>
+                <div class="mt-1 flex gap-3">
+                    <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                        <input type="radio" name="type" value="single_choice" @checked(old('type', 'single_choice') === 'single_choice')>
+                        Single Choice (radio)
+                    </label>
+                    <label class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                        <input type="radio" name="type" value="multiple_choice" @checked(old('type') === 'multiple_choice')>
+                        Multiple Choice (checkboxes)
+                    </label>
+                </div>
+                @error('type') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400">Question media (optional)</label>
+                <div class="mt-1">
+                    <x-question-media-field />
+                </div>
             </div>
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

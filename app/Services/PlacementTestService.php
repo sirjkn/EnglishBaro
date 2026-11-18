@@ -20,16 +20,19 @@ class PlacementTestService
 
     public function questions(): Collection
     {
-        return PlacementQuestion::query()->with('options.track')->orderBy('order')->get();
+        return PlacementQuestion::query()->with(['options.track', 'media'])->orderBy('order')->get();
     }
 
     /**
-     * @param  array<int, int>  $answers  [question_id => option_id]
+     * @param  array<int, int|array<int, int>>  $answers  [question_id => option_id] for single-choice questions,
+     *                                                     [question_id => [option_id, ...]] for multiple-choice ones
      */
     public function submit(User $user, array $answers): PlacementAttempt
     {
         return DB::transaction(function () use ($user, $answers) {
-            $options = PlacementOption::query()->whereIn('id', array_values($answers))->get()->keyBy('id');
+            $allOptionIds = collect($answers)->flatMap(fn ($value) => (array) $value)->values();
+
+            $options = PlacementOption::query()->whereIn('id', $allOptionIds)->get()->keyBy('id');
 
             $tally = [];
             foreach ($options as $option) {
@@ -44,12 +47,14 @@ class PlacementTestService
                 'completed_at' => now(),
             ]);
 
-            foreach ($answers as $questionId => $optionId) {
-                PlacementAnswer::create([
-                    'placement_attempt_id' => $attempt->id,
-                    'placement_question_id' => $questionId,
-                    'placement_option_id' => $optionId,
-                ]);
+            foreach ($answers as $questionId => $optionIds) {
+                foreach ((array) $optionIds as $optionId) {
+                    PlacementAnswer::create([
+                        'placement_attempt_id' => $attempt->id,
+                        'placement_question_id' => $questionId,
+                        'placement_option_id' => $optionId,
+                    ]);
+                }
             }
 
             $user->studentProfile?->update(['track_id' => $placedTrackId]);

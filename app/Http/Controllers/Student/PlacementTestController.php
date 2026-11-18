@@ -36,12 +36,24 @@ class PlacementTestController extends Controller
             return redirect()->route('home');
         }
 
-        $questionIds = $placementTest->questions()->pluck('id')->all();
+        $questions = $placementTest->questions();
+        $questionIds = $questions->pluck('id')->all();
 
-        $validated = $request->validate([
-            'answers' => ['required', 'array', 'size:'.count($questionIds)],
-            'answers.*' => ['required', 'integer', 'exists:placement_options,id'],
-        ]);
+        $rules = ['answers' => ['required', 'array', 'size:'.count($questionIds)]];
+
+        foreach ($questions as $question) {
+            $key = 'answers.'.$question->id;
+
+            $rules[$key] = $question->isMultipleChoice()
+                ? ['required', 'array', 'min:1']
+                : ['required', 'integer', 'exists:placement_options,id'];
+
+            if ($question->isMultipleChoice()) {
+                $rules[$key.'.*'] = ['integer', 'exists:placement_options,id'];
+            }
+        }
+
+        $validated = $request->validate($rules);
 
         foreach ($validated['answers'] as $questionId => $optionId) {
             abort_unless(in_array((int) $questionId, $questionIds, true), 422);
