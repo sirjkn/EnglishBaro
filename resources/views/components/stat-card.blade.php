@@ -22,7 +22,7 @@
     $palette = $colorClasses[$color] ?? $colorClasses['indigo'];
 @endphp
 
-<div {{ $attributes->merge(['class' => 'relative overflow-hidden rounded-2xl border-2 border-indigo-300 bg-white p-4 shadow-sm dark:border-indigo-700 dark:bg-gray-800 ' . ($compact ? 'min-h-[6.5rem]' : 'min-h-[9rem]')]) }}>
+<div {{ $attributes->merge(['class' => 'relative overflow-hidden rounded-2xl border-2 border-white bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 ' . ($compact ? 'min-h-[6.5rem]' : 'min-h-[9rem]')]) }}>
     <div class="pointer-events-none absolute -bottom-6 -right-6 h-20 w-20 rounded-full {{ $palette['blob'] }}"></div>
 
     <div class="relative flex h-full flex-col items-center justify-center text-center">
