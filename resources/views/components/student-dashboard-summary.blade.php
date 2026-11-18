@@ -57,7 +57,7 @@
 
         <div class="flex flex-col items-stretch gap-2 border-t border-blue-200/70 pt-4 lg:items-end lg:border-t-0 lg:pl-6 lg:pt-0 dark:border-gray-700">
             @if ($activeSubscription)
-                <x-subscription-countdown :subscription="$activeSubscription" class="justify-center lg:justify-start" />
+                <x-subscription-countdown :subscription="$activeSubscription" class="w-full justify-center lg:justify-start" />
             @endif
             <div class="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
                 <x-stat-card
