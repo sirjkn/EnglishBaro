@@ -7,6 +7,7 @@ use App\Http\Middleware\UnderConstruction;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Session\TokenMismatchException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,5 +30,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('web', UnderConstruction::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Instead of the jarring "Session Expired" page, just send the user
+        // back to retry whatever they were doing (login, a form submit, etc).
+        $exceptions->render(function (TokenMismatchException $e, $request) {
+            return redirect()->back()->with('status', 'That took a little too long — please try again.');
+        });
     })->create();
