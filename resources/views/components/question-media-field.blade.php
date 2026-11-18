@@ -70,8 +70,16 @@
             <template x-for="upload in uploads.filter((u) => u.status === 'uploading' || u.status === 'error')" :key="upload.key">
                 <li class="rounded-md bg-gray-50 px-2 py-1 text-[11px] dark:bg-gray-900">
                     <span x-text="upload.name"></span>
-                    <span x-show="upload.status === 'uploading'" x-text="' — ' + upload.progress + '%'"></span>
                     <span x-show="upload.status === 'error'" class="text-red-600" x-text="' — ' + (upload.error || 'Failed')"></span>
+
+                    <template x-if="upload.status === 'uploading'">
+                        <div class="mt-1 flex items-center gap-2">
+                            <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                                <div class="h-full bg-indigo-500 transition-all" :style="'width: ' + upload.progress + '%'"></div>
+                            </div>
+                            <span class="w-9 flex-none text-right text-gray-400" x-text="upload.progress + '%'"></span>
+                        </div>
+                    </template>
                 </li>
             </template>
         </ul>

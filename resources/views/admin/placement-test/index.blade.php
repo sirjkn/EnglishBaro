@@ -29,8 +29,16 @@
                         <template x-for="upload in uploads" :key="upload.key">
                             <div class="rounded-md bg-gray-50 p-2 text-xs dark:bg-gray-900">
                                 <span x-text="upload.name"></span>
-                                <span x-show="upload.status === 'uploading'" x-text="' — ' + upload.progress + '%'"></span>
                                 <span x-show="upload.status === 'error'" class="text-red-600" x-text="' — ' + (upload.error || 'Failed')"></span>
+
+                                <template x-if="upload.status === 'uploading'">
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                                            <div class="h-full bg-indigo-500 transition-all" :style="'width: ' + upload.progress + '%'"></div>
+                                        </div>
+                                        <span class="w-9 flex-none text-right text-[10px] text-gray-400" x-text="upload.progress + '%'"></span>
+                                    </div>
+                                </template>
 
                                 <template x-if="upload.status === 'done'">
                                     <form method="POST" action="{{ route('admin.settings.intro-video') }}" class="mt-2" @submit="saving = true">
@@ -74,8 +82,16 @@
                         <template x-for="upload in uploads" :key="upload.key">
                             <div class="rounded-md bg-gray-50 p-2 text-xs dark:bg-gray-900">
                                 <span x-text="upload.name"></span>
-                                <span x-show="upload.status === 'uploading'" x-text="' — ' + upload.progress + '%'"></span>
                                 <span x-show="upload.status === 'error'" class="text-red-600" x-text="' — ' + (upload.error || 'Failed')"></span>
+
+                                <template x-if="upload.status === 'uploading'">
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                                            <div class="h-full bg-indigo-500 transition-all" :style="'width: ' + upload.progress + '%'"></div>
+                                        </div>
+                                        <span class="w-9 flex-none text-right text-[10px] text-gray-400" x-text="upload.progress + '%'"></span>
+                                    </div>
+                                </template>
 
                                 <template x-if="upload.status === 'done'">
                                     <form method="POST" action="{{ route('admin.settings.help-video') }}" class="mt-2" @submit="saving = true">
