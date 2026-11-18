@@ -42,21 +42,21 @@
             <nav class="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800" style="padding-bottom: env(safe-area-inset-bottom)">
                 @foreach ($mobilePrimaryNav as $item)
                     <a href="{{ route($item['route']) }}"
-                       class="relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                       class="relative flex min-h-[3.25rem] flex-1 flex-col items-center justify-center gap-0.5 py-2 text-center text-[11px] font-medium leading-tight text-indigo-600 dark:text-indigo-400">
                         @if ($item['active'])
                             <span class="absolute bottom-0 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-indigo-600 dark:bg-indigo-400"></span>
                         @endif
-                        <x-dynamic-component :component="'icons.'.$item['icon']" class="h-5 w-5" />
+                        <x-dynamic-component :component="'icons.'.$item['icon']" class="h-5 w-5 shrink-0" />
                         {{ $item['label'] }}
                     </a>
                 @endforeach
 
                 <button type="button" @click="moreOpen = !moreOpen"
-                        class="relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                        class="relative flex min-h-[3.25rem] flex-1 flex-col items-center justify-center gap-0.5 py-2 text-center text-[11px] font-medium leading-tight text-indigo-600 dark:text-indigo-400">
                     @if ($moreActive)
                         <span class="absolute bottom-0 left-1/2 h-0.5 w-5 -translate-x-1/2 rounded-full bg-indigo-600 dark:bg-indigo-400"></span>
                     @endif
-                    <x-icons.dots-horizontal class="h-5 w-5" />
+                    <x-icons.dots-horizontal class="h-5 w-5 shrink-0" />
                     Others
                 </button>
             </nav>

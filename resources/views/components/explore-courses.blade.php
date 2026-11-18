@@ -1,10 +1,7 @@
 @props(['courses', 'pricingRegion' => null])
 
 <section id="explore-course" {{ $attributes->merge(['class' => 'scroll-mt-20']) }}>
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Courses</h2>
-    <p class="mt-2 text-gray-600 dark:text-gray-300">
-        One payment per course unlocks every track inside it — the placement test decides where you start.
-    </p>
+    <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">Courses</p>
 
     @if ($courses->isEmpty())
         <x-empty-state class="mt-10" message="No courses available yet." />
