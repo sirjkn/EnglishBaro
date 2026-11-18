@@ -2,7 +2,7 @@
 
 <footer {{ $attributes->merge(['class' => 'mt-24 bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 text-white '.$class]) }}>
     <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 gap-8 md:grid-cols-5">
+        <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
             <div>
                 <h3 class="text-sm font-semibold text-white">EnglishBaro</h3>
                 <p class="mt-3 text-sm text-indigo-200">
