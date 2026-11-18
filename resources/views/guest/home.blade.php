@@ -1,27 +1,29 @@
 <x-layouts.site :title="'Home'">
-    @if ($dashboardData)
-        {{-- A logged-in student's own profile/progress summary, above
-        everything else on Landing. --}}
-        <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-            <x-student-dashboard-summary
-                :student-profile="$dashboardData['studentProfile']"
-                :active-subscription="$dashboardData['activeSubscription']"
-                :enrollments="$dashboardData['enrollments']"
-                :needs-placement-test="$dashboardData['needsPlacementTest']"
-                :upcoming-track="$dashboardData['upcomingTrack']"
-                :nearest-expiry="$dashboardData['nearestExpiry']"
-                :sessions-this-month="$dashboardData['sessionsThisMonth']"
-                :session-monthly-limit="$dashboardData['sessionMonthlyLimit']"
-                :latest-session="$dashboardData['latestSession']"
-                :paid-currency="$dashboardData['paidCurrency']"
-                :total-paid="$dashboardData['totalPaid']"
-                :successful-payments-count="$dashboardData['successfulPaymentsCount']"
-            />
-        </section>
-    @endif
+    {{-- Dashboard summary + hero share one continuous wash so there's no
+    visible seam between the two sections for a logged-in student. --}}
+    <div class="bg-gradient-to-b from-indigo-50 to-white dark:from-gray-900 dark:to-gray-900">
+        @if ($dashboardData)
+            {{-- A logged-in student's own profile/progress summary, above
+            everything else on Landing. --}}
+            <section class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+                <x-student-dashboard-summary
+                    :student-profile="$dashboardData['studentProfile']"
+                    :active-subscription="$dashboardData['activeSubscription']"
+                    :enrollments="$dashboardData['enrollments']"
+                    :needs-placement-test="$dashboardData['needsPlacementTest']"
+                    :upcoming-track="$dashboardData['upcomingTrack']"
+                    :nearest-expiry="$dashboardData['nearestExpiry']"
+                    :sessions-this-month="$dashboardData['sessionsThisMonth']"
+                    :session-monthly-limit="$dashboardData['sessionMonthlyLimit']"
+                    :latest-session="$dashboardData['latestSession']"
+                    :paid-currency="$dashboardData['paidCurrency']"
+                    :total-paid="$dashboardData['totalPaid']"
+                    :successful-payments-count="$dashboardData['successfulPaymentsCount']"
+                />
+            </section>
+        @endif
 
-    {{-- Hero: introduction video --}}
-    <section class="bg-gradient-to-b from-indigo-50 to-white dark:from-gray-900 dark:to-gray-900">
+        {{-- Hero: introduction video --}}
         <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
             <div class="overflow-hidden rounded-xl shadow-xl ring-1 ring-black/5">
                 <x-video-player :media="$introVideo" placeholder="Introduction video coming soon." />
@@ -42,7 +44,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     {{-- Reviews: only shown to anonymous visitors deciding whether to sign
     up — a logged-in student landing here from the journey nav has already
