@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <div class="border-t border-gray-100 pt-6 dark:border-gray-700 lg:border-t-0 lg:border-l lg:pl-6 lg:pt-0">
+        <div class="border-t border-gray-100 pt-6 dark:border-gray-700 lg:border-t-0 lg:pt-0">
             <h3 class="font-semibold text-gray-900 dark:text-white">Help Page Video</h3>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Shown on the student Help page under "How to use the website". The player is always visible there; upload a video to fill it, replace it any time, or remove it to show an empty player.</p>
 
