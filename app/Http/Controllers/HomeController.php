@@ -59,6 +59,7 @@ class HomeController extends Controller
             'stats' => $stats,
             'pricingRegion' => $regionPricingService->resolveRegion($request),
             'dashboardData' => $dashboardData,
+            'isStudent' => (bool) $user?->isStudent(),
         ]);
     }
 }

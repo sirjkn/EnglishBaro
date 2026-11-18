@@ -39,29 +39,16 @@
                     @guest
                         <a href="{{ route('register') }}" class="rounded-md bg-indigo-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-indigo-500">Get Started</a>
                     @endguest
-                    <a href="#explore-course" class="rounded-md border border-indigo-500 bg-white px-6 py-3 text-center text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-indigo-900/30">Explore Courses</a>
+                    <a href="{{ $isStudent ? route('student.course') : '#explore-course' }}" class="rounded-md border border-indigo-500 bg-white px-6 py-3 text-center text-sm font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-indigo-900/30">Explore Courses</a>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- Explore Courses --}}
-    <section id="explore-course" class="mx-auto max-w-7xl scroll-mt-20 px-4 py-16 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Explore Courses</h2>
-        <p class="mt-2 text-gray-600 dark:text-gray-300">
-            One payment per course unlocks every track inside it — the placement test decides where you start.
-        </p>
-
-        @if ($featuredCourses->isEmpty())
-            <x-empty-state class="mt-10" message="No courses available yet." />
-        @else
-            <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ($featuredCourses as $course)
-                    <x-course-card :course="$course" :pricing-region="$pricingRegion" />
-                @endforeach
-            </div>
-        @endif
-    </section>
+    {{-- Logged-in students browse courses on their own Course page instead. --}}
+    @unless ($isStudent)
+        <x-explore-courses :courses="$featuredCourses" :pricing-region="$pricingRegion" class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" />
+    @endunless
 
     {{-- Reviews: only shown to anonymous visitors deciding whether to sign
     up — a logged-in student landing here from the journey nav has already

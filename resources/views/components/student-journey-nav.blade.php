@@ -1,10 +1,11 @@
 @auth
     @php
         $studentJourneyNav = [
-            ['route' => 'home', 'label' => 'My Course', 'icon' => 'home'],
+            ['route' => 'home', 'label' => 'Account', 'icon' => 'home'],
+            ['route' => 'student.course', 'label' => 'Course', 'icon' => 'book-open'],
             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
             ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
-            ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
+            ['route' => 'student.account', 'label' => 'Sessions', 'icon' => 'user-circle'],
             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
         ];

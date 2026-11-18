@@ -69,7 +69,7 @@
                             <p class="truncate px-3 pb-1.5 pt-1 text-sm font-medium text-gray-900 dark:text-white">{{ auth()->user()->name }}</p>
                             <div class="border-t border-gray-100 dark:border-gray-700"></div>
                             <a href="{{ route('student.account') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
-                                <x-icons.user-circle class="h-4 w-4" /> Account
+                                <x-icons.user-circle class="h-4 w-4" /> Sessions
                             </a>
                             <a href="{{ route('student.payments') }}" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">
                                 <x-icons.credit-card class="h-4 w-4" /> Payments
@@ -131,10 +131,11 @@
                     [
                         'label' => null,
                         'items' => [
-                            ['route' => 'home', 'label' => 'My Course', 'icon' => 'home'],
+                            ['route' => 'home', 'label' => 'Account', 'icon' => 'home'],
+                            ['route' => 'student.course', 'label' => 'Course', 'icon' => 'book-open'],
                             ['route' => 'student.more-practice', 'label' => 'More Practice', 'icon' => 'medal'],
                             ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal'],
-                            ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
+                            ['route' => 'student.account', 'label' => 'Sessions', 'icon' => 'user-circle'],
                             ['route' => 'student.payments', 'label' => 'Payment', 'icon' => 'credit-card'],
                             ['route' => 'student.help', 'label' => 'Help', 'icon' => 'desk-phone'],
                         ],
@@ -216,12 +217,13 @@
                 {{-- Mobile bottom tab bar --}}
                 @php
                     $mobilePrimaryNav = [
-                        ['route' => 'home', 'label' => 'My Course', 'icon' => 'book-open', 'active' => request()->routeIs('home')],
+                        ['route' => 'home', 'label' => 'Account', 'icon' => 'home', 'active' => request()->routeIs('home')],
+                        ['route' => 'student.course', 'label' => 'Course', 'icon' => 'book-open', 'active' => request()->routeIs('student.course')],
                         ['route' => 'student.placement-test', 'label' => 'Placement Test', 'icon' => 'medal', 'active' => request()->routeIs('student.placement-test*')],
                         ['route' => 'student.payments', 'label' => 'Payments', 'icon' => 'credit-card', 'active' => request()->routeIs('student.payments')],
                     ];
                     $mobileMoreNav = [
-                        ['route' => 'student.account', 'label' => 'Account', 'icon' => 'user-circle'],
+                        ['route' => 'student.account', 'label' => 'Sessions', 'icon' => 'user-circle'],
                         ['route' => 'student.notifications', 'label' => 'Notifications', 'icon' => 'bell'],
                         ['route' => 'student.support.index', 'label' => 'Support', 'icon' => 'desk-phone'],
                     ];

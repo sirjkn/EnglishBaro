@@ -1,5 +1,5 @@
-<x-layouts.student :title="'Account'">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Account</h1>
+<x-layouts.student :title="'Sessions'">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Sessions</h1>
 
     <div x-data="{ dark: false }" x-init="try { dark = localStorage.getItem('theme') === 'dark' } catch (e) {}" class="mt-6 flex items-center justify-between rounded-xl border-2 border-indigo-300 bg-white p-4 dark:border-indigo-700 dark:bg-gray-800">
         <div>
