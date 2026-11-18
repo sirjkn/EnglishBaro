@@ -59,23 +59,25 @@
                 <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($testimonials as $testimonial)
                         <div class="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                            <div class="text-amber-400">
-                                {{ str_repeat('★', $testimonial->rating ?? 5) }}{{ str_repeat('☆', 5 - ($testimonial->rating ?? 5)) }}
-                            </div>
-                            <p class="mt-3 text-sm text-gray-600 dark:text-gray-300">&ldquo;{{ $testimonial->content }}&rdquo;</p>
-                            <div class="mt-4 flex items-center gap-3">
-                                @if ($testimonial->avatar?->resolved_url)
-                                    <img src="{{ $testimonial->avatar->resolved_url }}" alt="{{ $testimonial->name }}" class="h-10 w-10 rounded-full object-cover">
-                                @else
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300">
-                                        {{ collect(explode(' ', $testimonial->name))->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('') }}
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex min-w-0 items-center gap-3">
+                                    @if ($testimonial->avatar?->resolved_url)
+                                        <img src="{{ $testimonial->avatar->resolved_url }}" alt="{{ $testimonial->name }}" class="h-10 w-10 flex-none rounded-full object-cover">
+                                    @else
+                                        <div class="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300">
+                                            {{ collect(explode(' ', $testimonial->name))->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('') }}
+                                        </div>
+                                    @endif
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ $testimonial->name }}</p>
+                                        <p class="truncate text-xs text-gray-500 dark:text-gray-400">{{ $testimonial->role_label }}</p>
                                     </div>
-                                @endif
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $testimonial->name }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $testimonial->role_label }}</p>
+                                </div>
+                                <div class="flex-none text-amber-400">
+                                    {{ str_repeat('★', $testimonial->rating ?? 5) }}{{ str_repeat('☆', 5 - ($testimonial->rating ?? 5)) }}
                                 </div>
                             </div>
+                            <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">&ldquo;{{ $testimonial->content }}&rdquo;</p>
                         </div>
                     @endforeach
                 </div>
