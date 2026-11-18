@@ -15,6 +15,8 @@
 
 @php
     $user = auth()->user();
+    $currencySymbols = ['USD' => '$', 'GBP' => '£', 'EUR' => '€', 'KES' => 'KSh'];
+    $paidCurrencySymbol = $currencySymbols[$paidCurrency] ?? $paidCurrency.' ';
 @endphp
 
 <div class="relative overflow-hidden rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-6 dark:border-gray-700 dark:from-gray-800 dark:to-gray-800">
@@ -59,7 +61,7 @@
             @endif
             <div class="grid w-full grid-cols-3 gap-1.5 sm:gap-2">
                 <x-stat-card
-                    label="Track Expires"
+                    label="Expiry"
                     :value="$nearestExpiry ? $nearestExpiry->expires_at->format('M j') : 'N/A'"
                     icon="clock"
                     color="indigo"
@@ -78,7 +80,7 @@
                 />
                 <x-stat-card
                     label="Total Paid"
-                    :value="$paidCurrency.' '.number_format((float) $totalPaid, 2)"
+                    :value="$paidCurrencySymbol.number_format((float) $totalPaid, 2)"
                     icon="credit-card"
                     color="emerald"
                     compact
