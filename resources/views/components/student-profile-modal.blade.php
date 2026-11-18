@@ -6,7 +6,7 @@
 @endphp
 
 <div x-data="{ open: {{ $errors->hasAny($profileFields) ? 'true' : 'false' }}, preview: null }" {{ $attributes }}>
-    <button type="button" @click="open = true" class="flex items-center gap-1 rounded-md border border-blue-600 bg-white px-3 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50 dark:border-blue-400 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700">
+    <button type="button" @click="open = true" class="flex w-full items-center justify-center gap-1.5 rounded-md border border-blue-600 bg-white px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 dark:border-blue-400 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700">
         <x-icons.pencil class="h-3 w-3" /> Edit Profile
     </button>
 
