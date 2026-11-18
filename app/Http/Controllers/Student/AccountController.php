@@ -18,13 +18,10 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        $payments = $user->payments()->latest()->take(10)->get();
-
         return view('student.account', [
             'user' => $user,
             'studentProfile' => $user->studentProfile,
             'sessions' => $user->userSessions()->orderByDesc('last_activity_at')->get(),
-            'payments' => $payments,
         ]);
     }
 

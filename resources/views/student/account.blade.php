@@ -49,7 +49,13 @@
                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->ip_address }}</td>
                             <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $session->last_activity_at?->diffForHumans() }}</td>
                             <td class="py-2 pr-4">
-                                <x-badge :pill="false" :color="$session->status === 'active' ? 'green' : 'gray'">{{ ucfirst($session->status) }}</x-badge>
+                                @if ($session->status === 'active')
+                                    <span class="inline-flex items-center gap-1.5 rounded-md border border-green-300 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700 dark:border-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Active
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center rounded-md border border-gray-300 bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-600 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">{{ ucfirst($session->status) }}</span>
+                                @endif
                             </td>
                             <td class="py-2 text-right">
                                 @if ($session->status === 'active')
@@ -65,37 +71,5 @@
                 </tbody>
             </table>
         </div>
-    </div>
-
-    {{-- Recent Payments --}}
-    <div class="mt-8 rounded-xl border-2 border-indigo-300 bg-white p-6 dark:border-indigo-700 dark:bg-gray-800">
-        <h2 class="font-semibold text-gray-900 dark:text-white">Recent Payments</h2>
-
-        @if ($payments->isEmpty())
-            <x-empty-state class="mt-4" message="No payment history yet." />
-        @else
-            <div class="mt-4 overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
-                    <thead>
-                        <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
-                            <th class="py-2 pr-4">Transaction</th>
-                            <th class="py-2 pr-4">Amount</th>
-                            <th class="py-2 pr-4">Status</th>
-                            <th class="py-2">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
-                        @foreach ($payments as $payment)
-                            <tr class="odd:bg-white even:bg-indigo-50 dark:odd:bg-gray-800 dark:even:bg-gray-900 divide-x divide-gray-200 dark:divide-gray-700">
-                                <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $payment->transaction_id }}</td>
-                                <td class="py-2 pr-4 text-gray-700 dark:text-gray-300">{{ $payment->currency }} {{ number_format((float) $payment->amount, 2) }}</td>
-                                <td class="py-2 pr-4"><x-payment-status :status="$payment->status" /></td>
-                                <td class="py-2 text-gray-700 dark:text-gray-300">{{ $payment->created_at->format('M d, Y') }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
     </div>
 </x-layouts.student>
