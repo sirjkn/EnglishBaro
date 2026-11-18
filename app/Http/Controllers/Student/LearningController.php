@@ -115,7 +115,6 @@ class LearningController extends Controller
             'level' => $level,
             'allLevels' => $allLevels,
             'pickerTracks' => $pickerTracks,
-            'unlockedTrackIds' => $trackUnlock->unlockedTrackIds(Auth::user(), $pickerTracks),
             'currentTrack' => $trackUnlock->currentTrackInCourse(Auth::user(), $track->course_id) ?? $track,
             'completedLessonIds' => $completedLessonIds,
             'startedLessonIds' => $startedLessonIds,
