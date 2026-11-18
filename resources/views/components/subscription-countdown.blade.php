@@ -4,7 +4,7 @@
     @php
         $daysLeft = max(0, now()->startOfDay()->diffInDays($subscription->expires_at->copy()->startOfDay(), false));
         $isUrgent = $daysLeft <= 3;
-        $colorClasses = 'border border-orange-400 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-900/30 dark:text-orange-300'.($isUrgent ? ' animate-pulse' : '');
+        $colorClasses = 'border border-gray-300 bg-orange-50 text-orange-700 dark:border-gray-600 dark:bg-orange-900/30 dark:text-orange-300'.($isUrgent ? ' animate-pulse' : '');
     @endphp
     <div {{ $attributes->merge(['class' => 'flex max-w-full items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-semibold tracking-tight sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-xs '.$colorClasses]) }}>
         <x-icons.medal class="h-4 w-4 shrink-0 sm:h-4 sm:w-4" />
