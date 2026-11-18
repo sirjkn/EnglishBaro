@@ -229,9 +229,6 @@
                                                 <button type="button" x-show="editingTrack === null && ! addingUnit" @click="addingUnit = true" class="flex-none rounded-md border border-green-600 bg-green-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-400">
                                                     + Add Track
                                                 </button>
-                                                <button type="button" x-show="editingTrack !== null" x-cloak @click="editingTrack = null" class="flex-none rounded-md border border-white/40 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">
-                                                    Cancel
-                                                </button>
                                             </div>
 
                                             <div x-show="addingUnit" x-cloak class="border-t border-gray-200 p-4 dark:border-gray-700">
@@ -261,7 +258,7 @@
                                                             :title="'Delete track '.$track->track_code.'?'"
                                                             :message="$courseTrackDeleteMessage"
                                                             :redirect="route('admin.courses.index', ['open' => $course->id], false)"
-                                                            class="rounded-md border border-red-300 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-900/30"
+                                                            class="rounded-md border border-red-700 bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500"
                                                         />
                                                     </div>
                                                     <form method="POST" action="{{ route('admin.tracks.update', $track) }}" enctype="multipart/form-data" class="mt-3">
@@ -269,13 +266,16 @@
                                                         @method('PUT')
                                                         @include('admin.tracks._form', ['track' => $track, 'hideCourseField' => true])
                                                         <input type="hidden" name="redirect" value="{{ route('admin.courses.index', ['open' => $course->id], false) }}">
-                                                        <button type="submit" class="mt-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                                        <div class="mt-4 flex items-center gap-2">
+                                                            <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                                                            <button type="button" @click="editingTrack = null" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                                                        </div>
                                                     </form>
                                                 </div>
                                             @endforeach
 
                                             <div x-show="! addingUnit && editingTrack === null" class="border-t border-gray-200 dark:border-gray-700">
-                                            <div class="max-h-[420px] overflow-y-auto overflow-x-auto">
+                                            <div class="overflow-x-auto">
                                                 <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                                                     <thead class="sticky top-0 z-10">
                                                         <tr class="bg-indigo-600 text-left text-xs uppercase text-white dark:bg-indigo-800 dark:text-white divide-x divide-white">
