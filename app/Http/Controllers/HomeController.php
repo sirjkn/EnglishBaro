@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanySetting;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Level;
+use App\Models\Media;
 use App\Models\Testimonial;
 use App\Services\RegionPricingService;
 use App\Services\StudentDashboardSummaryService;
@@ -47,7 +49,11 @@ class HomeController extends Controller
             ? $dashboardSummary->forUser($user)
             : null;
 
+        // Set by the admin under Placement Test > Homepage Intro Video.
+        $introVideoId = CompanySetting::get('intro_video_media_id');
+
         return view('guest.home', [
+            'introVideo' => $introVideoId ? Media::find($introVideoId) : null,
             'featuredCourses' => $featuredCourses,
             'testimonials' => $testimonials,
             'stats' => $stats,
