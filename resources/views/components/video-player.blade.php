@@ -35,8 +35,17 @@
             allowfullscreen
             referrerpolicy="strict-origin-when-cross-origin"
         ></iframe>
+    @elseif ($media->source_type === 'external' && (str_contains($media->url ?? '', 'youtube.com') || str_contains($media->url ?? '', 'youtu.be') || str_contains($media->url ?? '', 'vimeo.com')))
+        {{-- A YouTube/Vimeo link we couldn't extract a video ID from (unusual
+        URL format) — a <video> tag can't play a webpage, so don't even try. --}}
+        <div class="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-center text-gray-400">
+            <x-icons.play-circle class="h-10 w-10" />
+            <span class="text-sm">Couldn't recognize this video link. Please check the URL and try again.</span>
+        </div>
     @elseif ($media->source_type === 'external')
-        <video class="h-full w-full" controls preload="metadata" src="{{ $media->url }}" x-init="typeof initPlayer === 'function' && initPlayer($el)"></video>
+        <video class="h-full w-full" controls preload="metadata" src="{{ $media->url }}" x-init="typeof initPlayer === 'function' && initPlayer($el)">
+            Your browser can't play this video. <a href="{{ $media->url }}" target="_blank" rel="noopener" class="text-indigo-300 underline">Open the link directly</a>.
+        </video>
     @else
         <video class="h-full w-full" controls preload="metadata" src="{{ $media->resolved_url }}" x-init="typeof initPlayer === 'function' && initPlayer($el)"></video>
     @endif

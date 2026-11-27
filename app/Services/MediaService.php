@@ -140,8 +140,17 @@ class MediaService
 
     public function extractVimeoId(string $url): ?string
     {
-        if (preg_match('/vimeo\.com\/(?:video\/)?(\d+)/', $url, $matches)) {
-            return $matches[1];
+        $patterns = [
+            // player.vimeo.com/video/ID, vimeo.com/video/ID, vimeo.com/ID
+            '/vimeo\.com\/(?:video\/)?(\d+)/',
+            // vimeo.com/channels/name/ID, vimeo.com/groups/name/videos/ID, vimeo.com/album/name/video/ID
+            '/vimeo\.com\/(?:channels|groups|album)\/[^\/]+\/(?:videos\/)?(?:video\/)?(\d+)/',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return $matches[1];
+            }
         }
 
         return null;
@@ -150,9 +159,11 @@ class MediaService
     public function extractYouTubeId(string $url): ?string
     {
         $patterns = [
-            '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/',
+            '/youtube(?:-nocookie)?\.com\/watch\?(?:.*&)?v=([a-zA-Z0-9_-]{11})/',
             '/youtu\.be\/([a-zA-Z0-9_-]{11})/',
-            '/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/',
+            '/youtube(?:-nocookie)?\.com\/embed\/([a-zA-Z0-9_-]{11})/',
+            '/youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/',
+            '/youtube\.com\/live\/([a-zA-Z0-9_-]{11})/',
         ];
 
         foreach ($patterns as $pattern) {
