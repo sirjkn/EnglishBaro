@@ -39,6 +39,24 @@ class MediaUploadController extends Controller
         ]);
     }
 
+    public function externalVideo(Request $request, MediaService $mediaService): JsonResponse
+    {
+        $validated = $request->validate([
+            'url' => ['required', 'string', 'url', 'max:2048'],
+        ]);
+
+        $media = $mediaService->storeExternalVideo($validated['url']);
+
+        return response()->json([
+            'id' => $media->id,
+            'type' => $media->type,
+            'title' => $media->title ?: $media->url,
+            'provider' => $media->provider,
+            'ready' => true,
+            'resolved_url' => $media->resolved_url,
+        ]);
+    }
+
     public function destroy(Media $media, MediaService $mediaService): JsonResponse
     {
         abort_unless($media->created_by === auth()->id(), 403);

@@ -194,6 +194,56 @@ Alpine.data('lessonMediaUploader', (lessonId = null) => ({
         this.autoSaveIfReady();
     },
 
+    attachExternalVideo(url) {
+        if (! url || ! url.trim()) return;
+
+        const upload = Alpine.reactive({
+            key: this.nextKey++,
+            name: url,
+            type: 'video',
+            previewUrl: null,
+            progress: 100,
+            status: 'uploading',
+            mediaId: null,
+            error: null,
+            xhr: null,
+        });
+
+        this.uploads.push(upload);
+
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        const externalVideoUrl = window.adminMediaExternalVideoUrl;
+
+        if (! externalVideoUrl || ! csrfMeta) {
+            upload.status = 'error';
+            upload.error = 'Not configured';
+            return;
+        }
+
+        fetch(externalVideoUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrfMeta.content,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({ url: url.trim() }),
+        })
+            .then(async (r) => {
+                const data = await r.json().catch(() => null);
+                if (! r.ok) throw new Error(data?.errors?.url?.[0] || data?.message || 'Could not attach that link.');
+                upload.name = data.title || url;
+                upload.mediaId = data.id;
+                upload.status = 'done';
+                this.autoSaveIfReady();
+            })
+            .catch((e) => {
+                upload.status = 'error';
+                upload.error = e.message || 'Could not attach that link.';
+            });
+    },
+
     removeExistingResource(resource) {
         if (resource.removing || ! window.adminLessonResourceDestroyUrl) return;
 

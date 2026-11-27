@@ -26,6 +26,15 @@
             allowfullscreen
             referrerpolicy="strict-origin-when-cross-origin"
         ></iframe>
+    @elseif ($media->provider === 'vimeo' && $media->external_id)
+        <iframe
+            class="h-full w-full"
+            src="https://player.vimeo.com/video/{{ $media->external_id }}"
+            title="Lesson video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
     @elseif ($media->source_type === 'external')
         <video class="h-full w-full" controls preload="metadata" src="{{ $media->url }}" x-init="typeof initPlayer === 'function' && initPlayer($el)"></video>
     @else

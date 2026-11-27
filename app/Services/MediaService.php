@@ -114,6 +114,20 @@ class MediaService
             ]);
         }
 
+        $vimeoId = $this->extractVimeoId($url);
+
+        if ($vimeoId) {
+            return Media::create([
+                'type' => 'video',
+                'source_type' => 'external',
+                'provider' => 'vimeo',
+                'url' => $url,
+                'external_id' => $vimeoId,
+                'title' => $title,
+                'created_by' => Auth::id(),
+            ]);
+        }
+
         return Media::create([
             'type' => 'video',
             'source_type' => 'external',
@@ -122,6 +136,15 @@ class MediaService
             'title' => $title,
             'created_by' => Auth::id(),
         ]);
+    }
+
+    public function extractVimeoId(string $url): ?string
+    {
+        if (preg_match('/vimeo\.com\/(?:video\/)?(\d+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 
     public function extractYouTubeId(string $url): ?string

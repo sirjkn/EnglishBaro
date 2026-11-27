@@ -38,6 +38,10 @@
             <button type="button" @click="openMuxPicker('video')" class="w-full rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black hover:bg-gray-100">
                 Use existing
             </button>
+            <div x-data="{ url: '' }" class="w-full">
+                <input type="text" x-model="url" placeholder="Video link" class="w-full rounded-full border-gray-300 px-2 py-1 text-[10px] dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                <button type="button" @click="attachExternalVideo(url); url = ''" class="mt-1 w-full rounded-full border border-gray-300 bg-white px-2 py-1 text-[10px] font-medium text-black hover:bg-gray-100">Add link</button>
+            </div>
         </div>
         <div class="flex flex-col items-center gap-1.5 rounded-md border border-dashed border-gray-300 px-2 py-2 text-center dark:border-gray-600">
             <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400">Audio</span>

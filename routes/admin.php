@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified', 'admin'])
             Route::get('media-uploads/mux-assets', [MediaUploadController::class, 'muxAssets'])->name('media-uploads.mux-assets');
             Route::get('media-uploads/library', [MediaUploadController::class, 'libraryAssets'])->name('media-uploads.library');
             Route::post('media-uploads/from-mux', [MediaUploadController::class, 'fromMux'])->name('media-uploads.from-mux');
+            Route::post('media-uploads/external-video', [MediaUploadController::class, 'externalVideo'])->name('media-uploads.external-video');
             Route::delete('lesson-resources/{lessonResource}', [LessonController::class, 'destroyResource'])->name('lesson-resources.destroy');
 
             Route::scopeBindings()->group(function () {

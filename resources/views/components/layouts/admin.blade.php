@@ -28,6 +28,7 @@
             window.adminMuxAssetsUrl = @json(route('admin.media-uploads.mux-assets', [], false));
             window.adminMuxFromAssetUrl = @json(route('admin.media-uploads.from-mux', [], false));
             window.adminMediaLibraryUrl = @json(route('admin.media-uploads.library', [], false));
+            window.adminMediaExternalVideoUrl = @json(route('admin.media-uploads.external-video', [], false));
             window.adminLessonResourceDestroyUrl = @json(route('admin.lesson-resources.destroy', ['lessonResource' => '__ID__'], false));
         </script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])

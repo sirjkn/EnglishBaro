@@ -13,8 +13,13 @@
             <div class="mt-3 flex flex-wrap items-center gap-3" x-data="{ ...lessonMediaUploader(), saving: false }">
                 <label class="flex w-fit cursor-pointer items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
                     {{ $introVideo ? 'Replace Video' : 'Upload Intro Video' }}
-                    <input type="file" accept="video/mp4,video/webm" class="hidden" @change="handleFiles($event, 'video')">
+                    <input type="file" accept="video/mp4,video/webm" class="hidden" @change="handleFiles($event, 'video', 'own_server')">
                 </label>
+
+                <div x-data="{ url: '' }" class="flex items-center gap-1">
+                    <input type="text" x-model="url" placeholder="YouTube/Vimeo/video link" class="w-48 rounded-md border-gray-300 px-2 py-1.5 text-xs dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    <button type="button" @click="attachExternalVideo(url); url = ''" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-black hover:bg-gray-100">Add</button>
+                </div>
 
                 @if ($introVideo)
                     <form method="POST" action="{{ route('admin.settings.intro-video') }}">
@@ -66,8 +71,13 @@
             <div class="mt-3 flex flex-wrap items-center gap-3" x-data="{ ...lessonMediaUploader(), saving: false }">
                 <label class="flex w-fit cursor-pointer items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
                     {{ $helpVideo ? 'Replace Video' : 'Upload Help Video' }}
-                    <input type="file" accept="video/mp4,video/webm" class="hidden" @change="handleFiles($event, 'video')">
+                    <input type="file" accept="video/mp4,video/webm" class="hidden" @change="handleFiles($event, 'video', 'own_server')">
                 </label>
+
+                <div x-data="{ url: '' }" class="flex items-center gap-1">
+                    <input type="text" x-model="url" placeholder="YouTube/Vimeo/video link" class="w-48 rounded-md border-gray-300 px-2 py-1.5 text-xs dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    <button type="button" @click="attachExternalVideo(url); url = ''" class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-black hover:bg-gray-100">Add</button>
+                </div>
 
                 @if ($helpVideo)
                     <form method="POST" action="{{ route('admin.settings.help-video') }}">
