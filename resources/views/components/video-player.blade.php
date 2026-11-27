@@ -18,23 +18,59 @@
     @elseif ($media->provider === 'mux')
         <div class="flex h-full w-full items-center justify-center text-sm text-gray-400">Video is still processing. Please check back shortly.</div>
     @elseif ($media->provider === 'youtube' && $media->external_id)
-        <iframe
-            class="h-full w-full"
-            src="https://www.youtube-nocookie.com/embed/{{ $media->external_id }}"
-            title="Lesson video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            referrerpolicy="strict-origin-when-cross-origin"
-        ></iframe>
+        {{-- YouTube's embed policy doesn't allow hiding the title/controls
+        chrome outright, so instead we show just a thumbnail + play button
+        and only load the real (fully-chromed) player once clicked. --}}
+        <div x-data="{ started: false }" class="relative h-full w-full">
+            <button
+                type="button"
+                x-show="! started"
+                @click="started = true"
+                class="group absolute inset-0 flex h-full w-full items-center justify-center bg-cover bg-center"
+                style="background-image: url('https://img.youtube.com/vi/{{ $media->external_id }}/hqdefault.jpg')"
+                aria-label="Play video"
+            >
+                <span class="absolute inset-0 bg-black/20 transition group-hover:bg-black/30"></span>
+                <x-icons.play-circle class="relative h-16 w-16 text-white drop-shadow-lg" />
+            </button>
+
+            <template x-if="started">
+                <iframe
+                    class="h-full w-full"
+                    src="https://www.youtube-nocookie.com/embed/{{ $media->external_id }}?autoplay=1"
+                    title="Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin"
+                ></iframe>
+            </template>
+        </div>
     @elseif ($media->provider === 'vimeo' && $media->external_id)
-        <iframe
-            class="h-full w-full"
-            src="https://player.vimeo.com/video/{{ $media->external_id }}"
-            title="Lesson video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            referrerpolicy="strict-origin-when-cross-origin"
-        ></iframe>
+        {{-- Same click-to-play facade as YouTube above, so only the play
+        button shows until the viewer actually starts the video. --}}
+        <div x-data="{ started: false }" class="relative h-full w-full">
+            <button
+                type="button"
+                x-show="! started"
+                @click="started = true"
+                class="group absolute inset-0 flex h-full w-full items-center justify-center bg-gray-900"
+                aria-label="Play video"
+            >
+                <span class="absolute inset-0 bg-black/20 transition group-hover:bg-black/30"></span>
+                <x-icons.play-circle class="relative h-16 w-16 text-white drop-shadow-lg" />
+            </button>
+
+            <template x-if="started">
+                <iframe
+                    class="h-full w-full"
+                    src="https://player.vimeo.com/video/{{ $media->external_id }}?autoplay=1&title=0&byline=0&portrait=0"
+                    title="Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin"
+                ></iframe>
+            </template>
+        </div>
     @elseif ($media->source_type === 'external' && (str_contains($media->url ?? '', 'youtube.com') || str_contains($media->url ?? '', 'youtu.be') || str_contains($media->url ?? '', 'vimeo.com')))
         {{-- A YouTube/Vimeo link we couldn't extract a video ID from (unusual
         URL format) — a <video> tag can't play a webpage, so don't even try. --}}
