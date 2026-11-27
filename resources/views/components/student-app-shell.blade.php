@@ -1,4 +1,7 @@
-<div x-data="{ distractionFree: false, collapsed: localStorage.getItem('sidebarCollapsed') === 'true' }" x-init="$watch('collapsed', value => localStorage.setItem('sidebarCollapsed', value))">
+<div
+    x-data="{ distractionFree: new URLSearchParams(location.search).get('focus') === '1', collapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
+    x-init="$watch('collapsed', value => localStorage.setItem('sidebarCollapsed', value))"
+>
     {{-- Top row: sidebar logo + the page's own top bar(s) --}}
     <div class="flex">
         <div x-show="!distractionFree" :class="collapsed ? 'w-20' : 'w-64'" class="hidden shrink-0 border-r border-gray-200 bg-white transition-all duration-200 dark:border-gray-800 dark:bg-gray-800 md:block">
