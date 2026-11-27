@@ -2,31 +2,25 @@
     <div
         x-data="{
             openLevel: {{ $level->number }},
-            openSection: new URLSearchParams(location.search).get('open_section') ? Number(new URLSearchParams(location.search).get('open_section')) : null,
             openLesson: new URLSearchParams(location.search).get('open_lesson') ? Number(new URLSearchParams(location.search).get('open_lesson')) : null,
             search: '', changeLevelOpen: false, selTrack: '{{ $track->track_code }}', selLevel: {{ $level->number }},
             advanceTo(target) {
                 if (! target) { window.location.reload(); return; }
 
-                // The section a student is advancing into may not have been
+                // The lesson a student is advancing into may not have been
                 // unlocked yet when this page was rendered, in which case its
                 // content was never sent to the browser at all — reload with
                 // the target in the URL so the server renders it unlocked and
                 // this same script reopens it straight away.
-                const section = document.querySelector('[data-section-id=\'' + target.sectionId + '\']');
-                const sectionShowsLessonsInline = section && section.querySelector('[data-lesson-id]');
-                const lessonEl = section && section.querySelector('[data-lesson-id=\'' + target.lessonId + '\']');
+                const lessonEl = document.querySelector('[data-lesson-id=\'' + target.lessonId + '\']');
 
-                // Same for the next lesson inside a multi-lesson section: it was
-                // locked at render time, so its video isn't on the page yet.
-                if (! section || (sectionShowsLessonsInline && ! lessonEl)) {
-                    window.location.href = window.location.pathname + '?open_section=' + target.sectionId + '&open_lesson=' + target.lessonId;
+                if (! lessonEl) {
+                    window.location.href = window.location.pathname + '?open_lesson=' + target.lessonId;
                     return;
                 }
 
-                this.openSection = target.sectionId;
                 this.openLesson = target.lessonId;
-                if (lessonEl) this.$nextTick(() => lessonEl.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+                this.$nextTick(() => lessonEl.scrollIntoView({ behavior: 'smooth', block: 'start' }));
             },
         }"
         @lesson-advance.window="advanceTo($event.detail)"
@@ -175,168 +169,85 @@
                                     Preview only &mdash; complete level {{ $levelItem->number - 1 }} to watch and read this material.
                                 </p>
                             @else
+                                @php
+                                    $priorDone = true;
+                                    // The order a student walks through this level's lessons in,
+                                    // used to work out what to open next once one is finished.
+                                    $flatLessonSteps = $levelItem->sections->flatMap(
+                                        fn ($s) => $s->lessons->map(fn ($l) => ['sectionId' => $s->id, 'lessonId' => $l->id])
+                                    )->values();
+                                @endphp
                                 <div class="divide-y divide-gray-100 dark:divide-gray-700">
-                                    @php
-                                        $sectionNumber = 0;
-                                        $priorDone = true;
-                                        // The order a student walks through this level's lessons in,
-                                        // used to work out what to open next once one is finished.
-                                        $flatLessonSteps = $levelItem->sections->flatMap(
-                                            fn ($s) => $s->lessons->map(fn ($l) => ['sectionId' => $s->id, 'lessonId' => $l->id])
-                                        )->values();
-                                    @endphp
                                     @foreach ($levelItem->sections as $section)
-                                        @php
-                                            $sectionNumber++;
-                                            $sectionLessons = $section->lessons;
-                                            $doneCount = $sectionLessons->filter(fn ($l) => $completedLessonIds->contains($l->id))->count();
-                                            $isDone = $sectionLessons->isNotEmpty() && $doneCount === $sectionLessons->count();
-                                            $isLocked = ! $priorDone;
-                                            $priorDone = $priorDone && $isDone;
-                                            $isResume = $sectionLessons->contains(fn ($l) => $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $l->id);
-                                            $nextLesson = $sectionLessons->first(fn ($l) => ! $completedLessonIds->contains($l->id)) ?? $sectionLessons->first();
-                                            $questionCount = $sectionLessons->sum(fn ($l) => $l->activity?->questions->count() ?? 0);
-                                            $hasWrittenAnswer = $sectionLessons->contains(fn ($l) => $l->activity?->questions->contains(fn ($q) => in_array($q->type, ['short_answer', 'fill_blank'], true)) ?? false);
-                                        @endphp
-                                        <div class="{{ $isResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : '' }} {{ $isLocked ? 'opacity-60' : '' }}">
-                                            <div
-                                                role="button"
-                                                tabindex="0"
-                                                @click="openSection = (openSection === {{ $section->id }} ? null : {{ $section->id }})"
-                                                @keydown.enter="openSection = (openSection === {{ $section->id }} ? null : {{ $section->id }})"
-                                                class="flex w-full cursor-pointer items-center gap-3 px-2 py-2.5 text-left"
-                                            >
-                                                <span class="w-4 flex-none text-right text-xs text-gray-400">{{ $sectionNumber }}</span>
+                                        @foreach ($section->lessons as $subIndex => $lesson)
+                                            @php
+                                                $lessonIsDone = $completedLessonIds->contains($lesson->id);
+                                                $lessonIsLocked = ! $priorDone;
+                                                $priorDone = $priorDone && $lessonIsDone;
+                                                $lessonIsResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
+                                                $lessonHasStarted = $startedLessonIds->contains($lesson->id);
+                                                $lessonQuestionCount = $lesson->activity?->questions->count() ?? 0;
+                                                $lessonLabel = $section->title.' '.$levelItem->number.'.'.($subIndex + 1);
+                                                $lessonStepIndex = $flatLessonSteps->search(fn ($s) => $s['lessonId'] === $lesson->id);
+                                                $lessonAdvanceTarget = $flatLessonSteps->get($lessonStepIndex + 1);
+                                            @endphp
+                                            <div class="{{ $lessonIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : '' }} {{ $lessonIsLocked ? 'opacity-60' : '' }}">
+                                                <button
+                                                    type="button"
+                                                    @if (! $lessonIsLocked) @click="openLesson = (openLesson === {{ $lesson->id }} ? null : {{ $lesson->id }})" @endif
+                                                    @if ($lessonIsLocked) disabled @endif
+                                                    class="flex w-full items-center gap-3 px-2 py-2.5 text-left"
+                                                >
+                                                    @if ($lessonIsDone)
+                                                        <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
+                                                    @elseif ($lessonIsLocked)
+                                                        <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+                                                            <x-icons.lock class="h-2.5 w-2.5" />
+                                                        </span>
+                                                    @else
+                                                        <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
+                                                    @endif
 
-                                                @if ($isDone)
-                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
-                                                @elseif ($isLocked)
-                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-                                                        <x-icons.lock class="h-2 w-2" />
-                                                    </span>
-                                                @else
-                                                    <span class="flex h-4 w-4 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
-                                                @endif
-
-                                                <span class="min-w-0 flex-1">
-                                                    <span class="block truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $section->title }}</span>
-                                                    <span class="block truncate text-[11px] text-gray-500 dark:text-gray-400">
-                                                        @if ($isLocked)
-                                                            Locked &middot; finish section {{ $sectionNumber - 1 }} first
-                                                        @else
-                                                            {{ $sectionLessons->count() }} video{{ $sectionLessons->count() === 1 ? '' : 's' }}
-                                                            @if ($questionCount) &middot; {{ $questionCount }} question{{ $questionCount === 1 ? '' : 's' }} @endif
-                                                            @if ($hasWrittenAnswer) + written answer @endif
-                                                            @if ($isDone) &middot; already watched @endif
+                                                    <span class="min-w-0 flex-1">
+                                                        <span class="block truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $lessonLabel }}</span>
+                                                        @if (! $lessonIsLocked && $lessonQuestionCount)
+                                                            <span class="block truncate text-[11px] text-gray-500 dark:text-gray-400">{{ $lessonQuestionCount }} question{{ $lessonQuestionCount === 1 ? '' : 's' }}</span>
                                                         @endif
                                                     </span>
-                                                </span>
 
-                                                <div class="flex flex-none items-center gap-2">
-                                                    @if ($isDone)
-                                                        <span class="rounded-full bg-green-100 px-3 py-1 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Done</span>
-                                                    @elseif ($isLocked)
-                                                        <span class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
-                                                    @elseif ($nextLesson)
-                                                        @php $sectionHasStarted = $sectionLessons->contains(fn ($l) => $startedLessonIds->contains($l->id)); @endphp
-                                                        <span class="rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-semibold text-white">{{ $sectionHasStarted ? 'Continue' : 'Start' }}</span>
+                                                    @if ($lessonIsDone)
+                                                        <span class="flex-none rounded-full bg-green-100 px-3 py-1 text-[11px] font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Done</span>
+                                                    @elseif ($lessonIsLocked)
+                                                        <span class="flex-none rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
+                                                    @else
+                                                        <span class="flex-none rounded-full bg-indigo-600 px-3 py-1 text-[11px] font-semibold text-white">{{ $lessonHasStarted ? 'Continue' : 'Start' }}</span>
                                                     @endif
-                                                </div>
 
-                                                <x-icons.chevron-left class="h-3.5 w-3.5 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openSection === {{ $section->id }} ? '-rotate-90' : 'rotate-90'" />
-                                            </div>
+                                                    @unless ($lessonIsLocked)
+                                                        <x-icons.chevron-left class="h-3.5 w-3.5 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openLesson === {{ $lesson->id }} ? '-rotate-90' : 'rotate-90'" />
+                                                    @endunless
+                                                </button>
 
-                                            @unless ($isLocked)
-                                                <div data-section-id="{{ $section->id }}" x-show="openSection === {{ $section->id }}" x-cloak x-transition class="bg-gray-50 px-2 pb-2.5 pl-10 dark:bg-gray-900/40">
-                                                    @if ($sectionLessons->count() === 1)
-                                                        {{-- A section with a single lesson has nothing to choose between,
-                                                        so opening the section goes straight to its video and questions
-                                                        instead of making the student click through another row first. --}}
-                                                        @php
-                                                            $onlyLesson = $sectionLessons->first();
-                                                            $onlyLessonHasStarted = $startedLessonIds->contains($onlyLesson->id);
-                                                            $onlyLessonStepIndex = $flatLessonSteps->search(fn ($s) => $s['lessonId'] === $onlyLesson->id);
-                                                            $onlyLessonAdvanceTarget = $flatLessonSteps->get($onlyLessonStepIndex + 1);
-                                                        @endphp
+                                                @unless ($lessonIsLocked)
+                                                    <div data-lesson-id="{{ $lesson->id }}" x-show="openLesson === {{ $lesson->id }}" x-cloak x-transition class="scroll-mt-24 bg-gray-50 px-2 pb-3 pl-10 dark:bg-gray-900/40">
                                                         @include('student.partials.lesson-preview', [
-                                                            'lesson' => $onlyLesson,
+                                                            'lesson' => $lesson,
                                                             'track' => $track,
                                                             'level' => $levelItem,
-                                                            'lessonIsDone' => $isDone,
-                                                            'lessonHasStarted' => $onlyLessonHasStarted,
-                                                            'resumeSeconds' => $lessonProgressByLessonId->get($onlyLesson->id)?->video_progress_seconds ?? 0,
-                                                            'assessment' => $onlyLesson->activity,
-                                                            'attempt' => $onlyLesson->activity ? $latestAttemptByAssessmentId->get($onlyLesson->activity->id) : null,
-                                                            'checked' => $onlyLesson->activity ? $checkedAssessmentIds->contains($onlyLesson->activity->id) : false,
-                                                            'attemptsUsed' => $onlyLesson->activity ? ($attemptsUsedByAssessmentId->get($onlyLesson->activity->id) ?? 0) : 0,
+                                                            'lessonIsDone' => $lessonIsDone,
+                                                            'lessonHasStarted' => $lessonHasStarted,
+                                                            'resumeSeconds' => $lessonProgressByLessonId->get($lesson->id)?->video_progress_seconds ?? 0,
+                                                            'assessment' => $lesson->activity,
+                                                            'attempt' => $lesson->activity ? $latestAttemptByAssessmentId->get($lesson->activity->id) : null,
+                                                            'checked' => $lesson->activity ? $checkedAssessmentIds->contains($lesson->activity->id) : false,
+                                                            'attemptsUsed' => $lesson->activity ? ($attemptsUsedByAssessmentId->get($lesson->activity->id) ?? 0) : 0,
                                                             'maxAttempts' => \App\Services\AssessmentGradingService::MAX_ATTEMPTS,
-                                                            'advanceTarget' => $onlyLessonAdvanceTarget,
+                                                            'advanceTarget' => $lessonAdvanceTarget,
                                                         ])
-                                                    @else
-                                                        <div class="space-y-1">
-                                                            @php $subPriorDone = true; @endphp
-                                                            @foreach ($sectionLessons as $subIndex => $lesson)
-                                                                @php
-                                                                    $lessonIsDone = $completedLessonIds->contains($lesson->id);
-                                                                    $lessonIsLocked = ! $subPriorDone;
-                                                                    $subPriorDone = $subPriorDone && $lessonIsDone;
-                                                                    $lessonIsResume = $resumeNode?->type === 'lesson' && $resumeNode->lesson->id === $lesson->id;
-                                                                    $lessonHasStarted = $startedLessonIds->contains($lesson->id);
-                                                                    $lessonQuestionCount = $lesson->activity?->questions->count() ?? 0;
-                                                                @endphp
-                                                                <div class="rounded-lg {{ $lessonIsResume ? 'bg-indigo-50 dark:bg-indigo-900/30' : 'bg-white dark:bg-gray-800' }} {{ $lessonIsLocked ? 'opacity-60' : '' }}">
-                                                                    {{-- Opening the section shows every unlocked lesson's video and
-                                                                    questions directly; this row is just a heading, not a toggle. --}}
-                                                                    <div class="flex items-center gap-2 px-2 py-2">
-                                                                        @if ($lessonIsDone)
-                                                                            <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-green-100 text-[10px] text-green-600 dark:bg-green-900/40 dark:text-green-300">&#10003;</span>
-                                                                        @elseif ($lessonIsLocked)
-                                                                            <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-                                                                                <x-icons.lock class="h-2.5 w-2.5" />
-                                                                            </span>
-                                                                        @else
-                                                                            <span class="flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600"></span>
-                                                                        @endif
-
-                                                                        <span class="min-w-0 flex-1 text-xs text-gray-700 dark:text-gray-300">
-                                                                            {{ $section->title }} {{ $subIndex + 1 }}
-                                                                            @if (! $lessonIsLocked && $lessonQuestionCount) &middot; {{ $lessonQuestionCount }} question{{ $lessonQuestionCount === 1 ? '' : 's' }} @endif
-                                                                        </span>
-
-                                                                        @if ($lessonIsLocked)
-                                                                            <span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:bg-gray-700 dark:text-gray-500">Locked</span>
-                                                                        @endif
-                                                                    </div>
-
-                                                                    @unless ($lessonIsLocked)
-                                                                        @php
-                                                                            $lessonStepIndex = $flatLessonSteps->search(fn ($s) => $s['lessonId'] === $lesson->id);
-                                                                            $lessonAdvanceTarget = $flatLessonSteps->get($lessonStepIndex + 1);
-                                                                        @endphp
-                                                                        <div data-lesson-id="{{ $lesson->id }}" class="scroll-mt-24 px-2 pb-3">
-                                                                            @include('student.partials.lesson-preview', [
-                                                                                'lesson' => $lesson,
-                                                                                'track' => $track,
-                                                                                'level' => $levelItem,
-                                                                                'lessonIsDone' => $lessonIsDone,
-                                                                                'lessonHasStarted' => $lessonHasStarted,
-                                                                                'resumeSeconds' => $lessonProgressByLessonId->get($lesson->id)?->video_progress_seconds ?? 0,
-                                                                                'assessment' => $lesson->activity,
-                                                                                'attempt' => $lesson->activity ? $latestAttemptByAssessmentId->get($lesson->activity->id) : null,
-                                                                                'checked' => $lesson->activity ? $checkedAssessmentIds->contains($lesson->activity->id) : false,
-                                                                                'attemptsUsed' => $lesson->activity ? ($attemptsUsedByAssessmentId->get($lesson->activity->id) ?? 0) : 0,
-                                                                                'maxAttempts' => \App\Services\AssessmentGradingService::MAX_ATTEMPTS,
-                                                                                'advanceTarget' => $lessonAdvanceTarget,
-                                                                            ])
-                                                                        </div>
-                                                                    @endunless
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            @endunless
-                                        </div>
+                                                    </div>
+                                                @endunless
+                                            </div>
+                                        @endforeach
                                     @endforeach
                                 </div>
                             @endunless
