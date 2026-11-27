@@ -40,9 +40,8 @@
         </div>
 
         <div class="mt-4">
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <x-stat-card label="Total Courses" :value="$overview['total']" compact class="p-3" />
-                <x-stat-card label="Published Courses" :value="$overview['published']" compact class="p-3" />
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <x-stat-card label="Courses" :value="$overview['published'].' / '.$overview['total']" sub="Published / Total" compact class="p-3" />
                 <x-stat-card label="Total Enrollments" :value="$overview['enrollments']" compact class="p-3" />
                 <x-stat-card label="Total Revenue" :value="'$'.number_format($overview['revenue'], 2)" icon="currency-dollar" color="teal" compact class="p-3" />
             </div>
