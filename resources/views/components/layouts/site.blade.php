@@ -30,12 +30,8 @@
         @auth
             @if (auth()->user()->user_type === 'student')
                 <x-student-app-shell>
-                    @if (session('status'))
-                        <div class="rounded-md bg-green-50 dark:bg-green-900/30 p-4 text-sm text-green-700 dark:text-green-300">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
+                    {{-- x-student-app-shell already shows session('status') itself —
+                    repeating it here duplicated the "Payment successful" banner. --}}
                     {{ $slot }}
 
                     <x-site-footer class="-mx-4 mt-16 sm:-mx-6 lg:-mx-8" />

@@ -3,10 +3,19 @@
 @php
     $user = auth()->user();
     $profileFields = ['name', 'gender', 'phone', 'country', 'referral_email', 'avatar'];
+    $passwordFields = ['current_password', 'password'];
 @endphp
 
-<div x-data="{ open: {{ $errors->hasAny($profileFields) ? 'true' : 'false' }}, preview: null }" {{ $attributes }}>
-    <button type="button" @click="open = true" class="flex w-full items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700">
+<div
+    x-data="{
+        open: {{ $errors->hasAny([...$profileFields, ...$passwordFields]) ? 'true' : 'false' }},
+        tab: {{ $errors->hasAny($passwordFields) ? "'password'" : "'profile'" }},
+        preview: null,
+        show: false,
+    }"
+    {{ $attributes }}
+>
+    <button type="button" @click="open = true; tab = 'profile'" class="flex w-full items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-300 dark:hover:bg-gray-700">
         <x-icons.pencil class="h-3 w-3" /> Edit Profile
     </button>
 
@@ -23,7 +32,12 @@
                     </button>
                 </div>
 
-                <form method="POST" action="{{ route('student.account.update') }}" enctype="multipart/form-data" class="mt-5">
+                <div class="mt-4 flex gap-1 border-b border-gray-200 dark:border-gray-700">
+                    <button type="button" @click="tab = 'profile'" class="border-b-2 px-3 py-2 text-sm font-semibold" :class="tab === 'profile' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'">Profile</button>
+                    <button type="button" @click="tab = 'password'" class="border-b-2 px-3 py-2 text-sm font-semibold" :class="tab === 'password' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'">Password</button>
+                </div>
+
+                <form x-show="tab === 'profile'" method="POST" action="{{ route('student.account.update') }}" enctype="multipart/form-data" class="mt-5">
                     @csrf
                     @method('PUT')
 
@@ -98,6 +112,38 @@
                     <div class="mt-6 flex items-center justify-end gap-2 border-t border-gray-100 pt-4 dark:border-gray-700">
                         <button type="button" @click="open = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
                         <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Save Changes</button>
+                    </div>
+                </form>
+
+                <form x-show="tab === 'password'" method="POST" action="{{ route('student.account.password') }}" class="mt-5 space-y-4">
+                    @csrf
+                    @method('PUT')
+
+                    <div>
+                        <label for="current_password_modal" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
+                        <input id="current_password_modal" :type="show ? 'text' : 'password'" type="password" name="current_password" required autocomplete="current-password" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        @error('current_password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label for="new_password_modal" class="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
+                        <input id="new_password_modal" :type="show ? 'text' : 'password'" type="password" name="password" required autocomplete="new-password" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                        @error('password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label for="confirm_password_modal" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm New Password</label>
+                        <input id="confirm_password_modal" :type="show ? 'text' : 'password'" type="password" name="password_confirmation" required autocomplete="new-password" class="mt-1 w-full rounded-md border-gray-300 text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white">
+                    </div>
+
+                    <label class="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                        <input type="checkbox" x-model="show" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900">
+                        Show passwords
+                    </label>
+
+                    <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-4 dark:border-gray-700">
+                        <button type="button" @click="open = false" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">Cancel</button>
+                        <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Update Password</button>
                     </div>
                 </form>
             </div>

@@ -25,20 +25,19 @@
     <div class="relative grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2 lg:divide-x lg:divide-blue-200/60 dark:lg:divide-gray-700">
         <div class="flex flex-col justify-between">
             {{-- Square photo beside the identity, so the card stays short on phones --}}
-            <div class="flex items-center gap-3.5 sm:gap-4">
-                <x-student-avatar :profile="$studentProfile" size="h-[76px] w-[76px] sm:h-20 sm:w-20" class="!rounded-lg border-2 border-white shadow-sm dark:border-gray-700" />
-                <div class="min-w-0">
-                    <h1 class="truncate text-xl font-extrabold text-gray-900 sm:text-2xl dark:text-white">{{ $user->name }}</h1>
+            <div class="flex min-w-0 items-center gap-3.5 sm:gap-4">
+                <x-student-avatar :profile="$studentProfile" size="h-[76px] w-[76px] sm:h-20 sm:w-20" class="!rounded-lg flex-none border-2 border-white shadow-sm dark:border-gray-700" />
+                <div class="min-w-0 flex-1">
+                    <h1 class="truncate text-lg font-extrabold leading-tight text-gray-900 sm:text-xl lg:text-2xl dark:text-white">{{ $user->name }}</h1>
                     <p class="mt-0.5 text-sm font-semibold text-blue-700 dark:text-blue-300">{{ $studentProfile?->student_id ?? '—' }}</p>
                     <p class="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-gray-500 sm:text-sm dark:text-gray-400">
-                        <x-icons.envelope class="h-4 w-4 flex-none" /> <span class="truncate">{{ $user->email }}</span>
+                        <x-icons.envelope class="h-4 w-4 flex-none" /> <span class="min-w-0 truncate">{{ $user->email }}</span>
                     </p>
                 </div>
             </div>
 
-            <div class="mt-4 grid grid-cols-2 gap-2">
+            <div class="mt-4">
                 <x-student-profile-modal :student-profile="$studentProfile" />
-                <x-student-password-modal />
             </div>
 
             <div class="mt-3 grid grid-cols-2 gap-2">

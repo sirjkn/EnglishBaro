@@ -76,7 +76,13 @@
                 </p>
             @endif
             <span class="mt-3 block w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition group-hover:bg-indigo-500">
-                {{ $isEnrolledInCourse ? 'Continue Learning' : 'View Course' }}
+                @if (! $isEnrolledInCourse)
+                    View Course
+                @elseif (($progress->lessons_completed ?? 0) > 0)
+                    Continue Learning
+                @else
+                    Start Learning
+                @endif
             </span>
         </div>
     </div>
