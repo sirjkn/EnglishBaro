@@ -30,7 +30,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                     @forelse ($courses as $course)
-                        <tr :class="(mode === 'edit' && selected === {{ $course->id }}) ? 'bg-yellow-100 dark:bg-yellow-900/40' : 'odd:bg-white even:bg-indigo-50 hover:bg-yellow-100 dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:hover:bg-yellow-900/30'">
+                        <tr :class="(mode === 'edit' && selected === {{ $course->id }}) ? 'font-semibold' : ''">
                             <td class="p-0" colspan="2">
                                 <button
                                     type="button"
