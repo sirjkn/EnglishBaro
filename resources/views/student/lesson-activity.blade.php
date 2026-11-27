@@ -46,6 +46,25 @@
             &larr; {{ $level->title }}
         </a>
 
+        @php
+            $activityVideoResources = $lesson->resources->filter(fn ($r) => $r->media?->type === 'video');
+            $activityAudioResources = $lesson->resources->filter(fn ($r) => $r->media?->type === 'audio');
+            $activityPrimaryVideo = $activityVideoResources->first()?->media ?? $lesson->video;
+            $activityPrimaryAudio = $activityPrimaryVideo ? null : $activityAudioResources->first();
+        @endphp
+
+        {{-- The lesson's own video, shown again here so the video and its
+        Activity Questions are always on the same page. --}}
+        @if ($activityPrimaryVideo)
+            <div class="mt-3">
+                <x-video-player :media="$activityPrimaryVideo" />
+            </div>
+        @elseif ($activityPrimaryAudio)
+            <div class="mt-3">
+                <x-audio-player :media="$activityPrimaryAudio->media" :title="$activityPrimaryAudio->title" />
+            </div>
+        @endif
+
         <div class="mt-3 flex items-center justify-between">
             <div>
                 <span class="text-xs font-medium uppercase text-indigo-600 dark:text-indigo-400">{{ $lesson->title }}</span>
