@@ -28,7 +28,23 @@
             <div class="flex min-w-0 items-center gap-2.5 sm:gap-4">
                 <x-student-avatar :profile="$studentProfile" size="h-14 w-14 sm:h-20 sm:w-20" class="!rounded-lg flex-none border-2 border-white shadow-sm dark:border-gray-700" />
                 <div class="min-w-0 flex-1">
-                    <h1 class="break-words text-base font-extrabold leading-tight text-gray-900 sm:text-xl lg:text-2xl dark:text-white">{{ $user->name }}</h1>
+                    <h1
+                        class="truncate whitespace-nowrap text-base font-extrabold leading-tight text-gray-900 sm:text-xl lg:text-2xl dark:text-white"
+                        x-data
+                        x-init="
+                            const shrinkToFit = () => {
+                                $el.style.fontSize = '';
+                                const max = parseFloat(getComputedStyle($el).fontSize);
+                                let size = max;
+                                while ($el.scrollWidth > $el.clientWidth && size > 11) {
+                                    size -= 1;
+                                    $el.style.fontSize = size + 'px';
+                                }
+                            };
+                            shrinkToFit();
+                            new ResizeObserver(shrinkToFit).observe($el);
+                        "
+                    >{{ $user->name }}</h1>
                     <p class="mt-0.5 text-xs font-semibold text-blue-700 sm:text-sm dark:text-blue-300">{{ $studentProfile?->student_id ?? '—' }}</p>
                     <p class="mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px] text-gray-500 sm:text-sm dark:text-gray-400">
                         <x-icons.envelope class="h-3.5 w-3.5 flex-none sm:h-4 sm:w-4" /> <span class="min-w-0 truncate">{{ $user->email }}</span>
