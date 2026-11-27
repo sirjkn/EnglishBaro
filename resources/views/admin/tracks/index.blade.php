@@ -29,15 +29,15 @@
     @endphp
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4" x-data="{ selected: {{ $openCourseId ?? 'null' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }}, addingTrack: {{ $reopenAddingTrack ? 'true' : 'false' }} }">
         {{-- 1/4: courses, stacked in one column --}}
-        <div class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700 lg:col-span-1">
+        <div class="lg:col-span-1">
             <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                 <thead>
-                    <tr class="bg-indigo-600 text-left text-[11px] uppercase text-white dark:bg-indigo-800">
-                        <th class="px-3 py-2 text-sm font-bold normal-case tracking-normal">Courses</th>
+                    <tr class="text-left text-[11px] uppercase text-gray-500 dark:text-gray-400">
+                        <th class="px-3 py-2 text-sm font-bold normal-case tracking-normal text-gray-900 dark:text-white">Courses</th>
                         <th class="px-3 py-2 text-right">Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                     @forelse ($courses as $course)
                         <tr :class="selected === {{ $course->id }} ? 'bg-yellow-100 dark:bg-yellow-900/40' : 'odd:bg-white even:bg-indigo-50 hover:bg-yellow-100 dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:hover:bg-yellow-900/30'">
                             <td class="p-0" colspan="2">
