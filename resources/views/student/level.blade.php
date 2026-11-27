@@ -110,46 +110,65 @@
                         x-show="search === '' || {{ \Illuminate\Support\Js::from(strtolower($levelItem->number.' '.$levelItem->title)) }}.includes(search.toLowerCase())"
                         class="scroll-mt-20 {{ $isCurrent ? 'bg-indigo-50/60 dark:bg-indigo-900/20' : '' }}"
                     >
-                        <button
-                            type="button"
-                            @click="openLevel = (openLevel === {{ $levelItem->number }} ? null : {{ $levelItem->number }})"
-                            class="flex w-full items-center gap-3 px-4 py-3 text-left"
-                        >
-                            @if ($isCompleted)
-                                <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-green-500 text-xs text-white">&#10003;</span>
-                            @elseif (! $isUnlocked)
-                                <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-                                    <x-icons.lock class="h-3.5 w-3.5" />
+                        @php
+                            $levelHasStarted = $levelItem->sections->flatMap->lessons->contains(fn ($l) => $startedLessonIds->contains($l->id));
+                        @endphp
+                        @if ($isCurrent)
+                            {{-- The current level is always expanded, with no
+                            collapse control and no Start/Continue badge —
+                            it's already where the student is. --}}
+                            <div class="flex w-full items-center gap-3 px-4 py-3 text-left">
+                                <span class="min-w-0 flex-1">
+                                    <span class="flex items-center gap-2">
+                                        <span class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ $levelItem->title }}</span>
+                                        @if ($levelItem->number === 1)
+                                            <span class="flex-none rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:bg-gray-700 dark:text-gray-300">Starting Point</span>
+                                        @endif
+                                    </span>
+                                    <span class="block truncate text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $levelItem->sections->pluck('title')->implode(' · ') }}
+                                    </span>
                                 </span>
-                            @endif
+                            </div>
+                        @else
+                            <button
+                                type="button"
+                                @click="openLevel = (openLevel === {{ $levelItem->number }} ? null : {{ $levelItem->number }})"
+                                class="flex w-full items-center gap-3 px-4 py-3 text-left"
+                            >
+                                @if ($isCompleted)
+                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-green-500 text-xs text-white">&#10003;</span>
+                                @elseif (! $isUnlocked)
+                                    <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+                                        <x-icons.lock class="h-3.5 w-3.5" />
+                                    </span>
+                                @endif
 
-                            <span class="min-w-0 flex-1">
-                                <span class="flex items-center gap-2">
-                                    <span class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ $levelItem->title }}</span>
-                                    @if ($levelItem->number === 1)
-                                        <span class="flex-none rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:bg-gray-700 dark:text-gray-300">Starting Point</span>
-                                    @endif
+                                <span class="min-w-0 flex-1">
+                                    <span class="flex items-center gap-2">
+                                        <span class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ $levelItem->title }}</span>
+                                        @if ($levelItem->number === 1)
+                                            <span class="flex-none rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:bg-gray-700 dark:text-gray-300">Starting Point</span>
+                                        @endif
+                                    </span>
+                                    <span class="block truncate text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $levelItem->sections->pluck('title')->implode(' · ') }}
+                                    </span>
                                 </span>
-                                <span class="block truncate text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $levelItem->sections->pluck('title')->implode(' · ') }}
-                                </span>
-                            </span>
 
-                            @php
-                                $levelHasStarted = $levelItem->sections->flatMap->lessons->contains(fn ($l) => $startedLessonIds->contains($l->id));
-                            @endphp
-                            @if ($isCompleted)
-                                <span class="flex-none rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Complete</span>
-                            @elseif (! $isUnlocked)
-                                <span class="flex-none rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400">Locked</span>
-                            @else
-                                <span class="flex-none rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">{{ $levelHasStarted ? 'Continue' : 'Start' }}</span>
-                            @endif
+                                @if ($isCompleted)
+                                    <span class="flex-none rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 dark:bg-green-900/40 dark:text-green-300">Complete</span>
+                                @elseif (! $isUnlocked)
+                                    <span class="flex-none rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500 dark:bg-gray-700 dark:text-gray-400">Locked</span>
+                                @else
+                                    <span class="flex-none rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">{{ $levelHasStarted ? 'Continue' : 'Start' }}</span>
+                                @endif
 
-                            <x-icons.chevron-left class="h-4 w-4 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openLevel === {{ $levelItem->number }} ? '-rotate-90' : 'rotate-90'" />
-                        </button>
+                                <x-icons.chevron-left class="h-4 w-4 flex-none text-gray-400 transition-transform duration-200" x-bind:class="openLevel === {{ $levelItem->number }} ? '-rotate-90' : 'rotate-90'" />
+                            </button>
+                        @endif
 
-                        <div x-show="openLevel === {{ $levelItem->number }}" x-cloak x-transition class="border-t border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
+                        <div x-show="{{ $isCurrent ? 'true' : 'openLevel === '.$levelItem->number }}" x-cloak x-transition class="border-t border-gray-100 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
                             @unless ($isUnlocked)
                                 <p class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                     <x-icons.lock class="h-3.5 w-3.5" />
