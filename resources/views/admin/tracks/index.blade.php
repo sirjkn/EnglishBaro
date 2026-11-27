@@ -27,47 +27,27 @@
         $reopenAddingTrack = $errors->any() && old('track_code') !== null;
         $reopenEditingTrackId = $errors->any() && old('_editing_track_id') !== null ? (int) old('_editing_track_id') : null;
     @endphp
-    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4" x-data="{ selected: {{ $openCourseId ?? 'null' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }}, addingTrack: {{ $reopenAddingTrack ? 'true' : 'false' }} }">
-        {{-- 1/4: courses, stacked in one column --}}
-        <div class="lg:col-span-1">
-            <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
-                <thead>
-                    <tr class="text-left text-[11px] uppercase text-gray-500 dark:text-gray-400">
-                        <th class="px-3 py-2 text-sm font-bold normal-case tracking-normal text-gray-900 dark:text-white">Courses</th>
-                        <th class="px-3 py-2 text-right">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                    @forelse ($courses as $course)
-                        <tr :class="selected === {{ $course->id }} ? 'font-semibold' : ''">
-                            <td class="p-0" colspan="2">
-                                <button
-                                    type="button"
-                                    @click="selected = {{ $course->id }}; editingTrack = null; addingTrack = false"
-                                    class="flex w-full flex-wrap items-center gap-x-1.5 gap-y-1 px-2.5 py-2.5 text-left"
-                                >
-                                    <span class="flex min-w-[64px] flex-1 items-center gap-1.5">
-                                        <span class="flex-none rounded bg-indigo-600 px-1.5 py-1 text-[10px] font-bold uppercase text-white">{{ $course->course_code }}</span>
-                                        <span class="truncate text-xs font-semibold text-gray-900 dark:text-white">{{ $course->name }}</span>
-                                    </span>
-                                    <span class="ml-auto flex flex-none items-center gap-1.5">
-                                        <span class="whitespace-nowrap text-xs font-semibold text-gray-700 dark:text-gray-300">
-                                            {{ $course->tracks->count() }} track{{ $course->tracks->count() === 1 ? '' : 's' }}
-                                        </span>
-                                        <x-badge :pill="false" class="flex-none !px-1.5 !text-[10px]" :color="$course->status === 'published' ? 'green' : ($course->status === 'draft' ? 'yellow' : 'gray')">{{ ucfirst($course->status) }}</x-badge>
-                                    </span>
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="2" class="px-3 py-8 text-center text-gray-400">No courses found.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    @php
+        // With only one course, there's no need for a list/selector UI at
+        // all — just open it directly. If a second course is ever added,
+        // fall back to a plain text switcher instead of reintroducing a
+        // list panel.
+        $defaultCourseId = $openCourseId ?? $courses->first()?->id;
+    @endphp
+    <div class="mt-6" x-data="{ selected: {{ $defaultCourseId ?? 'null' }}, editingTrack: {{ $reopenEditingTrackId ?? 'null' }}, addingTrack: {{ $reopenAddingTrack ? 'true' : 'false' }} }">
+        @if ($courses->count() > 1)
+            <div class="mb-4 flex flex-wrap items-center gap-3 text-sm">
+                @foreach ($courses as $course)
+                    <button type="button" @click="selected = {{ $course->id }}; editingTrack = null; addingTrack = false"
+                            class="font-medium text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400"
+                            :class="selected === {{ $course->id }} ? '!text-indigo-600 dark:!text-indigo-400 underline' : ''">
+                        {{ $course->name }}
+                    </button>
+                @endforeach
+            </div>
+        @endif
 
-        {{-- 3/4: selected course's units --}}
-        <div class="lg:col-span-3">
+        <div>
             @forelse ($courses as $course)
                 <div x-show="selected === {{ $course->id }}" x-cloak>
                     <div class="flex flex-wrap items-center justify-between gap-2 rounded-t-xl bg-indigo-600 px-4 py-3 dark:bg-indigo-800">
