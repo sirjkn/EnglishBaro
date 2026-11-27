@@ -10,9 +10,9 @@
         x-data="{ selected: {{ $openCourseId ?? 'null' }}, mode: '{{ $openCourseId ? 'edit' : 'create' }}', lastSelected: {{ $openCourseId ?? 'null' }} }"
     >
         {{-- 1/4: course list --}}
-        <div class="overflow-hidden rounded-xl border-2 border-indigo-300 dark:border-indigo-700 lg:col-span-1">
-            <div class="flex items-center justify-between gap-2 bg-indigo-600 px-3 py-2 dark:bg-indigo-800">
-                <span class="text-sm font-bold text-white">Courses</span>
+        <div class="lg:col-span-1">
+            <div class="flex items-center justify-between gap-2 px-1 py-2">
+                <span class="text-sm font-bold text-gray-900 dark:text-white">Courses</span>
                 <button
                     type="button"
                     @click="mode = 'create'; selected = null"
@@ -23,12 +23,12 @@
             </div>
             <table class="min-w-full divide-y divide-gray-200 text-xs dark:divide-gray-700">
                 <thead>
-                    <tr class="bg-indigo-600 text-left text-[11px] uppercase text-white dark:bg-indigo-800">
+                    <tr class="text-left text-[11px] uppercase text-gray-500 dark:text-gray-400">
                         <th class="px-3 py-2"></th>
                         <th class="px-3 py-2 text-right">Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-indigo-100 dark:divide-gray-800">
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                     @forelse ($courses as $course)
                         <tr :class="(mode === 'edit' && selected === {{ $course->id }}) ? 'bg-yellow-100 dark:bg-yellow-900/40' : 'odd:bg-white even:bg-indigo-50 hover:bg-yellow-100 dark:odd:bg-gray-800 dark:even:bg-gray-900 dark:hover:bg-yellow-900/30'">
                             <td class="p-0" colspan="2">
