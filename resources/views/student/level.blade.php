@@ -2,7 +2,9 @@
     <div
         x-data="{
             openLevel: {{ $level->number }},
-            openLesson: new URLSearchParams(location.search).get('open_lesson') ? Number(new URLSearchParams(location.search).get('open_lesson')) : null,
+            openLesson: new URLSearchParams(location.search).get('open_lesson')
+                ? Number(new URLSearchParams(location.search).get('open_lesson'))
+                : {{ $resumeNode?->type === 'lesson' && $resumeNode->section->level_id === $level->id ? $resumeNode->lesson->id : 'null' }},
             search: '', changeLevelOpen: false, selTrack: '{{ $track->track_code }}', selLevel: {{ $level->number }},
             advanceTo(target) {
                 if (! target) { window.location.reload(); return; }
